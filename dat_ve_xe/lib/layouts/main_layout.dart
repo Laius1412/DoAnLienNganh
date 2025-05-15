@@ -1,5 +1,6 @@
+import 'package:dat_ve_xe/views/notification/notification_screen.dart';
+import 'package:dat_ve_xe/views/personal_screen/personal_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dat_ve_xe/themes/theme_manager.dart';
 import 'package:dat_ve_xe/views/home_screen/home_screen.dart';
 
 class MainLayout extends StatefulWidget {
@@ -13,10 +14,10 @@ class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const HomeScreen(),
+    HomeScreen(),
     const Center(child: Text('Tra cứu')),
     const Center(child: Text('Gửi hàng')),
-    const Center(child: Text('Tài khoản')),
+    PersonalScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -72,54 +73,43 @@ class _MainLayoutState extends State<MainLayout> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               color: Color.fromARGB(255, 253, 109, 37),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
                   // Nút đổi theme bên trái
+
+                  // Logo hoặc tên app (căn giữa)
+                  SizedBox(
+                    height:
+                        70, // Đảm bảo banner có kích thước giống với thanh AppBar
+                    width: 200, // Đặt chiều rộng mong muốn
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.asset(
+                        'assets/app_icon/bannerApp.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+
+                  // Icon thông báo bên phải
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.centerRight,
                     child: IconButton(
                       icon: Icon(
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Icons.light_mode
-                            : Icons.dark_mode,
+                        Icons.notifications,
                         color:
                             Theme.of(context).brightness == Brightness.dark
                                 ? Colors.black
                                 : Colors.white,
                       ),
                       onPressed: () {
-                        themeManager.toggleTheme();
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(width: 8),
-                  // Logo hoặc tên app
-                  Expanded(
-                    flex: 2,
-                    child: SizedBox(
-                      height: kToolbarHeight,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Image.asset(
-                          'assets/app_icon/bannerApp.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  // Icon thông báo
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.notifications,
-                        color: isDark ? Colors.black : Colors.white,
-                      ),
-                      onPressed: () {
-                        // Mở trang thông báo
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationScreen(),
+                          ),
+                        ); // Mở trang thông báo
                       },
                     ),
                   ),
@@ -132,23 +122,38 @@ class _MainLayoutState extends State<MainLayout> {
 
             // Bottom Navigation
             Container(
-              color: Color.fromARGB(255, 253, 109, 37),
-              child: BottomNavigationBar(
-                backgroundColor: Color.fromARGB(255, 253, 109, 37),
-                selectedItemColor: isDark ? Colors.white : Colors.black,
-                unselectedItemColor: isDark ? Colors.black : Colors.white,
-                showUnselectedLabels: true,
-                currentIndex: _selectedIndex,
-                onTap: _onItemTapped,
-                type: BottomNavigationBarType.fixed,
-                selectedFontSize: 14,
-                unselectedFontSize: 14,
-                items: [
-                  _navItem(Icons.home, 'Trang chủ', 0, isDark),
-                  _navItem(Icons.local_activity, 'Vé của tôi', 1, isDark),
-                  _navItem(Icons.local_shipping, 'Gửi hàng', 2, isDark),
-                  _navItem(Icons.person, 'Tài khoản', 3, isDark),
-                ],
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                bottom: 10,
+                top: 4,
+              ),
+              color: Colors.transparent,
+              child: PhysicalModel(
+                color: Color.fromARGB(255, 253, 109, 37),
+                elevation: 8,
+                borderRadius: BorderRadius.circular(15),
+                shadowColor: Colors.black.withOpacity(0.3),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: BottomNavigationBar(
+                    backgroundColor: Color.fromARGB(255, 253, 109, 37),
+                    selectedItemColor: isDark ? Colors.white : Colors.black,
+                    unselectedItemColor: isDark ? Colors.black : Colors.white,
+                    showUnselectedLabels: true,
+                    currentIndex: _selectedIndex,
+                    onTap: _onItemTapped,
+                    type: BottomNavigationBarType.fixed,
+                    selectedFontSize: 14,
+                    unselectedFontSize: 14,
+                    items: [
+                      _navItem(Icons.home, 'Trang chủ', 0, isDark),
+                      _navItem(Icons.local_activity, 'Vé của tôi', 1, isDark),
+                      _navItem(Icons.local_shipping, 'Gửi hàng', 2, isDark),
+                      _navItem(Icons.person, 'Tài khoản', 3, isDark),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
