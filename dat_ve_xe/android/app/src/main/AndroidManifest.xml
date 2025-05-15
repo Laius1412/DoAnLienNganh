@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="dat_ve_xe"
+        android:label="Flash Travel"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
