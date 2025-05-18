@@ -14,7 +14,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedLanguageCode = 'vi'; // Lưu mã ngôn ngữ (ví, en)
+  String _selectedLanguageCode = 'vi'; // Lưu mã ngôn ngữ (vi, en)
   bool _isDarkMode = false;
   late SharedPreferences _prefs;
 
@@ -52,22 +52,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _getDisplayLanguage(String languageCode) {
     switch (languageCode) {
       case 'en':
-        return 'Tiếng Anh';
+        return AppLocalizations.of(context)!.english;
       case 'vi':
-        return 'Tiếng Việt';
+        return AppLocalizations.of(context)!.vietnamese;
       default:
-        return 'Tiếng Việt';
+        return AppLocalizations.of(context)!.vietnamese;
     }
   }
 
   String _getLanguageCode(String displayLanguage) {
-    switch (displayLanguage) {
-      case 'Tiếng Anh':
-        return 'en';
-      case 'Tiếng Việt':
-        return 'vi';
-      default:
-        return 'vi';
+    if (displayLanguage == AppLocalizations.of(context)!.english) {
+      return 'en';
+    } else if (displayLanguage == AppLocalizations.of(context)!.vietnamese) {
+      return 'vi';
+    } else {
+      return 'vi';
+    }
+  }
+
+  List<String> _getLanguageList() {
+    if (_selectedLanguageCode == 'en') {
+      return [
+        AppLocalizations.of(context)!.english,
+        AppLocalizations.of(context)!.vietnamese,
+      ];
+    } else {
+      return [
+        AppLocalizations.of(context)!.vietnamese,
+        AppLocalizations.of(context)!.english,
+      ];
     }
   }
 
@@ -101,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             items:
-                ['Tiếng Anh', 'Tiếng Việt']
+                _getLanguageList()
                     .map(
                       (lang) =>
                           DropdownMenuItem(value: lang, child: Text(lang)),
@@ -114,7 +127,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const SizedBox(height: 24),
-
           Text(
             AppLocalizations.of(context)!.theme, // Sử dụng localization
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -141,7 +153,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           const SizedBox(height: 24),
-
           Text(
             AppLocalizations.of(context)!.notifications, // Sử dụng localization
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
