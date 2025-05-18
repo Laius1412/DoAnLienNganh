@@ -2,9 +2,12 @@ import 'package:dat_ve_xe/views/notification/notification_screen.dart';
 import 'package:dat_ve_xe/views/personal_screen/personal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dat_ve_xe/views/home_screen/home_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
+  final Function(Locale) onLanguageChanged;
+
+  const MainLayout({super.key, required this.onLanguageChanged});
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
@@ -13,12 +16,18 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    HomeScreen(),
-    const Center(child: Text('Tra cứu')),
-    const Center(child: Text('Gửi hàng')),
-    PersonalScreen(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomeScreen(),
+      const Center(child: Text('Tra cứu')),
+      const Center(child: Text('Gửi hàng')),
+      PersonalScreen(onLanguageChanged: widget.onLanguageChanged),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -147,10 +156,30 @@ class _MainLayoutState extends State<MainLayout> {
                     selectedFontSize: 14,
                     unselectedFontSize: 14,
                     items: [
-                      _navItem(Icons.home, 'Trang chủ', 0, isDark),
-                      _navItem(Icons.local_activity, 'Vé của tôi', 1, isDark),
-                      _navItem(Icons.local_shipping, 'Gửi hàng', 2, isDark),
-                      _navItem(Icons.person, 'Tài khoản', 3, isDark),
+                      _navItem(
+                        Icons.home,
+                        AppLocalizations.of(context)!.home,
+                        0,
+                        isDark,
+                      ),
+                      _navItem(
+                        Icons.local_activity,
+                        AppLocalizations.of(context)!.myTickets,
+                        1,
+                        isDark,
+                      ),
+                      _navItem(
+                        Icons.local_shipping,
+                        AppLocalizations.of(context)!.delivery,
+                        2,
+                        isDark,
+                      ),
+                      _navItem(
+                        Icons.person,
+                        AppLocalizations.of(context)!.account,
+                        3,
+                        isDark,
+                      ),
                     ],
                   ),
                 ),

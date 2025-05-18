@@ -1,0 +1,23 @@
+{
+    "home": "Home",
+    "myTickets": "My Tickets",
+    "delivery": "Delivery",
+    "account": "Account",
+    "settings": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "notifications": "Notifications",
+    "notificationSettings": "Notification Settings",
+    "policy": "Policy",
+    "aboutUs": "About us",
+    "emailOrPhone": "Email or phone number",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "login": "Login",
+    "register": "Register",
+    "ifDontHaveAccount": "You don't have an account?",
+    "editProfile": "Edit profie",
+    "english": "English",
+    "vietnamese": "Vietnamese"
+}

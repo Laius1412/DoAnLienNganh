@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dat_ve_xe/themes/theme_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final Function(Locale) onLanguageChanged;
+
+  const SettingsScreen({super.key, required this.onLanguageChanged});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedLanguage = 'Tiếng Việt';
+  String _selectedLanguageCode = 'vi'; // Lưu mã ngôn ngữ (ví, en)
   bool _isDarkMode = false;
   late SharedPreferences _prefs;
 
@@ -24,44 +27,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedLanguage = _prefs.getString('language') ?? 'Tiếng Việt';
+      _selectedLanguageCode = _prefs.getString('languageCode') ?? 'vi';
       _isDarkMode = _prefs.getBool('isDarkMode') ?? false;
     });
   }
 
-  Future<void> _updateLanguage(String language) async {
-    await _prefs.setString('language', language);
+  Future<void> _updateLanguage(String languageCode) async {
+    await _prefs.setString('languageCode', languageCode);
     setState(() {
-      _selectedLanguage = language;
+      _selectedLanguageCode = languageCode;
     });
+    // Gọi callback để thông báo cho MyApp thay đổi Locale
+    widget.onLanguageChanged(Locale(languageCode));
   }
 
   Future<void> _updateDarkMode(bool isDark) async {
     await _prefs.setBool('isDarkMode', isDark);
     setState(() {
       _isDarkMode = isDark;
-      themeManager.toggleTheme(); // toggle theme
+      themeManager.toggleTheme();
     });
+  }
+
+  String _getDisplayLanguage(String languageCode) {
+    switch (languageCode) {
+      case 'en':
+        return 'Tiếng Anh';
+      case 'vi':
+        return 'Tiếng Việt';
+      default:
+        return 'Tiếng Việt';
+    }
+  }
+
+  String _getLanguageCode(String displayLanguage) {
+    switch (displayLanguage) {
+      case 'Tiếng Anh':
+        return 'en';
+      case 'Tiếng Việt':
+        return 'vi';
+      default:
+        return 'vi';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cài đặt'),
+        title: Text(
+          AppLocalizations.of(context)!.settings,
+        ), // Sử dụng localization
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
         foregroundColor: Colors.white,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'Ngôn ngữ',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context)!.language, // Sử dụng localization
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: _selectedLanguage,
+            value: _getDisplayLanguage(_selectedLanguageCode),
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -72,27 +101,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             items:
-                ['Tiếng Anh', 'Tiếng Việt', 'Tiếng Việt (Nghệ An)']
+                ['Tiếng Anh', 'Tiếng Việt']
                     .map(
                       (lang) =>
                           DropdownMenuItem(value: lang, child: Text(lang)),
                     )
                     .toList(),
             onChanged: (value) {
-              if (value != null) _updateLanguage(value);
+              if (value != null) {
+                _updateLanguage(_getLanguageCode(value));
+              }
             },
           ),
           const SizedBox(height: 24),
 
-          const Text(
-            'Chế độ giao diện',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context)!.theme, // Sử dụng localization
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Chế độ tối", style: TextStyle(fontSize: 16)),
+              Text(
+                AppLocalizations.of(context)!.darkMode, // Sử dụng localization
+                style: const TextStyle(fontSize: 16),
+              ),
               FlutterSwitch(
                 value: _isDarkMode,
                 activeColor: const Color.fromARGB(255, 253, 109, 37),
@@ -108,14 +142,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 24),
 
-          const Text(
-            'Thông báo',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context)!.notifications, // Sử dụng localization
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Cài đặt thông báo'),
+            title: Text(
+              AppLocalizations.of(context)!.notificationSettings,
+            ), // Sử dụng localization
             trailing: const Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () {
               Navigator.push(
@@ -123,7 +159,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 MaterialPageRoute(
                   builder:
                       (context) =>
-                          Placeholder(), // Thay sau = NotificationSettingsScreen()
+                          const Placeholder(), // Thay sau = NotificationSettingsScreen()
                 ),
               );
             },

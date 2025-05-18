@@ -1,0 +1,23 @@
+{
+    "home": "Trang chủ",
+    "myTickets": "Vé của tôi",
+    "delivery": "Chuyển phát",
+    "account": "Tài khoản",
+    "settings": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "theme": "Giao diện",
+    "darkMode": "Chế độ tối",
+    "notifications": "Thông báo",
+    "notificationSettings": "Cài đặt thông báo",
+    "policy": "Chính sách",
+    "aboutUs": "Giới thiệu",
+    "emailOrPhone": "Email hoặc số điện thoại",
+    "password": "Mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "ifDontHaveAccount": "Bạn chưa có tài khoản?",
+    "editProfile": "Chỉnh sửa thông tin cá nhân",
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt"
+}

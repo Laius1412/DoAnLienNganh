@@ -1,8 +1,11 @@
 import 'package:dat_ve_xe/views/settings_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PersonalScreen extends StatefulWidget {
-  const PersonalScreen({super.key});
+  final Function(Locale) onLanguageChanged;
+
+  const PersonalScreen({super.key, required this.onLanguageChanged});
 
   @override
   State<PersonalScreen> createState() => _PersonalScreenState();
@@ -36,7 +39,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tài khoản'),
+        title: Text(AppLocalizations.of(context)!.account),
         actions:
             isLoggedIn
                 ? [
@@ -55,24 +58,29 @@ class _PersonalScreenState extends State<PersonalScreen> {
             const SizedBox(height: 30),
             _buildMenuItem(
               icon: Icons.settings,
-              title: 'Cài đặt',
+              title: AppLocalizations.of(context)!.settings,
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SettingsScreen()),
+                  MaterialPageRoute(
+                    builder:
+                        (context) => SettingsScreen(
+                          onLanguageChanged: widget.onLanguageChanged,
+                        ),
+                  ),
                 );
               },
             ),
             _buildMenuItem(
               icon: Icons.policy,
-              title: 'Chính sách',
+              title: AppLocalizations.of(context)!.policy,
               onTap: () {
                 Navigator.pushNamed(context, '/policy');
               },
             ),
             _buildMenuItem(
               icon: Icons.info,
-              title: 'Giới thiệu',
+              title: AppLocalizations.of(context)!.aboutUs,
               onTap: () {
                 Navigator.pushNamed(context, '/about');
               },
@@ -89,17 +97,17 @@ class _PersonalScreenState extends State<PersonalScreen> {
       children: [
         TextField(
           controller: _emailPhoneController,
-          decoration: const InputDecoration(
-            labelText: 'Email hoặc Số điện thoại',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.emailOrPhone,
+            border: const OutlineInputBorder(),
           ),
         ),
         const SizedBox(height: 16),
         TextField(
           controller: _passwordController,
           obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Mật khẩu',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.password,
             border: OutlineInputBorder(),
           ),
         ),
@@ -110,7 +118,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
             onPressed: () {
               Navigator.pushNamed(context, '/forgot-password');
             },
-            child: const Text('Quên mật khẩu?'),
+            child: Text(AppLocalizations.of(context)!.forgotPassword),
           ),
         ),
         const SizedBox(height: 8),
@@ -121,9 +129,9 @@ class _PersonalScreenState extends State<PersonalScreen> {
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             backgroundColor: const Color.fromARGB(255, 251, 215, 161),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
-              'Đăng nhập',
+              AppLocalizations.of(context)!.login,
               style: TextStyle(color: Color.fromARGB(255, 3, 74, 253)),
             ),
           ),
@@ -132,12 +140,12 @@ class _PersonalScreenState extends State<PersonalScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Chưa có tài khoản?'),
+            Text(AppLocalizations.of(context)!.ifDontHaveAccount),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/register');
               },
-              child: const Text('Đăng ký'),
+              child: Text(AppLocalizations.of(context)!.register),
             ),
           ],
         ),
@@ -159,7 +167,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
           onPressed: () {
             Navigator.pushNamed(context, '/edit-profile');
           },
-          child: const Text('Chỉnh sửa thông tin cá nhân'),
+          child: Text(AppLocalizations.of(context)!.editProfile),
         ),
       ],
     );

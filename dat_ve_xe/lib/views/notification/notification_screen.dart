@@ -1,4 +1,3 @@
-import 'package:dat_ve_xe/layouts/main_layout.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatelessWidget {
@@ -6,6 +5,6 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MainLayout();
+    return Center(child: Text("Thông báo"));
   }
 }
