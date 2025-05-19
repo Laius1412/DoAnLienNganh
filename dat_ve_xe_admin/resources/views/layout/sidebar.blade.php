@@ -42,7 +42,7 @@
                       <img class="avatar-img" src="..\assets\img\160x160\img6.jpg" alt="Image Description">
                     </div>
                     <div class="media-body">
-                      <span class="card-title h5">Mark Williams</span>
+                      <span class="card-title h5">Thành Đạt</span>
                       <span class="card-text">mark@example.com</span>
                     </div>
                   </div>
@@ -135,13 +135,13 @@
       <div class="navbar-vertical-footer-offset">
         <div class="navbar-brand-wrapper justify-content-between">
           <!-- Logo -->
-          
-          
+
+
             <a class="navbar-brand" href="..\index.html" aria-label="Front">
               <img class="navbar-brand-logo" src="..\assets\svg\logos\logoApp.png" alt="Logo">
               <img class="navbar-brand-logo-mini" src="..\assets\svg\logos\logo-short.svg" alt="Logo">
             </a>
-          
+
           <!-- End Logo -->
 
           <!-- Navbar Vertical Toggle -->
@@ -200,7 +200,7 @@
             <li class="navbar-vertical-aside-has-menu ">
               <a class="js-navbar-vertical-aside-menu-link nav-link" href="" title="">
                 <i class="bi bi-box-seam nav-icon"></i>
-                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý giao hàng</span>
+                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý chuyển phát</span>
               </a>
             </li>
 
