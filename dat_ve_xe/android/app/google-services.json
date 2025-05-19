@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "652593698682",
+    "project_id": "flash-b458d",
+    "storage_bucket": "flash-b458d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652593698682:android:eeff82f0f91e569f6ae8c3",
+        "android_client_info": {
+          "package_name": "com.example.dat_ve_xe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIGh2CkWoQ4Y2yZ7tm9vM7UKc-kviOqtY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
