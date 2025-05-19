@@ -1,6 +1,10 @@
+import 'package:dat_ve_xe/views/auth/login_screen.dart';
 import 'package:dat_ve_xe/views/settings_screen/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dat_ve_xe/views/auth/register_screen.dart';
 
 class PersonalScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -12,53 +16,83 @@ class PersonalScreen extends StatefulWidget {
 }
 
 class _PersonalScreenState extends State<PersonalScreen> {
-  bool isLoggedIn = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? _userName;
+  String? _avatarUrl;
+  bool _isLoading = true;
 
-  final TextEditingController _emailPhoneController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  String userName = 'Nguyễn Văn A'; // Giả lập tên người dùng
-  String avatarUrl = 'https://via.placeholder.com/100'; // Ảnh đại diện mẫu
-
-  void _login() {
-    // Giả lập đăng nhập
-    setState(() {
-      isLoggedIn = true;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
   }
 
-  void _logout() {
-    setState(() {
-      isLoggedIn = false;
-      _emailPhoneController.clear();
-      _passwordController.clear();
-    });
+  Future<void> _loadUserData() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      try {
+        final doc = await _firestore.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          setState(() {
+            _userName = doc.data()?['name'] ?? 'Chưa cập nhật tên';
+            _avatarUrl = doc.data()?['avt'];
+            _isLoading = false;
+          });
+        }
+      } catch (e) {
+        print('Error loading user data: $e');
+        setState(() => _isLoading = false);
+      }
+    } else {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _logout() async {
+    try {
+      await _auth.signOut();
+      setState(() {
+        _userName = null;
+        _avatarUrl = null;
+      });
+    } catch (e) {
+      print('Error signing out: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final isLoggedIn = _auth.currentUser != null;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.account),
-        actions:
-            isLoggedIn
-                ? [
-                  IconButton(
-                    icon: const Icon(Icons.logout),
-                    onPressed: _logout,
-                  ),
-                ]
-                : [],
-      ),
+      // appBar: AppBar(
+      //   title: Text(t.account),
+      //   actions:
+      //       isLoggedIn
+      //           ? [
+      //             IconButton(
+      //               icon: const Icon(Icons.logout),
+      //               onPressed: _logout,
+      //             ),
+      //           ]
+      //           : [],
+      // ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            isLoggedIn ? _buildUserProfile() : _buildLoginForm(),
+            if (_isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (isLoggedIn)
+              _buildUserProfile()
+            else
+              _buildLoginButton(),
             const SizedBox(height: 30),
             _buildMenuItem(
               icon: Icons.settings,
-              title: AppLocalizations.of(context)!.settings,
+              title: t.settings,
               onTap: () {
                 Navigator.push(
                   context,
@@ -73,14 +107,14 @@ class _PersonalScreenState extends State<PersonalScreen> {
             ),
             _buildMenuItem(
               icon: Icons.policy,
-              title: AppLocalizations.of(context)!.policy,
+              title: t.policy,
               onTap: () {
                 Navigator.pushNamed(context, '/policy');
               },
             ),
             _buildMenuItem(
               icon: Icons.info,
-              title: AppLocalizations.of(context)!.aboutUs,
+              title: t.aboutUs,
               onTap: () {
                 Navigator.pushNamed(context, '/about');
               },
@@ -91,75 +125,88 @@ class _PersonalScreenState extends State<PersonalScreen> {
     );
   }
 
-  Widget _buildLoginForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          controller: _emailPhoneController,
-          decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.emailOrPhone,
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: AppLocalizations.of(context)!.password,
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/forgot-password');
-            },
-            child: Text(AppLocalizations.of(context)!.forgotPassword),
-          ),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(
-          onPressed: _login,
-          style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: Colors.orange, width: 2), // Viền cam
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            backgroundColor: const Color.fromARGB(255, 251, 215, 161),
-          ),
-          child: Center(
-            child: Text(
-              AppLocalizations.of(context)!.login,
-              style: TextStyle(color: Color.fromARGB(255, 3, 74, 253)),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildLoginButton() {
+    final t = AppLocalizations.of(context)!;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Colors.orange, width: 2),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
           children: [
-            Text(AppLocalizations.of(context)!.ifDontHaveAccount),
-            TextButton(
+            Text(
+              t.pleaseLogin,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            OutlinedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/register');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => LoginScreen(
+                          onLanguageChanged: widget.onLanguageChanged,
+                          onLoginSuccess: () {
+                            _loadUserData();
+                          },
+                        ),
+                  ),
+                );
               },
-              child: Text(AppLocalizations.of(context)!.register),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.orange, width: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+              ),
+              child: Text(t.login, style: const TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(t.ifDontHaveAccount),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => RegisterScreen(
+                              onLanguageChanged: widget.onLanguageChanged,
+                            ),
+                      ),
+                    );
+                  },
+                  child: Text(t.register),
+                ),
+              ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildUserProfile() {
     return Column(
       children: [
-        CircleAvatar(radius: 50, backgroundImage: NetworkImage(avatarUrl)),
+        CircleAvatar(
+          radius: 50,
+          backgroundImage:
+              _avatarUrl != null && _avatarUrl!.isNotEmpty
+                  ? NetworkImage(_avatarUrl!)
+                  : const AssetImage('assets/images/default_avatar.png')
+                      as ImageProvider,
+        ),
         const SizedBox(height: 12),
         Text(
-          userName,
+          _userName ?? 'Chưa cập nhật tên',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -168,6 +215,19 @@ class _PersonalScreenState extends State<PersonalScreen> {
             Navigator.pushNamed(context, '/edit-profile');
           },
           child: Text(AppLocalizations.of(context)!.editProfile),
+        ),
+        const SizedBox(height: 16),
+        OutlinedButton.icon(
+          onPressed: _logout,
+          icon: const Icon(Icons.logout, color: Colors.red),
+          label: Text(
+            AppLocalizations.of(context)!.logout,
+            style: const TextStyle(color: Colors.red),
+          ),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: Colors.red),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          ),
         ),
       ],
     );
@@ -182,16 +242,16 @@ class _PersonalScreenState extends State<PersonalScreen> {
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Colors.orange, width: 2), // Viền cam
+        side: const BorderSide(color: Colors.orange, width: 2),
       ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.orange), // Đổi màu icon nếu muốn
+        leading: Icon(icon, color: Colors.orange),
         title: Text(title),
         trailing: const Icon(
           Icons.arrow_forward_ios,
           size: 16,
           color: Colors.orange,
-        ), // Đổi màu mũi tên nếu muốn
+        ),
         onTap: onTap,
       ),
     );

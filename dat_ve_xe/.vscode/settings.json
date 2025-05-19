@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Laptrinh/DoAnLienNganh/dat_ve_xe/windows/flutter"
+    "cmake.sourceDirectory": "C:/Laptrinh/DoAnLienNganh/dat_ve_xe/windows/flutter",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
