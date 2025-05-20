@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\CheckAuth;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -22,3 +23,4 @@ Route::post('/login', [AuthController::class, 'login'])
 
 Route::get('/logout', [AuthController::class, 'logout'])
      ->name('logout');
+Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
