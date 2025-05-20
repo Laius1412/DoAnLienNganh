@@ -184,6 +184,271 @@ class S {
   String get vietnamese {
     return Intl.message('Vietnamese', name: 'vietnamese', desc: '', args: []);
   }
+
+  /// `Verification Failed`
+  String get verificationFailed {
+    return Intl.message(
+      'Verification Failed',
+      name: 'verificationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid OTP`
+  String get invalidOtp {
+    return Intl.message('Invalid OTP', name: 'invalidOtp', desc: '', args: []);
+  }
+
+  /// `Phone Verification`
+  String get phoneVerification {
+    return Intl.message(
+      'Phone Verification',
+      name: 'phoneVerification',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your phone`
+  String get enterPhone {
+    return Intl.message(
+      'Enter your phone',
+      name: 'enterPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter OTP`
+  String get enterOtp {
+    return Intl.message('Enter OTP', name: 'enterOtp', desc: '', args: []);
+  }
+
+  /// `Verify`
+  String get verify {
+    return Intl.message('Verify', name: 'verify', desc: '', args: []);
+  }
+
+  /// `Send code`
+  String get sendCode {
+    return Intl.message('Send code', name: 'sendCode', desc: '', args: []);
+  }
+
+  /// `Passwords do not match!`
+  String get passwordMismatch {
+    return Intl.message(
+      'Passwords do not match!',
+      name: 'passwordMismatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get name {
+    return Intl.message('Name', name: 'name', desc: '', args: []);
+  }
+
+  /// `Required field`
+  String get requiredField {
+    return Intl.message(
+      'Required field',
+      name: 'requiredField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email`
+  String get email {
+    return Intl.message('Email', name: 'email', desc: '', args: []);
+  }
+
+  /// `Birth date`
+  String get birthDate {
+    return Intl.message('Birth date', name: 'birthDate', desc: '', args: []);
+  }
+
+  /// `Male`
+  String get male {
+    return Intl.message('Male', name: 'male', desc: '', args: []);
+  }
+
+  /// `Female`
+  String get female {
+    return Intl.message('Female', name: 'female', desc: '', args: []);
+  }
+
+  /// `Gender`
+  String get gender {
+    return Intl.message('Gender', name: 'gender', desc: '', args: []);
+  }
+
+  /// `Confirm Password`
+  String get confirmPassword {
+    return Intl.message(
+      'Confirm Password',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter all fields`
+  String get enterAllFields {
+    return Intl.message(
+      'Please enter all fields',
+      name: 'enterAllFields',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account not found`
+  String get accountNotFound {
+    return Intl.message(
+      'Account not found',
+      name: 'accountNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong Password`
+  String get wrongPassword {
+    return Intl.message(
+      'Wrong Password',
+      name: 'wrongPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login Failed`
+  String get loginFailed {
+    return Intl.message(
+      'Login Failed',
+      name: 'loginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remember me`
+  String get rememberMe {
+    return Intl.message('Remember me', name: 'rememberMe', desc: '', args: []);
+  }
+
+  /// `Phone number`
+  String get phone {
+    return Intl.message('Phone number', name: 'phone', desc: '', args: []);
+  }
+
+  /// `Please enter a valid 10-digit phone number starting with 0`
+  String get invalidPhone {
+    return Intl.message(
+      'Please enter a valid 10-digit phone number starting with 0',
+      name: 'invalidPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Register success!`
+  String get registerSuccess {
+    return Intl.message(
+      'Register success!',
+      name: 'registerSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Register failed!`
+  String get registerFailed {
+    return Intl.message(
+      'Register failed!',
+      name: 'registerFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email has been used!`
+  String get emailAlreadyUsed {
+    return Intl.message(
+      'Email has been used!',
+      name: 'emailAlreadyUsed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password is too weak!`
+  String get weakPassword {
+    return Intl.message(
+      'Password is too weak!',
+      name: 'weakPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to select`
+  String get tapToSelect {
+    return Intl.message(
+      'Tap to select',
+      name: 'tapToSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid email!`
+  String get invalidEmail {
+    return Intl.message(
+      'Invalid email!',
+      name: 'invalidEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login success!`
+  String get loginSuccess {
+    return Intl.message(
+      'Login success!',
+      name: 'loginSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `accountDisabled`
+  String get accountDisabled {
+    return Intl.message(
+      'accountDisabled',
+      name: 'accountDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logout {
+    return Intl.message('Logout', name: 'logout', desc: '', args: []);
+  }
+
+  /// `Please login`
+  String get pleaseLogin {
+    return Intl.message(
+      'Please login',
+      name: 'pleaseLogin',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

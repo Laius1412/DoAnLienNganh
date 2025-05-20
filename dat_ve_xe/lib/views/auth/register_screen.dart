@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/auth/login_screen.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -70,6 +71,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
+      await Future.delayed(const Duration(seconds: 2));
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -132,101 +135,129 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(t.register)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: _inputDecoration(t.name),
-                validator: (value) => value!.isEmpty ? t.requiredField : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: _inputDecoration(t.email),
-                validator: (value) => value!.isEmpty ? t.requiredField : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: _inputDecoration(t.phone),
-                validator: (value) {
-                  final phone = value!.trim();
-                  if (phone.isEmpty) return t.requiredField;
-                  if (!RegExp(r'^0\d{9}$').hasMatch(phone)) {
-                    return t.invalidPhone;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: _selectDate,
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    controller: _birthDateController,
-                    decoration: _inputDecoration(t.birthDate),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: _inputDecoration(t.name),
                     validator:
                         (value) => value!.isEmpty ? t.requiredField : null,
                   ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: _inputDecoration(t.email),
+                    validator:
+                        (value) => value!.isEmpty ? t.requiredField : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: _inputDecoration(t.phone),
+                    validator: (value) {
+                      final phone = value!.trim();
+                      if (phone.isEmpty) return t.requiredField;
+                      if (!RegExp(r'^0\d{9}$').hasMatch(phone)) {
+                        return t.invalidPhone;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: _selectDate,
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _birthDateController,
+                        decoration: _inputDecoration(t.birthDate),
+                        validator:
+                            (value) => value!.isEmpty ? t.requiredField : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<String>(
+                    value: _gender,
+                    items:
+                        _gender == 'female'
+                            ? [
+                              DropdownMenuItem(
+                                value: 'female',
+                                child: Text(t.female),
+                              ),
+                              DropdownMenuItem(
+                                value: 'male',
+                                child: Text(t.male),
+                              ),
+                            ]
+                            : [
+                              DropdownMenuItem(
+                                value: 'male',
+                                child: Text(t.male),
+                              ),
+                              DropdownMenuItem(
+                                value: 'female',
+                                child: Text(t.female),
+                              ),
+                            ],
+                    onChanged: (val) {
+                      setState(() {
+                        _gender = val!;
+                      });
+                    },
+                    decoration: _inputDecoration(t.gender),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: _inputDecoration(t.password),
+                    validator:
+                        (value) => value!.isEmpty ? t.requiredField : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    obscureText: true,
+                    decoration: _inputDecoration(t.confirmPassword),
+                    validator:
+                        (value) => value!.isEmpty ? t.requiredField : null,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _submit,
+                    child:
+                        _isLoading
+                            ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                            : Text(t.register),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: LoadingAnimationWidget.inkDrop(
+                    color: Colors.orange,
+                    size: 60,
+                  ),
                 ),
               ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _gender,
-                items:
-                    _gender == 'female'
-                        ? [
-                          DropdownMenuItem(
-                            value: 'female',
-                            child: Text(t.female),
-                          ),
-                          DropdownMenuItem(value: 'male', child: Text(t.male)),
-                        ]
-                        : [
-                          DropdownMenuItem(value: 'male', child: Text(t.male)),
-                          DropdownMenuItem(
-                            value: 'female',
-                            child: Text(t.female),
-                          ),
-                        ],
-                onChanged: (val) {
-                  setState(() {
-                    _gender = val!;
-                  });
-                },
-                decoration: _inputDecoration(t.gender),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: _inputDecoration(t.password),
-                validator: (value) => value!.isEmpty ? t.requiredField : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                decoration: _inputDecoration(t.confirmPassword),
-                validator: (value) => value!.isEmpty ? t.requiredField : null,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _submit,
-                child:
-                    _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(t.register),
-              ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }

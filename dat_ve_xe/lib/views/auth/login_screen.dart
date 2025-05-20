@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dat_ve_xe/views/auth/register_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -48,6 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         _showMessage(t.loginSuccess);
+
+        await Future.delayed(const Duration(seconds: 2));
 
         widget.onLoginSuccess();
 
@@ -95,84 +98,98 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.login)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: loc.email,
-                border: const OutlineInputBorder(),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
-                ),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: loc.password,
-                border: const OutlineInputBorder(),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Checkbox(
-                  value: _rememberMe,
-                  onChanged: (value) {
-                    setState(() => _rememberMe = value ?? false);
-                  },
-                ),
-                Text(loc.rememberMe),
-                const Spacer(),
-                TextButton(
-                  onPressed: () {
-                    // TODO: Forgot password logic
-                  },
-                  child: Text(loc.forgotPassword),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _login,
-              child:
-                  _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(loc.login),
-            ),
-            const SizedBox(height: 24),
-            Row(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(loc.ifDontHaveAccount),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => RegisterScreen(
-                              onLanguageChanged: widget.onLanguageChanged,
-                            ),
-                      ),
-                    );
-                  },
-                  child: Text(loc.register),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: loc.email,
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: loc.password,
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _rememberMe,
+                      onChanged: (value) {
+                        setState(() => _rememberMe = value ?? false);
+                      },
+                    ),
+                    Text(loc.rememberMe),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        // TODO: Forgot password logic
+                      },
+                      child: Text(loc.forgotPassword),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _login,
+                  child: Text(loc.login),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(loc.ifDontHaveAccount),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => RegisterScreen(
+                                  onLanguageChanged: widget.onLanguageChanged,
+                                ),
+                          ),
+                        );
+                      },
+                      child: Text(loc.register),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          // ✅ Di chuyển overlay ra ngoài Column để phủ toàn màn hình
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: LoadingAnimationWidget.inkDrop(
+                    color: Colors.orange,
+                    size: 60,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

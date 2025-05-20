@@ -24,30 +24,81 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aboutUs": MessageLookupByLibrary.simpleMessage("About us"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
+    "accountDisabled": MessageLookupByLibrary.simpleMessage("accountDisabled"),
+    "accountNotFound": MessageLookupByLibrary.simpleMessage(
+      "Account not found",
+    ),
+    "birthDate": MessageLookupByLibrary.simpleMessage("Birth date"),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "delivery": MessageLookupByLibrary.simpleMessage("Delivery"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit profie"),
+    "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "emailAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Email has been used!",
+    ),
     "emailOrPhone": MessageLookupByLibrary.simpleMessage(
       "Email or phone number",
     ),
     "english": MessageLookupByLibrary.simpleMessage("English"),
+    "enterAllFields": MessageLookupByLibrary.simpleMessage(
+      "Please enter all fields",
+    ),
+    "enterOtp": MessageLookupByLibrary.simpleMessage("Enter OTP"),
+    "enterPhone": MessageLookupByLibrary.simpleMessage("Enter your phone"),
+    "female": MessageLookupByLibrary.simpleMessage("Female"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
+    "gender": MessageLookupByLibrary.simpleMessage("Gender"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "ifDontHaveAccount": MessageLookupByLibrary.simpleMessage(
       "You don\'t have an account?",
     ),
+    "invalidEmail": MessageLookupByLibrary.simpleMessage("Invalid email!"),
+    "invalidOtp": MessageLookupByLibrary.simpleMessage("Invalid OTP"),
+    "invalidPhone": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid 10-digit phone number starting with 0",
+    ),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "loginFailed": MessageLookupByLibrary.simpleMessage("Login Failed"),
+    "loginSuccess": MessageLookupByLibrary.simpleMessage("Login success!"),
+    "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "male": MessageLookupByLibrary.simpleMessage("Male"),
     "myTickets": MessageLookupByLibrary.simpleMessage("My Tickets"),
+    "name": MessageLookupByLibrary.simpleMessage("Name"),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Notification Settings",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "passwordMismatch": MessageLookupByLibrary.simpleMessage(
+      "Passwords do not match!",
+    ),
+    "phone": MessageLookupByLibrary.simpleMessage("Phone number"),
+    "phoneVerification": MessageLookupByLibrary.simpleMessage(
+      "Phone Verification",
+    ),
+    "pleaseLogin": MessageLookupByLibrary.simpleMessage("Please login"),
     "policy": MessageLookupByLibrary.simpleMessage("Policy"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
+    "registerFailed": MessageLookupByLibrary.simpleMessage("Register failed!"),
+    "registerSuccess": MessageLookupByLibrary.simpleMessage(
+      "Register success!",
+    ),
+    "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
+    "requiredField": MessageLookupByLibrary.simpleMessage("Required field"),
+    "sendCode": MessageLookupByLibrary.simpleMessage("Send code"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "tapToSelect": MessageLookupByLibrary.simpleMessage("Tap to select"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),
+    "verificationFailed": MessageLookupByLibrary.simpleMessage(
+      "Verification Failed",
+    ),
+    "verify": MessageLookupByLibrary.simpleMessage("Verify"),
     "vietnamese": MessageLookupByLibrary.simpleMessage("Vietnamese"),
+    "weakPassword": MessageLookupByLibrary.simpleMessage(
+      "Password is too weak!",
+    ),
+    "wrongPassword": MessageLookupByLibrary.simpleMessage("Wrong Password"),
   };
 }

@@ -24,32 +24,93 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aboutUs": MessageLookupByLibrary.simpleMessage("Giới thiệu"),
     "account": MessageLookupByLibrary.simpleMessage("Tài khoản"),
+    "accountDisabled": MessageLookupByLibrary.simpleMessage(
+      "Tài khoản bị vô hiệu hóa",
+    ),
+    "accountNotFound": MessageLookupByLibrary.simpleMessage(
+      "Tài khoản không chính xác hoặc không tồn tại",
+    ),
+    "birthDate": MessageLookupByLibrary.simpleMessage("Ngày sinh"),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage(
+      "Xác nhận mật khẩu",
+    ),
     "darkMode": MessageLookupByLibrary.simpleMessage("Chế độ tối"),
     "delivery": MessageLookupByLibrary.simpleMessage("Chuyển phát"),
     "editProfile": MessageLookupByLibrary.simpleMessage(
       "Chỉnh sửa thông tin cá nhân",
     ),
+    "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "emailAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Email đã được sử dụng!",
+    ),
     "emailOrPhone": MessageLookupByLibrary.simpleMessage(
       "Email hoặc số điện thoại",
     ),
     "english": MessageLookupByLibrary.simpleMessage("Tiếng Anh"),
+    "enterAllFields": MessageLookupByLibrary.simpleMessage(
+      "Vui lòng nhập đầy đủ thông tin",
+    ),
+    "enterOtp": MessageLookupByLibrary.simpleMessage("Nhập mã OTP"),
+    "enterPhone": MessageLookupByLibrary.simpleMessage("Nhập số điện thoại"),
+    "female": MessageLookupByLibrary.simpleMessage("Nữ"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Quên mật khẩu?"),
+    "gender": MessageLookupByLibrary.simpleMessage("Giới tính"),
     "home": MessageLookupByLibrary.simpleMessage("Trang chủ"),
     "ifDontHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Bạn chưa có tài khoản?",
     ),
+    "invalidEmail": MessageLookupByLibrary.simpleMessage(
+      "Email không đúng hoặc không tồn tại",
+    ),
+    "invalidOtp": MessageLookupByLibrary.simpleMessage(
+      "Mã OTP không chính xác",
+    ),
+    "invalidPhone": MessageLookupByLibrary.simpleMessage(
+      "Vui lòng nhập số điện thoại hợp lệ gồm 10 chữ số và bắt đầu bằng số 0",
+    ),
     "language": MessageLookupByLibrary.simpleMessage("Ngôn ngữ"),
     "login": MessageLookupByLibrary.simpleMessage("Đăng nhập"),
+    "loginFailed": MessageLookupByLibrary.simpleMessage("Đăng nhập thất bại"),
+    "loginSuccess": MessageLookupByLibrary.simpleMessage(
+      "Đăng nhập thành công!",
+    ),
+    "logout": MessageLookupByLibrary.simpleMessage("Đăng xuất"),
+    "male": MessageLookupByLibrary.simpleMessage("Nam"),
     "myTickets": MessageLookupByLibrary.simpleMessage("Vé của tôi"),
+    "name": MessageLookupByLibrary.simpleMessage("Họ và tên"),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Cài đặt thông báo",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Thông báo"),
     "password": MessageLookupByLibrary.simpleMessage("Mật khẩu"),
+    "passwordMismatch": MessageLookupByLibrary.simpleMessage(
+      "Mật khẩu không trùng khớp!",
+    ),
+    "phone": MessageLookupByLibrary.simpleMessage("Số điện thoại"),
+    "phoneVerification": MessageLookupByLibrary.simpleMessage(
+      "Xác thực số điện thoại",
+    ),
+    "pleaseLogin": MessageLookupByLibrary.simpleMessage("Vui lòng đăng nhập"),
     "policy": MessageLookupByLibrary.simpleMessage("Chính sách"),
     "register": MessageLookupByLibrary.simpleMessage("Đăng ký"),
+    "registerFailed": MessageLookupByLibrary.simpleMessage("Đăng ký thất bại!"),
+    "registerSuccess": MessageLookupByLibrary.simpleMessage(
+      "Đăng ký thành công!",
+    ),
+    "rememberMe": MessageLookupByLibrary.simpleMessage("Nhớ mật khẩu"),
+    "requiredField": MessageLookupByLibrary.simpleMessage("Yêu cầu bắt buộc"),
+    "sendCode": MessageLookupByLibrary.simpleMessage("Gửi mã"),
     "settings": MessageLookupByLibrary.simpleMessage("Cài đặt"),
+    "tapToSelect": MessageLookupByLibrary.simpleMessage("Chạm để chọn ngày"),
     "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),
+    "verificationFailed": MessageLookupByLibrary.simpleMessage(
+      "Xác thực thất bại",
+    ),
+    "verify": MessageLookupByLibrary.simpleMessage("Xác thực"),
     "vietnamese": MessageLookupByLibrary.simpleMessage("Tiếng Việt"),
+    "weakPassword": MessageLookupByLibrary.simpleMessage("Mật khẩu quá yếu!"),
+    "wrongPassword": MessageLookupByLibrary.simpleMessage(
+      "Mật khẩu không chính xác",
+    ),
   };
 }
