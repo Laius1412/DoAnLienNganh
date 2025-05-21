@@ -35,6 +35,7 @@ app.use('/dashboard', dashboardRoutes);
 app.get("/", (req, res) => {
   res.redirect("/login");
 });
-
+const userRoutes = require('./routes/user');
+app.use('/user', userRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));

@@ -1,0 +1,32 @@
+<h1 class="mb-4">Danh sách khách hàng</h1>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th>Họ tên</th>
+      <th>Email</th>
+      <th>Giới tính</th>
+      <th>Ngày sinh</th>
+      <th>Số điện thoại</th>
+      <th>Vai trò</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (users.length === 0) { %>
+      <tr>
+        <td colspan="6" class="text-center">Không có người dùng nào.</td>
+      </tr>
+    <% } else { %>
+      <% users.forEach(user => { %>
+        <tr>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.gender === 'female' ? 'Nữ' : 'Nam' %></td>
+          <td><%= new Date(user.birth).toLocaleDateString('vi-VN') %></td>
+          <td><%= user.phone %></td>
+          <td><%= user.role %></td>
+        </tr>
+      <% }) %>
+    <% } %>
+  </tbody>
+</table>
