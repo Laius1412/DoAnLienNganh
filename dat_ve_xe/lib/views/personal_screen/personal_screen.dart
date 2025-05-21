@@ -37,8 +37,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
           setState(() {
             _userName = doc.data()?['name'] ?? 'Chưa cập nhật tên';
             _avatarUrl = doc.data()?['avt'];
-            _isLoading = false;
           });
+          setState(() => _isLoading = false);
         }
       } catch (e) {
         print('Error loading user data: $e');
@@ -84,7 +84,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
         child: Column(
           children: [
             if (_isLoading)
-              const Center(child: CircularProgressIndicator())
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Center(child: CircularProgressIndicator()),
+              )
             else if (isLoggedIn)
               _buildUserProfile()
             else

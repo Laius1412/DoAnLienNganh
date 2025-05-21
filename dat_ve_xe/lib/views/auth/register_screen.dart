@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/auth/login_screen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -56,6 +57,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             password: _passwordController.text.trim(),
           );
 
+      final fcmToken = await FirebaseMessaging.instance.getToken();
       // 2. Lưu thông tin người dùng vào Firestore
       await FirebaseFirestore.instance
           .collection('users')
@@ -68,6 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'gender': _gender,
             'role': 'customer',
             'avt': '',
+            'fcmToken': fcmToken ?? '',
             'createdAt': FieldValue.serverTimestamp(),
           });
 
@@ -80,10 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           builder:
               (context) => LoginScreen(
                 onLanguageChanged: widget.onLanguageChanged,
-                onLoginSuccess: () {
-                  // Không cần làm gì ở đây vì chúng ta đang ở màn hình đăng ký
-                  // và sẽ chuyển sang màn hình đăng nhập
-                },
+                onLoginSuccess: () {},
               ),
         ),
       );
