@@ -15,7 +15,7 @@ exports.loginUser = async (req, res) => {
     req.session.user = userCredential.user;
     res.redirect('/dashboard');
   } catch (err) {
-    res.render('auth/login', { error: 'Sai email hoặc mật khẩu' });
+    res.render('auth/login', { layout: false, error: 'Sai email hoặc mật khẩu' });
   }
 };
 
