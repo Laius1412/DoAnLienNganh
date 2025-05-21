@@ -16,7 +16,7 @@
 
 ## 3. Công cụ sử dụng:
 
-- Website quản lý: Framework Laravel (PHP, Html, Css, Js).
+- Website quản lý: Framework ExpressJS (NodeJS, Html, Css, Js).
 - App mobile: Flutter Platform (Dart, C++)
 - Database: Firebase, Cloudinary, SQLite.
 
