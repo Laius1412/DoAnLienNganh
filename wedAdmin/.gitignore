@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Firebase service account key
+# This line specifically ignores the Firebase key file based on your directory structure
+firebase/firebase-adminsdk.json
+
+# Build and temporary directories
+dist/
+build/
+tmp/
+temp/
+coverage/
+
+# IDE specific files
+.idea/ # IntelliJ IDEA
+.vscode/ # VS Code
+*.iml # IntelliJ IDEA module files
+
+# Operating System specific files
+.DS_Store # macOS specific
+Thumbs.db # Windows specific
+
+# Logs
+logs/
+*.log
