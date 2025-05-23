@@ -28,3 +28,23 @@ exports.index = async (req, res) => {
     res.status(500).send('Lỗi khi lấy danh sách người dùng');
   }
 };
+exports.store = async (req, res) => {
+  const { name, email, gender, birth, phone, role } = req.body;
+
+  try {
+    await db.collection('users').add({
+      name,
+      email,
+      gender,
+      birth,
+      phone,
+      role
+    });
+
+    res.redirect('/user'); // Trở về danh sách
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Lỗi khi thêm người dùng');
+  }
+};
+
