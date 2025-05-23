@@ -1,5 +1,18 @@
 <h1 class="mb-4">Danh sách khách hàng</h1>
 
+<!-- Form tìm kiếm -->
+<form method="GET" action="/user" class="mb-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <input type="text" name="q" class="form-control" placeholder="Tìm theo tên hoặc số điện thoại" value="<%= typeof query !== 'undefined' ? query : '' %>">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </div>
+  </div>
+</form>
+
+<!-- Bảng danh sách -->
 <table class="table table-bordered table-hover">
   <thead class="table-dark">
     <tr>
@@ -22,7 +35,7 @@
           <td><%= user.name %></td>
           <td><%= user.email %></td>
           <td><%= user.gender === 'female' ? 'Nữ' : 'Nam' %></td>
-          <td><%= new Date(user.birth).toLocaleDateString('vi-VN') %></td>
+          <td><%= user.birth ? new Date(user.birth).toLocaleDateString('vi-VN') : '' %></td>
           <td><%= user.phone %></td>
           <td><%= user.role %></td>
         </tr>
