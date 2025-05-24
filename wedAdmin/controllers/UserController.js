@@ -28,6 +28,7 @@ exports.index = async (req, res) => {
     res.status(500).send('Lỗi khi lấy danh sách người dùng');
   }
 };
+// thêm tài khoản mới
 exports.store = async (req, res) => {
   const { name, email, gender, birth, phone, role } = req.body;
 
@@ -47,4 +48,56 @@ exports.store = async (req, res) => {
     res.status(500).send('Lỗi khi thêm người dùng');
   }
 };
+// xóa tài khoản
+exports.destroy = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await db.collection('users').doc(id).delete();
+    res.redirect('/user');
+  }catch (error) {
+    console.error(error);
+    res.status(500).send('Lỗi khi xóa người dùng');
+  }
+}
+// chỉnh sửa người dùng 
+  exports.edit = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const doc = await db.collection('users').doc(id).get();
+    if (!doc.exists) {
+      return res.status(404).send('Người dùng không tồn tại');
+    }
+
+    const user = { id: doc.id, ...doc.data() };
+
+    const snapshot = await db.collection('users').get();
+    const users = [];
+    snapshot.forEach(d => {
+      users.push({ id: d.id, ...d.data() });
+    });
+
+   res.render('users/edit', {
+  user,  // chỉ cần 1 user để sửa
+  layout: 'layout'
+});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Lỗi khi lấy thông tin người dùng');
+  }
+};
+
+exports.update = async (req, res) => {
+  const id = req.params.id;
+  const { name, email, phone, gender, birth, role } = req.body;
+  try {
+    await db.collection('users').doc(id).update({
+      name, email, phone, gender, birth, role
+    });
+    res.redirect('/user');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Lỗi khi cập nhật người dùng');
+  }
+};
+
 
