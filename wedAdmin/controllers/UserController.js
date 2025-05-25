@@ -68,7 +68,7 @@ exports.destroy = async (req, res) => {
       return res.status(404).send('Người dùng không tồn tại');
     }
 
-    const user = { id: doc.id, ...doc.data() };
+    const editUser = { id: doc.id, ...doc.data() };
 
     const snapshot = await db.collection('users').get();
     const users = [];
@@ -76,15 +76,21 @@ exports.destroy = async (req, res) => {
       users.push({ id: d.id, ...d.data() });
     });
 
-   res.render('users/edit', {
-  user,  // chỉ cần 1 user để sửa
-  layout: 'layout'
-});
+    res.render('users/index', {
+      users,
+      query: '',
+      editUser, 
+      layout: 'layout'
+    });
+
   } catch (error) {
     console.error(error);
     res.status(500).send('Lỗi khi lấy thông tin người dùng');
   }
 };
+
+
+
 
 exports.update = async (req, res) => {
   const id = req.params.id;
