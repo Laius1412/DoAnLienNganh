@@ -1,0 +1,196 @@
+<div class="container-fluid p-4">
+  <div class="row">
+    <!-- Cột 1: Khu vực -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Khu vực</h5>
+          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addRegionModal">
+            <i class="fas fa-plus"></i> Thêm
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="list-group" id="regionList">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cột 2: Văn phòng -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Văn phòng</h5>
+          <button class="btn btn-sm btn-primary" id="addOfficeBtn" data-bs-toggle="modal" data-bs-target="#addOfficeModal" disabled>
+            <i class="fas fa-plus"></i> Thêm
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="list-group" id="officeList">
+            <!-- Danh sách văn phòng sẽ được load động -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cột 3: Chi tiết văn phòng -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Chi tiết văn phòng</h5>
+        </div>
+        <div class="card-body">
+          <div id="officeDetails" class="text-center text-muted">
+            <i class="fas fa-info-circle fa-2x mb-2"></i>
+            <p>Chọn văn phòng để xem thông tin</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Xác nhận xóa -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác nhận xóa</h5>
+        <button type="button" class="btn-close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="deleteConfirmMessage">Bạn có chắc chắn muốn xóa mục này?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary">Hủy</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thêm Khu vực -->
+<div class="modal fade" id="addRegionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="addRegionForm" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm khu vực</h5>
+        <button type="button" class="btn-close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="regionId" class="form-label">ID Khu vực</label>
+          <input type="text" name="regionId" class="form-control" required 
+                 pattern="[A-Za-z0-9]+" title="Chỉ chấp nhận chữ và số" />
+        </div>
+        <div class="mb-3">
+          <label for="regionName" class="form-label">Tên Khu vực</label>
+          <input type="text" name="regionName" class="form-control" required />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary">Hủy</button>
+        <button type="submit" class="btn btn-primary">Thêm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Thêm Văn phòng -->
+<div class="modal fade" id="addOfficeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="addOfficeForm" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm văn phòng</h5>
+        <button type="button" class="btn-close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="regionId" id="officeRegionId">
+        <div class="mb-3">
+          <label for="officeId" class="form-label">ID Văn phòng</label>
+          <input type="text" name="officeId" class="form-control" required 
+                 pattern="[A-Za-z0-9]+" title="Chỉ chấp nhận chữ và số" />
+        </div>
+        <div class="mb-3">
+          <label for="officeName" class="form-label">Tên Văn phòng</label>
+          <input type="text" name="officeName" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label for="address" class="form-label">Địa chỉ</label>
+          <textarea name="address" class="form-control" required rows="2"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="hotline" class="form-label">Hotline</label>
+          <input type="tel" name="hotline" class="form-control" required 
+                 pattern="[0-9]+" title="Chỉ chấp nhận số" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary">Hủy</button>
+        <button type="submit" class="btn btn-primary">Thêm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Sửa Khu vực -->
+<div class="modal fade" id="editRegionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="editRegionForm" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Sửa khu vực</h5>
+        <button type="button" class="btn-close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="editRegionId" class="form-label">ID Khu vực</label>
+          <input type="text" name="regionId" id="editRegionId" class="form-control" required 
+                 pattern="[A-Za-z0-9]+" title="Chỉ chấp nhận chữ và số" />
+        </div>
+        <div class="mb-3">
+          <label for="editRegionName" class="form-label">Tên Khu vực</label>
+          <input type="text" name="regionName" id="editRegionName" class="form-control" required />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary">Hủy</button>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Sửa Văn phòng -->
+<div class="modal fade" id="editOfficeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="editOfficeForm" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Sửa văn phòng</h5>
+        <button type="button" class="btn-close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="officeId" id="editOfficeId">
+        <div class="mb-3">
+          <label for="editOfficeName" class="form-label">Tên Văn phòng</label>
+          <input type="text" name="officeName" id="editOfficeName" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label for="editAddress" class="form-label">Địa chỉ</label>
+          <textarea name="address" id="editAddress" class="form-control" required rows="2"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="editHotline" class="form-label">Hotline</label>
+          <input type="tel" name="hotline" id="editHotline" class="form-control" required 
+                 pattern="[0-9]+" title="Chỉ chấp nhận số" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary">Hủy</button>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Load script để xử lý tương tác -->
+<script src="/js/delivery.js"></script>
