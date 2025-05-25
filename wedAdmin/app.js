@@ -37,5 +37,7 @@ app.get("/", (req, res) => {
 });
 const userRoutes = require('./routes/user');
 app.use('/user', userRoutes);
+const DeliverRoutes = require('./routes/delivery');
+app.use('/delivery', DeliverRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));
