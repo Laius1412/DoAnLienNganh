@@ -94,58 +94,25 @@ exports.store = async (req, res) => {
 };
 
 
-// // Thêm tài khoản mới
-// exports.store = async (req, res) => {
-//   const { name, email, gender, birth, phone, role } = req.body;
-//   const cleanedPhone = phone.trim().replace(/\s+/g, '');
-
-//   try {
-//     // Kiểm tra trùng số điện thoại sau khi chuẩn hóa
-//     const snapshot = await db.collection('users')
-//       .where('phone', '==', cleanedPhone)
-//       .get();
-
-//     if (!snapshot.empty) {
-//       const usersSnapshot = await db.collection('users').get();
-//       const users = [];
-//       usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-
-//       return res.render('users/index', {
-//         users,
-//         query: '',
-//         layout: 'layout',
-//         error: 'Số điện thoại đã tồn tại, vui lòng nhập số khác!'
-//       });
-//     }
-
-//     // Thêm người dùng với số điện thoại đã chuẩn hóa
-//     await db.collection('users').add({
-//       name,
-//       email,
-//       gender,
-//       birth,
-//       phone: cleanedPhone,
-//       role
-//     });
-
-//     res.redirect('/user');
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Lỗi khi thêm người dùng');
-//   }
-// };
 
 // Xóa tài khoản
 exports.destroy = async (req, res) => {
   const id = req.params.id;
+
   try {
+    // Xóa khỏi Authentication
+    await admin.auth().deleteUser(id);
+
+    // Xóa khỏi Firestore
     await db.collection('users').doc(id).delete();
+
     res.redirect('/user?deleted=1');
   } catch (error) {
-    console.error(error);
+    console.error('Lỗi khi xóa người dùng:', error);
     res.status(500).send('Lỗi khi xóa người dùng');
   }
 };
+
 
 // Chỉnh sửa người dùng
 exports.edit = async (req, res) => {
@@ -201,7 +168,11 @@ exports.deleteMultiple = async (req, res) => {
   }
 
   try {
-    const deletePromises = ids.map(id => db.collection('users').doc(id).delete());
+    const deletePromises = ids.map(async (id) => {
+      await admin.auth().deleteUser(id); // Xóa trên Authentication
+      await db.collection('users').doc(id).delete(); // Xóa trên Firestore
+    });
+
     await Promise.all(deletePromises);
     res.redirect('/user?deleted=1');
   } catch (error) {
@@ -209,6 +180,7 @@ exports.deleteMultiple = async (req, res) => {
     res.status(500).send('Lỗi khi xóa');
   }
 };
+
 
 // Xuất danh sách người dùng ra file Excel
 exports.exportExcel = async (req, res) => {
