@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dat_ve_xe/views/auth/register_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -21,16 +22,25 @@ class _PersonalScreenState extends State<PersonalScreen> {
   String? _userName;
   String? _avatarUrl;
   bool _isLoading = true;
+  bool _isLoginSuccess = false;
 
   @override
   void initState() {
     super.initState();
+    _loadLoginState();
+  }
+
+  Future<void> _loadLoginState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isLoginSuccess = prefs.getBool('isLoginSuccess') ?? false;
+    });
     _loadUserData();
   }
 
   Future<void> _loadUserData() async {
     final user = _auth.currentUser;
-    if (user != null) {
+    if (user != null && _isLoginSuccess) {
       try {
         final doc = await _firestore.collection('users').doc(user.uid).get();
         if (doc.exists) {
@@ -49,12 +59,24 @@ class _PersonalScreenState extends State<PersonalScreen> {
     }
   }
 
+  void setLoginSuccess(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoginSuccess', value);
+    setState(() {
+      _isLoginSuccess = value;
+    });
+    _loadUserData();
+  }
+
   Future<void> _logout() async {
     try {
       await _auth.signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoginSuccess', false);
       setState(() {
         _userName = null;
         _avatarUrl = null;
+        _isLoginSuccess = false;
       });
     } catch (e) {
       print('Error signing out: $e');
@@ -156,6 +178,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           onLoginSuccess: () {
                             _loadUserData();
                           },
+                          onLoginStateChanged: setLoginSuccess,
                         ),
                   ),
                 );
@@ -183,6 +206,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                             (context) => RegisterScreen(
                               onLanguageChanged: widget.onLanguageChanged,
                               onLoginSuccess: () {},
+                              onLoginStateChanged: setLoginSuccess,
                             ),
                       ),
                     );

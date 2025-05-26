@@ -4,15 +4,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dat_ve_xe/views/auth/register_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
   final VoidCallback onLoginSuccess;
+  final Function(bool) onLoginStateChanged;
 
   const LoginScreen({
     Key? key,
     required this.onLanguageChanged,
     required this.onLoginSuccess,
+    required this.onLoginStateChanged,
   }) : super(key: key);
 
   @override
@@ -48,7 +52,17 @@ class _LoginScreenState extends State<LoginScreen> {
           await prefs.setString('email', email);
         }
 
+        // Lấy FCM token và cập nhật vào Firestore
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .update({'fcmToken': fcmToken, 'isNotificationEnabled': true});
+        }
+
         _showMessage(t.loginSuccess);
+        widget.onLoginStateChanged(true);
 
         await Future.delayed(const Duration(seconds: 2));
 
@@ -166,6 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 (context) => RegisterScreen(
                                   onLanguageChanged: widget.onLanguageChanged,
                                   onLoginSuccess: widget.onLoginSuccess,
+                                  onLoginStateChanged:
+                                      widget.onLoginStateChanged,
                                 ),
                           ),
                         );
