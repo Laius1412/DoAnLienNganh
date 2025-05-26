@@ -1,0 +1,26 @@
+<h1>Danh sách xe</h1>
+<a href="/vehicles/add">+ Thêm xe</a>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Tên xe</th><th>Biển số</th><th>Loại</th><th>Chuyến</th><th>Giá</th><th>Bắt đầu</th><th>Kết thúc</th><th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% vehicles.forEach(vehicle => { %>
+      <tr>
+        <td><%= vehicle.nameVehicle %></td>
+        <td><%= vehicle.plate %></td>
+        <td><%= vehicle.vehicleTypeName %></td>
+        <td><%= vehicle.tripName %></td>
+        <td><%= vehicle.price %></td>
+        <td><%= vehicle.startTime %></td>
+        <td><%= vehicle.endTime %></td>
+        <td>
+          <a href="/vehicles/edit/<%= vehicle.id %>">Sửa</a>
+          <a href="/vehicles/delete/<%= vehicle.id %>" onclick="return confirm('Xoá?')">Xoá</a>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

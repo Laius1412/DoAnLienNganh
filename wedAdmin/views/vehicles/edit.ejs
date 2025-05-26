@@ -1,0 +1,19 @@
+<h1>Sửa xe</h1>
+<form method="POST" action="/vehicles/edit/<%= vehicle.id %>">
+  <input name="nameVehicle" value="<%= vehicle.nameVehicle %>" required />
+  <input name="plate" value="<%= vehicle.plate %>" required />
+  <select name="vehicleTypeId" required>
+    <% vehicleTypes.forEach(type => { %>
+      <option value="<%= type.id %>" <%= type.id === vehicle.vehicleTypeId ? 'selected' : '' %>><%= type.nameType %></option>
+    <% }) %>
+  </select>
+  <select name="tripId" required>
+    <% trips.forEach(trip => { %>
+      <option value="<%= trip.id %>" <%= trip.id === vehicle.tripId ? 'selected' : '' %>><%= trip.nameTrip %></option>
+    <% }) %>
+  </select>
+  <input name="price" type="number" value="<%= vehicle.price %>" required />
+  <input name="startTime" type="time" value="<%= vehicle.startTime %>" required />
+  <input name="endTime" type="time" value="<%= vehicle.endTime %>" required />
+  <button type="submit">Cập nhật</button>
+</form>
