@@ -1,3 +1,4 @@
+
 <div class="d-flex justify-content-between align-items-center mb-4" style="gap: 10px;">
   <h1 class="mb-0">Quản lý người dùng</h1>
   <div class="d-flex align-items-center" style="gap: 10px;">
@@ -69,7 +70,7 @@
               <button class="btn btn-link dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu ">
                 <li>
                   <a class="dropdown-item" href="/user/edit/<%= user.id %>">Sửa</a>
                 </li>
@@ -79,7 +80,7 @@
                           data-name="<%= user.name %>">
                     Xóa
                   </button>
-                </li>
+                
 
                 </li>
               </ul>
@@ -149,6 +150,17 @@
     </form>
   </div>
 </div>
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger">
+    <%= error %>
+  </div>
+<% } %>
+
+
+
+
+
+
 <!-- form trượt từ dưới lên của edit tài khoản người dùng -->
  <% if (typeof editUser !== 'undefined') { %>
 <div id="editUserModal" class="modal-overlay active">
@@ -249,34 +261,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-<!-- script xác nhận xóa user -->
-<script>
-  document.querySelectorAll('.btn-delete-user').forEach(button => {
-    button.addEventListener('click', function () {
-      const userId = this.dataset.id;
-      const userName = this.dataset.name;
 
-      Swal.fire({
-        title: 'Bạn có chắc chắn?',
-        text: `Xoá người dùng "${userName}" sẽ không thể khôi phục!`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Xoá',
-        cancelButtonText: 'Huỷ',
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Tạo form và gửi POST request xoá
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = `/user/delete/${userId}`;
-          document.body.appendChild(form);
-          form.submit();
-        }
-      });
-    });
-  });
-</script>
+
+
 
 <!-- javascrip để xử lý checkbox -->
  <script>
@@ -355,3 +342,17 @@
   });
 </script>
 <script src="/assets/js/user.js"></script>
+
+
+
+
+<!-- <script>
+  Swal.fire({
+    icon: 'info',
+    title: 'Test',
+    text: 'Thông báo test thử!',
+    confirmButtonText: 'OK'
+  });
+</script> -->
+
+

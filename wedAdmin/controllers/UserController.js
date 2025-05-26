@@ -1,6 +1,7 @@
 const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore();
 const ExcelJS = require('exceljs');
+
 exports.index = async (req, res) => {
   try {
     const query = (req.query.q || '').toLowerCase(); // từ khóa tìm kiếm
@@ -28,27 +29,48 @@ exports.index = async (req, res) => {
     res.status(500).send('Lỗi khi lấy danh sách người dùng');
   }
 };
-// thêm tài khoản mới
+
+// Thêm tài khoản mới
 exports.store = async (req, res) => {
   const { name, email, gender, birth, phone, role } = req.body;
+  const cleanedPhone = phone.trim().replace(/\s+/g, '');
 
   try {
+    // Kiểm tra trùng số điện thoại sau khi chuẩn hóa
+    const snapshot = await db.collection('users')
+      .where('phone', '==', cleanedPhone)
+      .get();
+
+    if (!snapshot.empty) {
+      const usersSnapshot = await db.collection('users').get();
+      const users = [];
+      usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+
+      return res.render('users/index', {
+        users,
+        query: '',
+        layout: 'layout',
+        error: 'Số điện thoại đã tồn tại, vui lòng nhập số khác!'
+      });
+    }
+
+    // Thêm người dùng với số điện thoại đã chuẩn hóa
     await db.collection('users').add({
       name,
       email,
       gender,
       birth,
-      phone,
+      phone: cleanedPhone,
       role
     });
 
-    res.redirect('/user'); // Trở về danh sách
+    res.redirect('/user');
   } catch (error) {
     console.error(error);
     res.status(500).send('Lỗi khi thêm người dùng');
   }
 };
-// xóa tài khoản
+
 // Xóa tài khoản
 exports.destroy = async (req, res) => {
   const id = req.params.id;
@@ -61,8 +83,8 @@ exports.destroy = async (req, res) => {
   }
 };
 
-// chỉnh sửa người dùng 
-  exports.edit = async (req, res) => {
+// Chỉnh sửa người dùng
+exports.edit = async (req, res) => {
   const id = req.params.id;
   try {
     const doc = await db.collection('users').doc(id).get();
@@ -91,6 +113,7 @@ exports.destroy = async (req, res) => {
   }
 };
 
+// Cập nhật người dùng
 exports.update = async (req, res) => {
   const id = req.params.id;
   const { name, email, phone, gender, birth, role } = req.body;
@@ -104,7 +127,8 @@ exports.update = async (req, res) => {
     res.status(500).send('Lỗi khi cập nhật người dùng');
   }
 };
-// hàm xử lí xóa nhiều người 
+
+// Xóa nhiều người dùng
 exports.deleteMultiple = async (req, res) => {
   const ids = req.body.userIds;
 
@@ -121,7 +145,8 @@ exports.deleteMultiple = async (req, res) => {
     res.status(500).send('Lỗi khi xóa');
   }
 };
-// xử lí nút xuất file 
+
+// Xuất danh sách người dùng ra file Excel
 exports.exportExcel = async (req, res) => {
   try {
     const snapshot = await db.collection('users').get();
@@ -159,7 +184,7 @@ exports.exportExcel = async (req, res) => {
     );
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename=' + 'users.xlsx'
+      'attachment; filename=users.xlsx'
     );
 
     await workbook.xlsx.write(res);
@@ -170,5 +195,3 @@ exports.exportExcel = async (req, res) => {
     res.status(500).send('Lỗi khi xuất file Excel');
   }
 };
-
-
