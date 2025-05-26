@@ -1,7 +1,7 @@
 const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore();
 const ExcelJS = require('exceljs');
-
+const admin = require('firebase-admin');
 exports.index = async (req, res) => {
   try {
     const query = (req.query.q || '').toLowerCase(); // từ khóa tìm kiếm
@@ -29,14 +29,12 @@ exports.index = async (req, res) => {
     res.status(500).send('Lỗi khi lấy danh sách người dùng');
   }
 };
-
-// Thêm tài khoản mới
 exports.store = async (req, res) => {
-  const { name, email, gender, birth, phone, role } = req.body;
+  const { name, email, gender, birth, phone, role, password } = req.body;
   const cleanedPhone = phone.trim().replace(/\s+/g, '');
 
   try {
-    // Kiểm tra trùng số điện thoại sau khi chuẩn hóa
+    // Kiểm tra trùng số điện thoại
     const snapshot = await db.collection('users')
       .where('phone', '==', cleanedPhone)
       .get();
@@ -54,22 +52,88 @@ exports.store = async (req, res) => {
       });
     }
 
-    // Thêm người dùng với số điện thoại đã chuẩn hóa
-    await db.collection('users').add({
+    // Tạo người dùng trong Firebase Authentication
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
+      displayName: name,
+      phoneNumber: `+84${cleanedPhone.slice(1)}` // đảm bảo định dạng sđt quốc tế nếu cần
+    });
+
+    // Lưu thông tin người dùng vào Firestore kèm uid
+    await db.collection('users').doc(userRecord.uid).set({
       name,
       email,
       gender,
       birth,
       phone: cleanedPhone,
-      role
+      role,
+      uid: userRecord.uid
     });
 
     res.redirect('/user');
   } catch (error) {
     console.error(error);
+
+    // Nếu lỗi là email đã được sử dụng
+    if (error.code === 'auth/email-already-exists') {
+      const usersSnapshot = await db.collection('users').get();
+      const users = [];
+      usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+
+      return res.render('users/index', {
+        users,
+        query: '',
+        layout: 'layout',
+        error: 'Email đã tồn tại trong hệ thống!'
+      });
+    }
+
     res.status(500).send('Lỗi khi thêm người dùng');
   }
 };
+
+
+// // Thêm tài khoản mới
+// exports.store = async (req, res) => {
+//   const { name, email, gender, birth, phone, role } = req.body;
+//   const cleanedPhone = phone.trim().replace(/\s+/g, '');
+
+//   try {
+//     // Kiểm tra trùng số điện thoại sau khi chuẩn hóa
+//     const snapshot = await db.collection('users')
+//       .where('phone', '==', cleanedPhone)
+//       .get();
+
+//     if (!snapshot.empty) {
+//       const usersSnapshot = await db.collection('users').get();
+//       const users = [];
+//       usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+
+//       return res.render('users/index', {
+//         users,
+//         query: '',
+//         layout: 'layout',
+//         error: 'Số điện thoại đã tồn tại, vui lòng nhập số khác!'
+//       });
+//     }
+
+//     // Thêm người dùng với số điện thoại đã chuẩn hóa
+//     await db.collection('users').add({
+//       name,
+//       email,
+//       gender,
+//       birth,
+//       phone: cleanedPhone,
+//       role
+//     });
+
+//     res.redirect('/user');
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Lỗi khi thêm người dùng');
+//   }
+// };
 
 // Xóa tài khoản
 exports.destroy = async (req, res) => {
