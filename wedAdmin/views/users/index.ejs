@@ -16,6 +16,8 @@
 
     <!-- Nút mở form -->
     <button type="button" class="btn btn-success" id="openUserForm">+ Thêm người dùng</button>
+    <!-- Nút xuất file Excel -->
+<button type="button" class="btn btn-info" id="exportExcelBtn">Xuất file Excel</button>
     <!-- Nút reset tìm kiếm -->
   <button type="button" class="btn btn-outline-secondary" id="resetSearch" title="Xoá bộ lọc tìm kiếm">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
@@ -26,18 +28,23 @@
   </div>
 </div>
 
-
+<form id="multiDeleteForm" method="POST" action="user/users/delete-multiple">
+  <div id="selectedCount" style="margin-bottom: 10px; display: none;">
+    Đã chọn <span id="count">0</span> khách hàng
+    <button type="submit" class="btn btn-danger btn-sm" id="deleteSelectedBtn">Xóa đã chọn</button>
+  </div>
 <!-- Bảng danh sách -->
 <table class="table table-bordered table-hover">
   <thead class="table-dark">
     <tr>
+      <th><input type="checkbox" id="selectAll"></th>
       <th>Họ tên</th>
       <th>Email</th>
       <th>Giới tính</th>
       <th>Ngày sinh</th>
       <th>Số điện thoại</th>
       <th>Vai trò</th>
-      <th class="text-center">Thao tác</th>
+      <th ></th>
     </tr>
   </thead>
   <tbody>
@@ -48,6 +55,9 @@
     <% } else { %>
       <% users.forEach(user => { %>
         <tr>
+          <td>
+          <input type="checkbox" class="userCheckbox" name="userIds[]" value="<%= user.id %>">
+        </td>
           <td><%= user.name %></td>
           <td><%= user.email %></td>
           <td><%= user.gender === 'female' ? 'Nữ' : 'Nam' %></td>
@@ -56,7 +66,7 @@
           <td><%= user.role %></td>
           <td class="text-center">
             <div class="dropdown">
-              <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <button class="btn btn-link dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
               <ul class="dropdown-menu">
@@ -64,9 +74,13 @@
                   <a class="dropdown-item" href="/user/edit/<%= user.id %>">Sửa</a>
                 </li>
                 <li>
-                  <form method="POST" action="/user/delete/<%= user.id %>" onsubmit="return confirm('Bạn có chắc muốn xóa người dùng này?')" style="display:inline;">
-                    <button type="submit" class="dropdown-item text-danger" style="background:none; border:none; padding: 15; margin: 5;">Xóa</button>
-                  </form>
+                  <button class="dropdown-item text-danger btn-delete-user"
+                          data-id="<%= user.id %>"
+                          data-name="<%= user.name %>">
+                    Xóa
+                  </button>
+                </li>
+
                 </li>
               </ul>
             </div>
@@ -77,6 +91,20 @@
     <% } %>
   </tbody>
 </table>
+</form>
+<% if (typeof deleted !== 'undefined') { %>
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Xoá thành công',
+    text: 'Người dùng đã được xoá!',
+    timer: 2000,
+    showConfirmButton: false,
+    position: 'center'
+  });
+</script>
+<% } %>
+
 <!-- Form trượt từ dưới lên của phần thêm người dùng  -->
 <div id="userFormModal" class="modal-overlay">
   <div class="modal-content">
@@ -218,5 +246,112 @@
 <!-- đường dẫn scrip để hiện nút xóa sửa -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+<!-- script xác nhận xóa user -->
+<script>
+  document.querySelectorAll('.btn-delete-user').forEach(button => {
+    button.addEventListener('click', function () {
+      const userId = this.dataset.id;
+      const userName = this.dataset.name;
+
+      Swal.fire({
+        title: 'Bạn có chắc chắn?',
+        text: `Xoá người dùng "${userName}" sẽ không thể khôi phục!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xoá',
+        cancelButtonText: 'Huỷ',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Tạo form và gửi POST request xoá
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = `/user/delete/${userId}`;
+          document.body.appendChild(form);
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+
+<!-- javascrip để xử lý checkbox -->
+ <script>
+  const userCheckboxes = document.querySelectorAll('.userCheckbox');
+  const selectAll = document.getElementById('selectAll');
+  const countSpan = document.getElementById('count');
+  const selectedCount = document.getElementById('selectedCount');
+
+  function updateSelectedCount() {
+    const checkedCount = document.querySelectorAll('.userCheckbox:checked').length;
+    countSpan.textContent = checkedCount;
+    selectedCount.style.display = checkedCount > 0 ? 'block' : 'none';
+  }
+
+  userCheckboxes.forEach(cb => {
+    cb.addEventListener('change', updateSelectedCount);
+  });
+
+  selectAll.addEventListener('change', () => {
+    userCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+    updateSelectedCount();
+  });
+</script>
+
+<!-- SweetAlert2 xóa người dùng được chọn -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  // Hiển thị số người dùng đã chọn
+  const checkboxes = document.querySelectorAll('.userCheckbox');
+  const selectedCountDiv = document.getElementById('selectedCount');
+  
+
+  function updateSelectedCount() {
+    const checkedCount = document.querySelectorAll('.userCheckbox:checked').length;
+    if (checkedCount > 0) {
+      selectedCountDiv.style.display = 'block';
+      countSpan.textContent = checkedCount;
+    } else {
+      selectedCountDiv.style.display = 'none';
+    }
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedCount));
+  selectAll.addEventListener('change', function () {
+    checkboxes.forEach(cb => cb.checked = this.checked);
+    updateSelectedCount();
+  });
+
+  // Xác nhận xoá nhiều người dùng
+  const deleteBtn = document.getElementById('deleteSelectedBtn');
+  const form = document.getElementById('multiDeleteForm');
+
+  deleteBtn.addEventListener('click', function (e) {
+    e.preventDefault(); // Ngăn form gửi ngay
+
+    const selected = document.querySelectorAll('.userCheckbox:checked');
+    if (selected.length === 0) {
+      Swal.fire('Chưa chọn!', 'Vui lòng chọn ít nhất một người dùng để xoá.', 'warning');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Bạn có chắc chắn?',
+      text: `Bạn sắp xoá ${selected.length} người dùng. Hành động này không thể hoàn tác!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Xoá',
+      cancelButtonText: 'Huỷ',
+      reverseButtons: true
+    }).then(result => {
+      if (result.isConfirmed) {
+        form.submit(); // Nếu đồng ý thì submit form
+      }
+    });
+  });
+</script>
+<script src="/assets/js/user.js"></script>

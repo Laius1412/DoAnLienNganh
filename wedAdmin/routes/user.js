@@ -19,5 +19,9 @@ router.post('/delete/:id' ,userController.destroy);
 router.get('/edit/:id', userController.edit);
 router.post('/:id', userController.update);
 
+// xử lí xóa nhiều người 
+router.post('/users/delete-multiple', userController.deleteMultiple);
+// xử lí nút xuất file
+router.get('/export-excel', userController.exportExcel);
 module.exports = router;
 
