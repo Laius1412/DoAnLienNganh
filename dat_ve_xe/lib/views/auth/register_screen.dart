@@ -8,7 +8,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
-  const RegisterScreen({super.key, required this.onLanguageChanged});
+  final VoidCallback onLoginSuccess;
+  const RegisterScreen({
+    Key? key,
+    required this.onLanguageChanged,
+    required this.onLoginSuccess,
+  }) : super(key: key);
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -50,6 +55,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
+      // Kiểm tra số điện thoại đã tồn tại chưa
+      final phoneQuery =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('phone', isEqualTo: _phoneController.text.trim())
+              .get();
+
+      if (phoneQuery.docs.isNotEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(t.phoneAlreadyUsed)));
+        setState(() => _isLoading = false);
+        return;
+      }
+
       // 1. Tạo tài khoản trong Firebase Authentication
       final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
@@ -83,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           builder:
               (context) => LoginScreen(
                 onLanguageChanged: widget.onLanguageChanged,
-                onLoginSuccess: () {},
+                onLoginSuccess: widget.onLoginSuccess,
               ),
         ),
       );

@@ -52,5 +52,6 @@
     "loginSuccess": "Đăng nhập thành công!",
     "accountDisabled": "Tài khoản bị vô hiệu hóa",
     "logout": "Đăng xuất",
-    "pleaseLogin": "Vui lòng đăng nhập"
+    "pleaseLogin": "Vui lòng đăng nhập",
+    "phoneAlreadyUsed": "Số điện thoại đã được sử dụng!"
 }
