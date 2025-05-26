@@ -165,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder:
                                 (context) => RegisterScreen(
                                   onLanguageChanged: widget.onLanguageChanged,
+                                  onLoginSuccess: widget.onLoginSuccess,
                                 ),
                           ),
                         );

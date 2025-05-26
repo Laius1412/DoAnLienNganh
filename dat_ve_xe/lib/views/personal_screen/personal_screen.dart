@@ -182,6 +182,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                         builder:
                             (context) => RegisterScreen(
                               onLanguageChanged: widget.onLanguageChanged,
+                              onLoginSuccess: () {},
                             ),
                       ),
                     );

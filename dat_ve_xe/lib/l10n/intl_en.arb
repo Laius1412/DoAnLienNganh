@@ -52,5 +52,6 @@
     "loginSuccess": "Login success!",
     "accountDisabled": "accountDisabled",
     "logout": "Logout",
-    "pleaseLogin": "Please login"
+    "pleaseLogin": "Please login",
+    "phoneAlreadyUsed": "Phone have already been used!"
 }

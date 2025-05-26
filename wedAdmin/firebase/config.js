@@ -2,9 +2,10 @@
 const admin = require("firebase-admin");
 const { initializeApp } = require("firebase/app");
 const { getAuth } = require("firebase/auth");
-const serviceAccount = require("./firebase-adminsdk.json"); // bạn cần tải file này từ Firebase Console
+const { getFirestore } = require("firebase/firestore");
+const serviceAccount = require("./firebase-adminsdk.json");
 
-// Firebase Admin SDK cho xử lý phía server
+// Admin SDK (dùng cho backend)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -19,8 +20,8 @@ const firebaseConfig = {
   measurementId: "G-MB04EB6Q18"
 };
 
-// Client SDK cho frontend
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = admin.firestore(); // 🔥 Dùng Admin SDK cho backend
 
-module.exports = { admin, auth };
+module.exports = { admin, auth, db };

@@ -6,6 +6,8 @@ const expressLayouts = require('express-ejs-layouts');
 const app = express();
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
+const tripRoutes = require("./routes/trip");
+const vehicleRoutes = require('./routes/vehicle');
 
 // Middleware đọc dữ liệu từ form
 app.use(express.urlencoded({ extended: true }));
@@ -39,5 +41,9 @@ const userRoutes = require('./routes/user');
 app.use('/user', userRoutes);
 const DeliverRoutes = require('./routes/delivery');
 app.use('/delivery', DeliverRoutes);
+
+app.use("/trips", tripRoutes);
+app.use('/vehicles', vehicleRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));
