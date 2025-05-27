@@ -2,6 +2,8 @@ const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore();
 const ExcelJS = require('exceljs');
 const admin = require('firebase-admin');
+const auth = admin.auth();
+
 exports.index = async (req, res) => {
   try {
     const query = (req.query.q || '').toLowerCase(); // từ khóa tìm kiếm
@@ -146,18 +148,66 @@ exports.edit = async (req, res) => {
 
 // Cập nhật người dùng
 exports.update = async (req, res) => {
-  const id = req.params.id;
+  const docId = req.params.id;
   const { name, email, phone, gender, birth, role } = req.body;
+
   try {
-    await db.collection('users').doc(id).update({
-      name, email, phone, gender, birth, role
+    const docRef = db.collection('users').doc(docId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      return res.status(404).send('Người dùng không tồn tại');
+    }
+
+    const userData = docSnap.data();
+    const uid = userData.uid;
+
+    if (!uid) {
+      return res.status(400).send('Không tìm thấy UID để cập nhật người dùng');
+    }
+
+    const cleanedPhone = phone.trim().replace(/\s+/g, '');
+    const formattedPhone = cleanedPhone.startsWith('0')
+      ? `+84${cleanedPhone.slice(1)}`
+      : cleanedPhone;
+
+    // Cập nhật Auth trước
+    await auth.updateUser(uid, {
+      displayName: name,
+      email: email,
+      phoneNumber: formattedPhone
     });
+
+    // Sau đó mới cập nhật Firestore
+    await docRef.update({
+      name,
+      email,
+      phone: cleanedPhone,
+      gender,
+      birth,
+      role
+    });
+
     res.redirect('/user');
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Lỗi khi cập nhật người dùng');
+    console.error('Lỗi khi cập nhật người dùng:', error);
+
+    let message = 'Lỗi khi cập nhật người dùng';
+    if (error.code === 'auth/email-already-exists') {
+      message = 'Email đã tồn tại!';
+    } else if (error.code === 'auth/phone-number-already-exists') {
+      message = 'Số điện thoại đã tồn tại!';
+    }
+
+    res.status(500).send(message);
   }
 };
+
+
+  
+
+  
+
 
 // Xóa nhiều người dùng
 exports.deleteMultiple = async (req, res) => {
