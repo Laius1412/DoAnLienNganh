@@ -12,18 +12,49 @@
           <th scope="col">Ảnh</th>
           <th scope="col">Nội dung</th>
           <th scope="col">Ngày tạo</th>
+          <th class="text-center">Tác vụ</th>
         </tr>
       </thead>
       <tbody>
         <% news.forEach(item => { %>
           <tr>
-            <td><%= item.titles %></td>
-            <td><img src="<%= item.Img %>" alt="Ảnh bài viết" style="width: 100px; height: auto; object-fit: cover;" class="img-thumbnail"></td>
-            <td style="max-width: 300px;"><%= item.contents %></td>
+           <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <%= item.titles %>
+            </td>
+
+
+            <td>
+              <img src="<%= item.Img %>" alt="Ảnh bài viết"
+                   style="width: 100px; height: auto; object-fit: cover;" class="img-thumbnail">
+            </td>
+            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <%- item.contents %>
+            </td>
             <td><%= new Date(item.createAt._seconds * 1000).toLocaleDateString('vi-VN') %></td>
+            <td class="text-center">
+              <div class="dropdown">
+                <button class="btn btn-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="/news/view/<%= item.id %>">👁️ Xem chi tiết</a></li>
+                  <li><a class="dropdown-item" href="/news/edit/<%= item.id %>">✏️ Sửa</a></li>
+                  <li>
+                    <form action="/news/delete/<%= item.id %>" method="POST"
+                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?');">
+                      <button class="dropdown-item text-danger" type="submit">🗑️ Xóa</button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
   </div>
 </div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
