@@ -1,0 +1,26 @@
+<div class="form-container">
+  <h2>Thêm bài viết</h2>
+  <form action="/news/store" method="POST" enctype="multipart/form-data">
+    
+    <label for="titles">Tiêu đề</label>
+    <input type="text" id="titles" name="titles" class="form-control" required />
+
+    <label for="contents">Nội dung</label>
+    <textarea id="editor" name="contents" class="form-control" rows="4" required></textarea>
+
+    <label for="image">Ảnh</label>
+    <input type="file" id="image" name="image" class="form-control" accept="image/*" />
+
+    <button type="submit" class="btn btn-success mt-3">Lưu bài viết</button>
+  </form>
+</div>
+
+<!-- CKEditor 5 CDN -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+  ClassicEditor
+    .create(document.querySelector('#editor'))
+    .catch(error => {
+      console.error(error);
+    });
+</script>

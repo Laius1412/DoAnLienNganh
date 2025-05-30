@@ -1,0 +1,30 @@
+<div class="container mt-5">
+  <h2 class="text-warning">Chỉnh sửa bài viết</h2>
+  <form action="/news/update/<%= newsItem.id %>" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label>Tiêu đề</label>
+      <input type="text" name="titles" value="<%= newsItem.titles %>" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Nội dung</label>
+      <textarea id="editor" name="contents" class="form-control" rows="5" required><%= newsItem.contents %></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Ảnh hiện tại</label><br>
+      <img src="<%= newsItem.Img %>" alt="Ảnh" style="width: 200px;" class="img-thumbnail mb-2">
+      <input type="file" name="image" class="form-control mt-2">
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a href="/news" class="btn btn-secondary">Quay lại</a>
+  </form>
+</div>
+
+<!-- CKEditor 5 CDN -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+  ClassicEditor
+    .create(document.querySelector('#editor'))
+    .catch(error => {
+      console.error(error);
+    });
+</script>

@@ -9,10 +9,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class RegisterScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
   final VoidCallback onLoginSuccess;
+  final Function(bool) onLoginStateChanged;
+
   const RegisterScreen({
     Key? key,
     required this.onLanguageChanged,
     required this.onLoginSuccess,
+    required this.onLoginStateChanged,
   }) : super(key: key);
 
   @override
@@ -97,6 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await Future.delayed(const Duration(seconds: 2));
 
       if (!mounted) return;
+      widget.onLoginStateChanged(true);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -104,6 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               (context) => LoginScreen(
                 onLanguageChanged: widget.onLanguageChanged,
                 onLoginSuccess: widget.onLoginSuccess,
+                onLoginStateChanged: widget.onLoginStateChanged,
               ),
         ),
       );

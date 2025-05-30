@@ -3,6 +3,9 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dat_ve_xe/themes/theme_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -16,6 +19,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedLanguageCode = 'vi'; // Lưu mã ngôn ngữ (vi, en)
   bool _isDarkMode = false;
+  bool _isNotificationEnabled = true;
   late SharedPreferences _prefs;
 
   @override
@@ -29,6 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _selectedLanguageCode = _prefs.getString('languageCode') ?? 'vi';
       _isDarkMode = _prefs.getBool('isDarkMode') ?? false;
+      _isNotificationEnabled = _prefs.getBool('isNotificationEnabled') ?? true;
     });
   }
 
@@ -47,6 +52,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _isDarkMode = isDark;
       themeManager.toggleTheme();
     });
+  }
+
+  Future<void> _updateNotificationSettings(bool isEnabled) async {
+    await _prefs.setBool('isNotificationEnabled', isEnabled);
+    setState(() {
+      _isNotificationEnabled = isEnabled;
+    });
+
+    // Nếu bật thông báo, kiểm tra và cập nhật FCM token
+    if (isEnabled) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        if (fcmToken != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({'fcmToken': fcmToken});
+        }
+      }
+    } else {
+      // Nếu tắt thông báo, xóa FCM token
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'fcmToken': ''});
+      }
+    }
   }
 
   String _getDisplayLanguage(String languageCode) {
@@ -158,22 +193,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              AppLocalizations.of(context)!.notificationSettings,
-            ), // Sử dụng localization
-            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          const Placeholder(), // Thay sau = NotificationSettingsScreen()
-                ),
-              );
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.notificationSettings,
+                style: const TextStyle(fontSize: 16),
+              ),
+              FlutterSwitch(
+                value: _isNotificationEnabled,
+                activeColor: const Color.fromARGB(255, 253, 109, 37),
+                inactiveColor: Colors.grey.shade400,
+                width: 60.0,
+                height: 30.0,
+                toggleSize: 25.0,
+                borderRadius: 20.0,
+                padding: 4.0,
+                onToggle: _updateNotificationSettings,
+              ),
+            ],
           ),
         ],
       ),
