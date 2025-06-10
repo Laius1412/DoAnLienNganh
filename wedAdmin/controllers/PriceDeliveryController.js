@@ -54,14 +54,16 @@ exports.createPriceDelivery = async (req, res) => {
             }
         }
 
-        const docRef = db.collection('priceDelivery').doc();
+        // Ghép 2 regionId làm docId
+        const docId = fromRegionId + toRegionId;
+        const docRef = db.collection('priceDelivery').doc(docId);
         await docRef.set({
             fromRegionId,
             toRegionId,
             weightRanges,
             createdAt: new Date().toISOString()
         });
-        return res.status(200).json({ success: true, id: docRef.id });
+        return res.status(200).json({ success: true, id: docId });
     } catch (error) {
         console.error('Error creating price delivery:', error);
         return res.status(500).json({ error: 'Lỗi khi tạo bảng giá' });
