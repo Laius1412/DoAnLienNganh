@@ -40,6 +40,8 @@ app.get("/", (req, res) => {
 });
 const userRoutes = require('./routes/user');
 app.use('/user', userRoutes);
+
+
 const DeliverRoutes = require('./routes/delivery');
 app.use('/delivery', DeliverRoutes);
 
