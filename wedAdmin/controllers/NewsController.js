@@ -13,11 +13,31 @@ exports.create = (req, res) => {
 };
 
 exports.store = async (req, res) => {
-  const { titles, contents } = req.body;
-  const Img = req.file?.path || '';
-  await db.collection('news').add({ titles, contents, Img, createAt: new Date() });
-  res.redirect('/news');
+  try {
+    const { titles, contents } = req.body;
+    const Img = req.file?.path || ''; // path là Cloudinary URL khi dùng CloudinaryStorage
+
+    // Nếu cần chắc chắn hơn, bạn có thể log ra để kiểm tra:
+    // console.log('File upload:', req.file);
+
+    if (!titles || !contents) {
+      return res.status(400).send('Tiêu đề và nội dung là bắt buộc.');
+    }
+
+    await db.collection('news').add({
+      titles,
+      contents,
+      Img,
+      createAt: new Date()
+    });
+
+    res.redirect('/news');
+  } catch (error) {
+    console.error('Lỗi khi thêm bài viết:', error);
+    res.status(500).send('Đã xảy ra lỗi khi thêm bài viết.');
+  }
 };
+
 
 // chỉnh sửa
 exports.edit = async (req, res) => {
