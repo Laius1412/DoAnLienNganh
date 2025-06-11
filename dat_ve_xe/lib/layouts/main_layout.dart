@@ -3,6 +3,8 @@ import 'package:dat_ve_xe/views/personal_screen/personal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dat_ve_xe/views/home_screen/home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:dat_ve_xe/views/myticket_screen/myticket_screen.dart';
+import 'package:dat_ve_xe/views/delivery_screen/delivery_screen.dart';
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -23,8 +25,8 @@ class _MainLayoutState extends State<MainLayout> {
     super.initState();
     _pages = [
       HomeScreen(),
-      const Center(child: Text('Tra cứu')),
-      const Center(child: Text('Gửi hàng')),
+      MyTicketScreen(onLanguageChanged: widget.onLanguageChanged),
+      DeliveryScreen(onLanguageChanged: widget.onLanguageChanged),
       PersonalScreen(onLanguageChanged: widget.onLanguageChanged),
     ];
   }
