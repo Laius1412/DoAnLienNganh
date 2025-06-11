@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedIds = new Set();
     let deleteConfirmModal;
 
-    // Lấy danh sách khu vực
     async function loadRegions() {
         const res = await fetch('/delivery/price_delivery/regions');
         regions = await res.json();
@@ -14,14 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
         fromSel.innerHTML = toSel.innerHTML = regions.map(r => `<option value="${r.regionId}">${r.regionName}</option>`).join('');
     }
 
-    // Lấy danh sách bảng giá
     async function loadPriceList() {
         const res = await fetch('/delivery/price_delivery/list');
         priceList = await res.json();
         renderPriceList();
     }
 
-    // Hiển thị danh sách bảng giá dạng dropdown
     function renderPriceList() {
         const container = document.getElementById('priceDeliveryList');
         if (!priceList.length) {
@@ -68,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>`;
         }).join('');
 
-        // Checkbox event
         document.querySelectorAll('.price-checkbox').forEach(cb => {
             cb.onchange = function () {
                 if (this.checked) selectedIds.add(this.dataset.id);
@@ -77,22 +73,17 @@ document.addEventListener('DOMContentLoaded', function () {
             };
         });
 
-        // Edit event
         document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.onclick = function () {
                 showEditForm(this.dataset.id);
             };
         });
 
-        // Initialize all collapse elements
         document.querySelectorAll('.collapse').forEach(collapseEl => {
-            new bootstrap.Collapse(collapseEl, {
-                toggle: false
-            });
+            new bootstrap.Collapse(collapseEl, { toggle: false });
         });
     }
 
-    // Hiển thị form thêm/sửa
     function showForm(editItem = null) {
         editingId = editItem ? editItem.id : null;
         document.getElementById('priceModalTitle').textContent = editingId ? 'Sửa bảng giá' : 'Thêm bảng giá';
@@ -102,13 +93,16 @@ document.addEventListener('DOMContentLoaded', function () {
         new bootstrap.Modal(document.getElementById('priceModal')).show();
     }
 
-    // Hiển thị form sửa
     function showEditForm(id) {
-        const item = priceList.find(p => p.id === id);
-        showForm(item);
-    }
+    const item = priceList.find(p => p.id === id); // So sánh chuỗi
 
-    // Render các mức giá
+    if (!item) {
+        alert("Không tìm thấy bảng giá để sửa!");
+        return;
+    }
+    showForm(item);
+}
+
     function renderWeightRanges(ranges) {
         const container = document.getElementById('weightRanges');
         container.innerHTML = '';
@@ -116,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!ranges.length) addRangeRow();
     }
 
-    // Thêm dòng mức giá
     function addRangeRow(min = '', max = '', price = '', idx = null) {
         const container = document.getElementById('weightRanges');
         const row = document.createElement('div');
@@ -131,22 +124,15 @@ document.addEventListener('DOMContentLoaded', function () {
         row.querySelector('.btn-remove-range').onclick = () => row.remove();
     }
 
-    // Thêm dòng mức giá mới
     document.getElementById('btnAddRange').onclick = () => addRangeRow();
-
-    // Nút Thêm
     document.getElementById('btnAddPrice').onclick = () => showForm();
-
-    // Khởi tạo modal xác nhận xóa
     deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
 
-    // Nút Xóa đã chọn
     document.getElementById('btnDeleteSelected').onclick = () => {
         if (selectedIds.size === 0) return;
         deleteConfirmModal.show();
     };
 
-    // Xử lý xác nhận xóa
     document.getElementById('btnConfirmDelete').onclick = async () => {
         try {
             await fetch('/delivery/price_delivery', {
@@ -158,12 +144,10 @@ document.addEventListener('DOMContentLoaded', function () {
             deleteConfirmModal.hide();
             window.location.reload();
         } catch (error) {
-            alert('Có lỗi xảy ra khi xóa bảng giá!');
-            console.error(error);
+            window.location.reload();
         }
     };
 
-    // Xử lý submit form
     document.getElementById('priceForm').onsubmit = async function (e) {
         e.preventDefault();
         const fromRegionId = this.fromRegionId.value;
@@ -175,11 +159,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }));
 
         if (!weightRanges.length) {
-            alert('Phải có ít nhất 1 mức giá!');
+            window.location.reload();
             return;
         }
 
         const data = { fromRegionId, toRegionId, weightRanges };
+
         try {
             let response;
             if (editingId) {
@@ -196,23 +181,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            // Đọc JSON một lần duy nhất
-            const resData = await response.json();
+            const result = await response.json();
 
             if (!response.ok) {
-                alert(resData.error || 'Có lỗi xảy ra khi lưu bảng giá!');
+                window.location.reload();
                 return;
             }
 
-            // Thành công
-            bootstrap.Modal.getInstance(document.getElementById('priceModal')).hide();
             window.location.reload();
+            
         } catch (error) {
-            alert('Có lỗi xảy ra khi lưu bảng giá!');
-            console.error(error);
+            window.location.reload();
         }
     };
 
-    // Load dữ liệu ban đầu
     loadRegions().then(loadPriceList);
 });
