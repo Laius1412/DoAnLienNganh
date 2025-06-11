@@ -85,8 +85,6 @@ class _MainLayoutState extends State<MainLayout> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Nút đổi theme bên trái
-
                   // Logo hoặc tên app (căn giữa)
                   SizedBox(
                     height:
