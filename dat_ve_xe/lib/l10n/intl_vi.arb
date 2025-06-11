@@ -53,5 +53,12 @@
     "accountDisabled": "Tài khoản bị vô hiệu hóa",
     "logout": "Đăng xuất",
     "pleaseLogin": "Vui lòng đăng nhập",
-    "phoneAlreadyUsed": "Số điện thoại đã được sử dụng!"
+    "phoneAlreadyUsed": "Số điện thoại đã được sử dụng!",
+    "changePassword": "Đổi mật khẩu",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "passwordChangedSuccess": "Đổi mật khẩu thành công",
+    "changePasswordFailed": "Đổi mật khẩu thất bại",
+    "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự"
 }
