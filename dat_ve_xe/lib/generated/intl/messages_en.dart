@@ -29,7 +29,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Account not found",
     ),
     "birthDate": MessageLookupByLibrary.simpleMessage("Birth date"),
+    "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
+    "changePasswordFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to change password",
+    ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+    "currentPassword": MessageLookupByLibrary.simpleMessage("Current Password"),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "delivery": MessageLookupByLibrary.simpleMessage("Delivery"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit profie"),
@@ -66,15 +71,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "male": MessageLookupByLibrary.simpleMessage("Male"),
     "myTickets": MessageLookupByLibrary.simpleMessage("My Tickets"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
+    "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Notification Settings",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "passwordChangedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Password changed successfully",
+    ),
     "passwordMismatch": MessageLookupByLibrary.simpleMessage(
       "Passwords do not match!",
     ),
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "Password must be at least 6 characters",
+    ),
     "phone": MessageLookupByLibrary.simpleMessage("Phone number"),
+    "phoneAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Phone have already been used!",
+    ),
     "phoneVerification": MessageLookupByLibrary.simpleMessage(
       "Phone Verification",
     ),

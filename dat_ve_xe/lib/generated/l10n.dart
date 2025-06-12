@@ -449,6 +449,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Phone have already been used!`
+  String get phoneAlreadyUsed {
+    return Intl.message(
+      'Phone have already been used!',
+      name: 'phoneAlreadyUsed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Password`
+  String get changePassword {
+    return Intl.message(
+      'Change Password',
+      name: 'changePassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Password`
+  String get currentPassword {
+    return Intl.message(
+      'Current Password',
+      name: 'currentPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New Password`
+  String get newPassword {
+    return Intl.message(
+      'New Password',
+      name: 'newPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password changed successfully`
+  String get passwordChangedSuccess {
+    return Intl.message(
+      'Password changed successfully',
+      name: 'passwordChangedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to change password`
+  String get changePasswordFailed {
+    return Intl.message(
+      'Failed to change password',
+      name: 'changePasswordFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password must be at least 6 characters`
+  String get passwordTooShort {
+    return Intl.message(
+      'Password must be at least 6 characters',
+      name: 'passwordTooShort',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
