@@ -4,18 +4,18 @@ const ExcelJS = require('exceljs');
 const admin = require('firebase-admin');
 const auth = admin.auth();
 
-exports.index = async (req, res) => {
+// Danh sách người dùng + tìm kiếm
+const index = async (req, res) => {
   try {
-    const query = (req.query.q || '').toLowerCase(); // từ khóa tìm kiếm
+    const query = (req.query.q || '').toLowerCase();
     const snapshot = await db.collection('users').get();
-
     const users = [];
+
     snapshot.forEach(doc => {
       const data = doc.data();
       const name = (data.name || '').toLowerCase();
       const phone = (data.phone || '').toLowerCase();
 
-      // Lọc theo tên hoặc số điện thoại nếu có query
       if (!query || name.includes(query) || phone.includes(query)) {
         users.push({ id: doc.id, ...data });
       }
@@ -31,83 +31,69 @@ exports.index = async (req, res) => {
     res.status(500).send('Lỗi khi lấy danh sách người dùng');
   }
 };
-exports.store = async (req, res) => {
+
+// Thêm người dùng
+const store = async (req, res) => {
   const { name, email, gender, birth, phone, role, password } = req.body;
-  const cleanedPhone = phone.trim().replace(/\s+/g, '');
+
+  if (!email || !password || !name || !phone) {
+    return res.status(400).send('Vui lòng điền đầy đủ thông tin bắt buộc.');
+  }
+
+  let formattedPhone = phone;
+  if (phone.startsWith('0')) {
+    formattedPhone = '+84' + phone.slice(1);
+  }
 
   try {
-    // Kiểm tra trùng số điện thoại
-    const snapshot = await db.collection('users')
-      .where('phone', '==', cleanedPhone)
-      .get();
-
-    if (!snapshot.empty) {
-      const usersSnapshot = await db.collection('users').get();
-      const users = [];
-      usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-
-      return res.render('users/index', {
-        users,
-        query: '',
-        layout: 'layout',
-        error: 'Số điện thoại đã tồn tại, vui lòng nhập số khác!'
-      });
-    }
-
-    // Tạo người dùng trong Firebase Authentication
-    const userRecord = await admin.auth().createUser({
+    const userRecord = await auth.createUser({
       email,
       password,
       displayName: name,
-      phoneNumber: `+84${cleanedPhone.slice(1)}` // đảm bảo định dạng sđt quốc tế nếu cần
+      phoneNumber: formattedPhone,
     });
 
-    // Lưu thông tin người dùng vào Firestore kèm uid
     await db.collection('users').doc(userRecord.uid).set({
       name,
       email,
-      gender,
-      birth,
-      phone: cleanedPhone,
-      role,
-      uid: userRecord.uid
+      gender: gender || null,
+      birth: birth || null,
+      phone: formattedPhone,
+      role: role || 'user',
+      uid: userRecord.uid,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     res.redirect('/user');
   } catch (error) {
-    console.error(error);
+    console.error('Chi tiết lỗi khi thêm người dùng:', error);
 
-    // Nếu lỗi là email đã được sử dụng
     if (error.code === 'auth/email-already-exists') {
-      const usersSnapshot = await db.collection('users').get();
-      const users = [];
-      usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-
-      return res.render('users/index', {
-        users,
-        query: '',
-        layout: 'layout',
-        error: 'Email đã tồn tại trong hệ thống!'
-      });
+      return res.status(400).send('Email đã tồn tại.');
+    }
+    if (error.code === 'auth/invalid-email') {
+      return res.status(400).send('Email không hợp lệ.');
+    }
+    if (error.code === 'auth/invalid-password') {
+      return res.status(400).send('Mật khẩu phải có ít nhất 6 ký tự.');
+    }
+    if (error.code === 'auth/phone-number-already-exists') {
+      return res.status(400).send('Số điện thoại đã được sử dụng.');
+    }
+    if (error.code === 'auth/invalid-phone-number') {
+      return res.status(400).send('Số điện thoại không hợp lệ.');
     }
 
-    res.status(500).send('Lỗi khi thêm người dùng');
+    res.status(500).send('Lỗi khi thêm người dùng: ' + error.message);
   }
 };
 
-
-
-// Xóa tài khoản
-exports.destroy = async (req, res) => {
+// Xóa 1 người dùng
+const destroy = async (req, res) => {
   const id = req.params.id;
-
   try {
-    // Xóa khỏi Authentication
-    await admin.auth().deleteUser(id);
-
-    // Xóa khỏi Firestore
+    await auth.deleteUser(id);
     await db.collection('users').doc(id).delete();
-
     res.redirect('/user?deleted=1');
   } catch (error) {
     console.error('Lỗi khi xóa người dùng:', error);
@@ -115,9 +101,8 @@ exports.destroy = async (req, res) => {
   }
 };
 
-
-// Chỉnh sửa người dùng
-exports.edit = async (req, res) => {
+// Hiển thị form sửa người dùng
+const edit = async (req, res) => {
   const id = req.params.id;
   try {
     const doc = await db.collection('users').doc(id).get();
@@ -126,20 +111,16 @@ exports.edit = async (req, res) => {
     }
 
     const editUser = { id: doc.id, ...doc.data() };
-
     const snapshot = await db.collection('users').get();
     const users = [];
-    snapshot.forEach(d => {
-      users.push({ id: d.id, ...d.data() });
-    });
+    snapshot.forEach(d => users.push({ id: d.id, ...d.data() }));
 
     res.render('users/index', {
       users,
       query: '',
-      editUser, 
+      editUser,
       layout: 'layout'
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).send('Lỗi khi lấy thông tin người dùng');
@@ -147,7 +128,7 @@ exports.edit = async (req, res) => {
 };
 
 // Cập nhật người dùng
-exports.update = async (req, res) => {
+const update = async (req, res) => {
   const docId = req.params.id;
   const { name, email, phone, gender, birth, role } = req.body;
 
@@ -161,24 +142,19 @@ exports.update = async (req, res) => {
 
     const userData = docSnap.data();
     const uid = userData.uid;
-
     if (!uid) {
       return res.status(400).send('Không tìm thấy UID để cập nhật người dùng');
     }
 
     const cleanedPhone = phone.trim().replace(/\s+/g, '');
-    const formattedPhone = cleanedPhone.startsWith('0')
-      ? `+84${cleanedPhone.slice(1)}`
-      : cleanedPhone;
+    const formattedPhone = cleanedPhone.startsWith('0') ? `+84${cleanedPhone.slice(1)}` : cleanedPhone;
 
-    // Cập nhật Auth trước
     await auth.updateUser(uid, {
       displayName: name,
       email: email,
       phoneNumber: formattedPhone
     });
 
-    // Sau đó mới cập nhật Firestore
     await docRef.update({
       name,
       email,
@@ -191,36 +167,22 @@ exports.update = async (req, res) => {
     res.redirect('/user');
   } catch (error) {
     console.error('Lỗi khi cập nhật người dùng:', error);
-
     let message = 'Lỗi khi cập nhật người dùng';
-    if (error.code === 'auth/email-already-exists') {
-      message = 'Email đã tồn tại!';
-    } else if (error.code === 'auth/phone-number-already-exists') {
-      message = 'Số điện thoại đã tồn tại!';
-    }
-
+    if (error.code === 'auth/email-already-exists') message = 'Email đã tồn tại!';
+    else if (error.code === 'auth/phone-number-already-exists') message = 'Số điện thoại đã tồn tại!';
     res.status(500).send(message);
   }
 };
 
-
-  
-
-  
-
-
 // Xóa nhiều người dùng
-exports.deleteMultiple = async (req, res) => {
+const deleteMultiple = async (req, res) => {
   const ids = req.body.userIds;
-
-  if (!ids || ids.length === 0) {
-    return res.redirect('/user');
-  }
+  if (!ids || ids.length === 0) return res.redirect('/user');
 
   try {
     const deletePromises = ids.map(async (id) => {
-      await admin.auth().deleteUser(id); // Xóa trên Authentication
-      await db.collection('users').doc(id).delete(); // Xóa trên Firestore
+      await auth.deleteUser(id);
+      await db.collection('users').doc(id).delete();
     });
 
     await Promise.all(deletePromises);
@@ -231,9 +193,8 @@ exports.deleteMultiple = async (req, res) => {
   }
 };
 
-
-// Xuất danh sách người dùng ra file Excel
-exports.exportExcel = async (req, res) => {
+// Xuất file Excel
+const exportExcel = async (req, res) => {
   try {
     const snapshot = await db.collection('users').get();
     const users = [];
@@ -264,20 +225,24 @@ exports.exportExcel = async (req, res) => {
       });
     });
 
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    );
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename=users.xlsx'
-    );
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=users.xlsx');
 
     await workbook.xlsx.write(res);
     res.end();
-
   } catch (error) {
     console.error('Lỗi khi xuất Excel:', error);
     res.status(500).send('Lỗi khi xuất file Excel');
   }
+};
+
+// ✅ Export đầy đủ, đúng cách
+module.exports = {
+  index,
+  store,
+  destroy,
+  edit,
+  update,
+  deleteMultiple,
+  exportExcel
 };
