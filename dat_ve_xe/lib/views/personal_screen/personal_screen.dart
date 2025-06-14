@@ -91,6 +91,19 @@ class _PersonalScreenState extends State<PersonalScreen> {
     });
   }
 
+  Future<void> _logout() async {
+    try {
+      await _auth.signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoginSuccess', false);
+      setState(() {
+        _isLoginSuccess = false;
+      });
+    } catch (e) {
+      print('Error logging out: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
@@ -259,9 +272,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
         ),
         const SizedBox(height: 16),
         OutlinedButton.icon(
-          onPressed: () {
-            // _logout(); // Không cần gọi ở đây vì authStateChanges đã xử lý
-          },
+          onPressed: _logout,
           icon: const Icon(Icons.logout, color: Colors.red),
           label: Text(
             AppLocalizations.of(context)!.logout,
