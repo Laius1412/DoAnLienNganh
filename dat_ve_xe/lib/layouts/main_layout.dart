@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:dat_ve_xe/views/home_screen/home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/myticket_screen/myticket_screen.dart';
-import 'package:dat_ve_xe/views/delivery_screen/delivery_screen.dart';
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -25,8 +24,8 @@ class _MainLayoutState extends State<MainLayout> {
     super.initState();
     _pages = [
       HomeScreen(),
-      MyTicketScreen(onLanguageChanged: widget.onLanguageChanged),
-      DeliveryScreen(onLanguageChanged: widget.onLanguageChanged),
+      const MyTicketScreen(),
+      const Center(child: Text('Gửi hàng')),
       PersonalScreen(onLanguageChanged: widget.onLanguageChanged),
     ];
   }
@@ -87,6 +86,8 @@ class _MainLayoutState extends State<MainLayout> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
+                  // Nút đổi theme bên trái
+
                   // Logo hoặc tên app (căn giữa)
                   SizedBox(
                     height:
