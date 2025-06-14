@@ -64,5 +64,11 @@
     "deliveryPrice": "Bảng giá chuyển phát",
     "createDelivery": "Tạo đơn hàng",
     "trackDelivery": "Tra cứu đơn hàng",
-    "myDeliveries": "Đơn hàng của tôi"
+    "myDeliveries": "Đơn hàng của tôi",
+    "minWeight": "Khối lượng tối thiểu(kg)",
+    "maxWeight": "Khối lượng tối đa(kg)",
+    "price": "Giá cước(VND)",
+    "localDeliveryPrice": "Bảng giá cước chuyển phát khu vực {regionName}",
+    "interRegionDeliveryPrice": "Bảng giá cước chuyển phát {fromRegionName} - {toRegionName}",
+    "noPriceDataAvailable": "Không có dữ liệu giá nào."
 }

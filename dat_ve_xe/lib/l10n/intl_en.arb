@@ -64,5 +64,11 @@
     "deliveryPrice": "Delivery Price",
     "createDelivery": "Create Delivery",
     "trackDelivery": "Track Delivery",
-    "myDeliveries": "My Deliveries"
+    "myDeliveries": "My Deliveries",
+    "minWeight": "Min Weight (kg)",
+    "maxWeight": "Max Weight (kg)",
+    "price": "Price (VND)",
+    "localDeliveryPrice": "Local Delivery Price for {regionName}",
+    "interRegionDeliveryPrice": "Delivery Price from {fromRegionName} to {toRegionName}",
+    "noPriceDataAvailable": "No price data available."
 }
