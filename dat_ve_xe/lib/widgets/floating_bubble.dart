@@ -9,10 +9,9 @@ class FloatingBubblesManager {
     if (_overlayEntry != null) return;
 
     final size = MediaQuery.of(context).size;
-
     _position = Offset(
-      _position.dx.clamp(0.0, size.width - 100),
-      _position.dy.clamp(0.0, size.height - 200),
+      _position.dx.clamp(0.0, size.width - 56),
+      _position.dy.clamp(0.0, size.height - 122),
     );
 
     _overlayEntry = OverlayEntry(
