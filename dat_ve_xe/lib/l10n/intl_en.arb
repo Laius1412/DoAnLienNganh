@@ -60,5 +60,15 @@
     "confirmPassword": "Confirm Password",
     "passwordChangedSuccess": "Password changed successfully",
     "changePasswordFailed": "Failed to change password",
-    "passwordTooShort": "Password must be at least 6 characters"
+    "passwordTooShort": "Password must be at least 6 characters",
+    "deliveryPrice": "Delivery Price",
+    "createDelivery": "Create Delivery",
+    "trackDelivery": "Track Delivery",
+    "myDeliveries": "My Deliveries",
+    "minWeight": "Min Weight (kg)",
+    "maxWeight": "Max Weight (kg)",
+    "price": "Price (VND)",
+    "localDeliveryPrice": "Local Delivery Price for {regionName}",
+    "interRegionDeliveryPrice": "Delivery Price from {fromRegionName} to {toRegionName}",
+    "noPriceDataAvailable": "No price data available."
 }
