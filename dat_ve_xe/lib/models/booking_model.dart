@@ -80,9 +80,10 @@ class Booking {
   final DateTime createDate;
   final String startLocationBooking;
   final String endLocationBooking;
-  final String statusBooking;
+  final String statusBooking; // 'pending', 'pending_payment', 'confirmed', 'cancelled'
   final int totalPrice;
   final List<BookingSeat> seats;
+  final DateTime? paymentDeadline; // New field for payment deadline
 
   Booking({
     required this.id,
@@ -93,6 +94,7 @@ class Booking {
     required this.statusBooking,
     required this.totalPrice,
     required this.seats,
+    this.paymentDeadline,
   });
 
   Map<String, dynamic> toMap() {
@@ -105,6 +107,7 @@ class Booking {
       'statusBooking': statusBooking,
       'totalPrice': totalPrice,
       'seats': seats.map((e) => e.toMap()).toList(),
+      'paymentDeadline': paymentDeadline?.toIso8601String(),
     };
   }
 
@@ -120,6 +123,9 @@ class Booking {
       seats: (map['seats'] as List<dynamic>)
           .map((e) => BookingSeat.fromMap(e as Map<String, dynamic>))
           .toList(),
+      paymentDeadline: map['paymentDeadline'] != null 
+          ? DateTime.parse(map['paymentDeadline']) 
+          : null,
     );
   }
 }

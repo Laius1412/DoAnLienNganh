@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'views/myticket_screen/myticket_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -98,6 +99,9 @@ class _MyAppState extends State<MyApp> {
           ],
           locale: _currentLocale, // Sử dụng _currentLocale
           home: MainLayout(onLanguageChanged: _changeLanguage),
+          routes: {
+            '/myticket': (context) => const MyTicketScreen(),
+          },
         );
       },
     );

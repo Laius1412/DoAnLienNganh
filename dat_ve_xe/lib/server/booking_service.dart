@@ -3,11 +3,29 @@ import '../models/booking_model.dart';
 import '../models/seat_position_model.dart';
 import '../models/vehicle_type_model.dart';
 import '../models/vehicle_model.dart';
+import 'dart:async';
 
 class BookingService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Timer? _expiryCheckTimer;
 
-  // Tạo booking mới
+  BookingService() {
+    // Start periodic check for expired bookings
+    _startExpiryCheck();
+  }
+
+  void _startExpiryCheck() {
+    // Check every 30 seconds
+    _expiryCheckTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      checkAndCancelExpiredBookings();
+    });
+  }
+
+  void dispose() {
+    _expiryCheckTimer?.cancel();
+  }
+
+  // Create a new booking with pending_payment status
   Future<String?> createBooking({
     required String userId,
     required String startLocationBooking,
@@ -17,23 +35,16 @@ class BookingService {
     required DateTime selectedDate,
   }) async {
     try {
-      print('Starting booking process...');
-      print('User ID: $userId');
-      print('Selected seats: ${seatDetails.length}');
-
       final batch = _firestore.batch();
       final bookingRef = _firestore.collection('bookings').doc();
-      final List<BookingSeat> seats = [];
+      final List<Map<String, dynamic>> seatsData = [];
       
-      // Format date as YYYY-MM-DD
       final dateStr = "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
 
-      // Kiểm tra xem có ghế nào đã được đặt chưa
+      // Check if seats are available
       for (var detail in seatDetails) {
         final numberSeat = detail['seatPosition']['numberSeat'] as String;
         final vehicle = detail['vehicle'] as Vehicle;
-        
-        print('Checking seat $numberSeat for vehicle ${vehicle.id}...');
         
         final existingSeatQuery = await _firestore
             .collection('seatPositions')
@@ -44,83 +55,197 @@ class BookingService {
             .get();
 
         if (existingSeatQuery.docs.isNotEmpty) {
-          print('Seat $numberSeat is already booked for date $dateStr');
           throw Exception('Ghế $numberSeat đã được đặt cho ngày ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}');
         }
       }
 
-      print('All seats are available, proceeding with booking...');
-
-      // Tạo và cập nhật thông tin ghế
+      // Create seat positions with temporary booking
       for (var detail in seatDetails) {
         final numberSeat = detail['seatPosition']['numberSeat'] as String;
         final vehicle = detail['vehicle'] as Vehicle;
         
-        print('Creating seat position for seat $numberSeat...');
-        
         final seatRef = _firestore.collection('seatPositions').doc();
         
-        final seatPosition = SeatPosition(
-          id: seatRef.id,
-          numberSeat: numberSeat,
-          isBooked: true,
-          date: dateStr,
-        );
-
         final seatData = {
-          ...seatPosition.toMap(),
+          'numberSeat': numberSeat,
+          'isBooked': true,
+          'date': dateStr,
           'vehicleId': vehicle.id,
+          'bookingId': bookingRef.id,
+          'status': 'pending_payment'
         };
 
-        print('Adding seat data to batch: $seatData');
         batch.set(seatRef, seatData);
-        seats.add(BookingSeat(seatPosition: seatPosition, vehicle: vehicle));
+        
+        // Add seat data to booking
+        seatsData.add({
+          'seatPosition': {
+            'id': seatRef.id,
+            'numberSeat': numberSeat,
+            'isBooked': true,
+            'date': dateStr,
+          },
+          'vehicle': {
+            'id': vehicle.id,
+            'nameVehicle': vehicle.nameVehicle,
+            'plate': vehicle.plate,
+            'price': vehicle.price,
+            'startTime': vehicle.startTime,
+            'endTime': vehicle.endTime,
+            if (vehicle.trip != null) 'trip': {
+              'id': vehicle.trip!.id,
+              'destination': vehicle.trip!.destination,
+              'nameTrip': vehicle.trip!.nameTrip,
+              'startLocation': vehicle.trip!.startLocation,
+              'tripCode': vehicle.trip!.tripCode,
+              'vRouter': vehicle.trip!.vRouter,
+            },
+            if (vehicle.vehicleType != null) 'vehicleType': {
+              'id': vehicle.vehicleType!.id,
+              'nameType': vehicle.vehicleType!.nameType,
+              'seatCount': vehicle.vehicleType!.seatCount,
+            },
+          },
+        });
       }
 
-      final booking = Booking(
-        id: bookingRef.id,
-        userId: userId,
-        createDate: DateTime.now(),
-        startLocationBooking: startLocationBooking,
-        endLocationBooking: endLocationBooking,
-        statusBooking: 'pending',
-        totalPrice: totalPrice,
-        seats: seats,
-      );
+      // Create booking with pending_payment status and 5-minute deadline
+      final now = DateTime.now();
+      final paymentDeadline = now.add(const Duration(minutes: 5));
 
-      print('Creating booking with ID: ${bookingRef.id}');
-      print('Booking data: ${booking.toMap()}');
+      final bookingData = {
+        'id': bookingRef.id,
+        'userId': userId,
+        'createDate': now.toIso8601String(),
+        'startLocationBooking': startLocationBooking,
+        'endLocationBooking': endLocationBooking,
+        'statusBooking': 'pending_payment',
+        'totalPrice': totalPrice,
+        'seats': seatsData,
+        'paymentDeadline': paymentDeadline.toIso8601String(),
+      };
 
-      batch.set(bookingRef, booking.toMap());
-      
-      print('Committing batch...');
+      batch.set(bookingRef, bookingData);
       await batch.commit();
-      print('Batch committed successfully');
-      
+
+      print('Created new booking: ${bookingRef.id} with deadline: $paymentDeadline');
       return bookingRef.id;
-    } catch (e, stackTrace) {
-      print('Error creating booking:');
-      print('Error message: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
+      print('Error creating booking: $e');
       return null;
+    }
+  }
+
+  // Timer to check payment status
+  Future<void> _startPaymentTimer(String bookingId, DateTime deadline) async {
+    await Future.delayed(Duration(seconds: 300)); // 5 minutes
+
+    final bookingDoc = await _firestore.collection('bookings').doc(bookingId).get();
+    if (!bookingDoc.exists) return;
+
+    final booking = Booking.fromMap(bookingId, bookingDoc.data() as Map<String, dynamic>);
+    
+    // If still in pending_payment status after 5 minutes, cancel the booking
+    if (booking.statusBooking == 'pending_payment') {
+      await cancelBooking(bookingId);
+    }
+  }
+
+  // Cancel booking and release seats
+  Future<bool> cancelBooking(String bookingId) async {
+    try {
+      final bookingDoc = await _firestore.collection('bookings').doc(bookingId).get();
+      if (!bookingDoc.exists) return false;
+
+      final data = bookingDoc.data() as Map<String, dynamic>;
+      final batch = _firestore.batch();
+
+      // Get all seats associated with this booking
+      final seatsQuery = await _firestore
+          .collection('seatPositions')
+          .where('bookingId', isEqualTo: bookingId)
+          .get();
+
+      // Release all seats
+      for (var seatDoc in seatsQuery.docs) {
+        batch.update(seatDoc.reference, {
+          'isBooked': false,
+          'bookingId': null,
+          'status': 'available'
+        });
+      }
+
+      // Update booking status to cancelled
+      batch.update(_firestore.collection('bookings').doc(bookingId), {
+        'statusBooking': 'cancelled',
+        'paymentDeadline': null,
+      });
+
+      await batch.commit();
+      print('Successfully cancelled booking: $bookingId');
+      return true;
+    } catch (e) {
+      print('Error cancelling booking: $e');
+      return false;
+    }
+  }
+
+  // Confirm payment and update booking status
+  Future<bool> confirmPayment(String bookingId) async {
+    try {
+      final bookingDoc = await _firestore.collection('bookings').doc(bookingId).get();
+      if (!bookingDoc.exists) return false;
+
+      final booking = Booking.fromMap(bookingId, bookingDoc.data() as Map<String, dynamic>);
+      
+      // Only allow confirmation if in pending_payment status
+      if (booking.statusBooking != 'pending_payment') {
+        return false;
+      }
+
+      await _firestore.collection('bookings').doc(bookingId).update({
+        'statusBooking': 'pending',
+        'paymentDeadline': null,
+      });
+
+      return true;
+    } catch (e) {
+      print('Error confirming payment: $e');
+      return false;
     }
   }
 
   // Lấy danh sách booking của user
   Future<List<Booking>> getUserBookings(String userId) async {
     try {
+      print('Fetching bookings for user: $userId');
+      
       final querySnapshot = await _firestore
           .collection('bookings')
           .where('userId', isEqualTo: userId)
-          .orderBy('createDate', descending: true)
           .get();
 
-      return querySnapshot.docs
-          .map((doc) => Booking.fromMap(doc.id, doc.data() as Map<String, dynamic>))
-          .toList();
+      print('Found ${querySnapshot.docs.length} bookings in Firestore');
+
+      final bookings = querySnapshot.docs.map((doc) {
+        try {
+          final data = doc.data();
+          print('Processing booking ${doc.id} with data: $data');
+          return Booking.fromMap(doc.id, data);
+        } catch (e) {
+          print('Error processing booking ${doc.id}: $e');
+          return null;
+        }
+      }).where((booking) => booking != null).cast<Booking>().toList();
+
+      // Sort bookings by createDate in memory
+      bookings.sort((a, b) => b.createDate.compareTo(a.createDate));
+
+      print('Successfully processed ${bookings.length} bookings');
+      return bookings;
     } catch (e) {
       print('Error getting user bookings: $e');
-      return [];
+      rethrow;
     }
   }
 
@@ -185,18 +310,30 @@ class BookingService {
         query = query.where('statusBooking', isEqualTo: status);
       }
 
+      final querySnapshot = await query.get();
+      var bookings = querySnapshot.docs
+          .map((doc) => Booking.fromMap(doc.id, doc.data() as Map<String, dynamic>))
+          .toList();
+
+      // Filter by date in memory if needed
       if (startDate != null) {
-        query = query.where('createDate', isGreaterThanOrEqualTo: startDate);
+        bookings = bookings.where((booking) => 
+          booking.createDate.isAfter(startDate) || 
+          booking.createDate.isAtSameMomentAs(startDate)
+        ).toList();
       }
 
       if (endDate != null) {
-        query = query.where('createDate', isLessThanOrEqualTo: endDate);
+        bookings = bookings.where((booking) => 
+          booking.createDate.isBefore(endDate) || 
+          booking.createDate.isAtSameMomentAs(endDate)
+        ).toList();
       }
 
-      final querySnapshot = await query.get();
-      return querySnapshot.docs
-          .map((doc) => Booking.fromMap(doc.id, doc.data() as Map<String, dynamic>))
-          .toList();
+      // Sort by createDate in memory
+      bookings.sort((a, b) => b.createDate.compareTo(a.createDate));
+
+      return bookings;
     } catch (e) {
       print('Error searching bookings: $e');
       return [];
@@ -309,6 +446,41 @@ class BookingService {
     } catch (e) {
       print('Error getting booked seats: $e');
       return [];
+    }
+  }
+
+  // Check and cancel expired bookings
+  Future<void> checkAndCancelExpiredBookings() async {
+    try {
+      final now = DateTime.now();
+      
+      // Get all pending_payment bookings
+      final querySnapshot = await _firestore
+          .collection('bookings')
+          .where('statusBooking', isEqualTo: 'pending_payment')
+          .get();
+
+      print('Checking ${querySnapshot.docs.length} pending bookings for expiry');
+
+      for (var doc in querySnapshot.docs) {
+        try {
+          final data = doc.data();
+          if (data['paymentDeadline'] == null) continue;
+
+          final paymentDeadline = DateTime.parse(data['paymentDeadline']);
+          
+          // Check if booking has expired
+          if (paymentDeadline.isBefore(now)) {
+            print('Found expired booking: ${doc.id}');
+            await cancelBooking(doc.id);
+          }
+        } catch (e) {
+          print('Error processing booking ${doc.id}: $e');
+          continue;
+        }
+      }
+    } catch (e) {
+      print('Error checking expired bookings: $e');
     }
   }
 }
