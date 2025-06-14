@@ -30,21 +30,35 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
     super.initState();
-    _vehicleFuture = _vehicleService.searchVehiclesByLocation(
-      startLocation: widget.startLocation,
-      destination: widget.destination,
-    ).then((vehicles) async {
-      // Lấy số ghế còn trống cho mỗi xe
-      for (var vehicle in vehicles) {
-        final bookedSeats = await _bookingService.getBookedSeatsForVehicle(
-          vehicle.id,
-          widget.selectedDate,
-        );
-        final totalSeats = vehicle.vehicleType?.seatCount ?? 0;
-        final availableSeats = totalSeats - bookedSeats.length;
-        _availableSeats[vehicle.id] = availableSeats;
-      }
-      return vehicles;
+    _loadVehicles();
+  }
+
+  Future<void> _loadVehicles() async {
+    setState(() {
+      _vehicleFuture = _vehicleService.searchVehiclesByLocation(
+        startLocation: widget.startLocation,
+        destination: widget.destination,
+      ).then((vehicles) async {
+        // Lấy số ghế còn trống cho mỗi xe
+        for (var vehicle in vehicles) {
+          final bookedSeats = await _bookingService.getBookedSeatsForVehicle(
+            vehicle.id,
+            widget.selectedDate,
+          );
+          final totalSeats = vehicle.vehicleType?.seatCount ?? 0;
+          final availableSeats = totalSeats - bookedSeats.length;
+          _availableSeats[vehicle.id] = availableSeats;
+        }
+        
+        // Sắp xếp xe theo giờ khởi hành
+        vehicles.sort((a, b) {
+          final timeA = DateFormat('HH:mm').parse(a.startTime);
+          final timeB = DateFormat('HH:mm').parse(b.startTime);
+          return timeA.compareTo(timeB);
+        });
+        
+        return vehicles;
+      });
     });
   }
 
@@ -87,49 +101,52 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
         foregroundColor: Colors.white,
       ),
-      body: FutureBuilder<List<Vehicle>>(
-        future: _vehicleFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: RefreshIndicator(
+        onRefresh: _loadVehicles,
+        child: FutureBuilder<List<Vehicle>>(
+          future: _vehicleFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Lỗi: ${snapshot.error}'));
-          }
+            if (snapshot.hasError) {
+              return Center(child: Text('Lỗi: ${snapshot.error}'));
+            }
 
-          final vehicles = snapshot.data ?? [];
+            final vehicles = snapshot.data ?? [];
 
-          if (vehicles.isEmpty) {
-            return const Center(child: Text('Không tìm thấy xe phù hợp.'));
-          }
+            if (vehicles.isEmpty) {
+              return const Center(child: Text('Không tìm thấy xe phù hợp.'));
+            }
 
-          return ListView.builder(
-            itemCount: vehicles.length,
-            itemBuilder: (context, index) {
-              final vehicle = vehicles[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BookingScreen(
-                        vehicle: vehicle,
-                        startLocation: widget.startLocation,
-                        destination: widget.destination,
-                        selectedDate: widget.selectedDate,
+            return ListView.builder(
+              itemCount: vehicles.length,
+              itemBuilder: (context, index) {
+                final vehicle = vehicles[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BookingScreen(
+                          vehicle: vehicle,
+                          startLocation: widget.startLocation,
+                          destination: widget.destination,
+                          selectedDate: widget.selectedDate,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: _buildVehicleCard(vehicle),
-                ),
-              );
-            },
-          );
-        },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: _buildVehicleCard(vehicle),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -193,7 +210,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Text(
                         vehicle.startTime,
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -201,7 +218,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Text(
                         'Khởi hành',
                         style: TextStyle(
-                          color: Colors.grey[800],
+                          color: Colors.grey[200],
                           fontSize: 12,
                         ),
                       ),
@@ -228,7 +245,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Container(
                         width: 180,
                         height: 1,
-                        color: Colors.grey[400],
+                        color: Colors.grey[200],
                       ),
                     ],
                   ),
@@ -238,7 +255,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Text(
                         vehicle.endTime,
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -246,7 +263,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Text(
                         'Đến nơi',
                         style: TextStyle(
-                          color: Colors.grey[800],
+                          color: Colors.grey[200],
                           fontSize: 12,
                         ),
                       ),
@@ -264,7 +281,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         child: Text(
                           vehicle.trip?.startLocation ?? '---',
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -274,7 +291,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         padding: EdgeInsets.symmetric(horizontal: 6),
                         child: Icon(
                           Icons.arrow_forward,
-                          color: Colors.black,
+                          color: Colors.white,
                           size: 16,
                         ),
                       ),
@@ -282,7 +299,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         child: Text(
                           vehicle.trip?.destination ?? '---',
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -299,7 +316,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         child: Text(
                           vehicle.trip?.vRouter ?? '',
                           style: TextStyle(
-                            color: Colors.grey[800],
+                            color: Colors.grey[200],
                             fontSize: 12,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -309,7 +326,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Text(
                         '$priceFormatted đ',
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),

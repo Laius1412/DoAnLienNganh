@@ -3,9 +3,11 @@ import 'package:dat_ve_xe/server/booking_service.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:dat_ve_xe/views/personal_screen/login_request_card.dart';
 
 class MyTicketScreen extends StatefulWidget {
-  const MyTicketScreen({Key? key}) : super(key: key);
+  final Function(Locale) onLanguageChanged;
+  const MyTicketScreen({Key? key, required this.onLanguageChanged}) : super(key: key);
 
   @override
   State<MyTicketScreen> createState() => _MyTicketScreenState();
@@ -36,11 +38,6 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
         });
       } else {
         print('No user logged in');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Vui lòng đăng nhập để xem vé của bạn')),
-          );
-        }
         setState(() => _isLoading = false);
       }
     } catch (e) {
@@ -86,6 +83,28 @@ class _MyTicketScreenState extends State<MyTicketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Vé của tôi'),
+          backgroundColor: const Color.fromARGB(255, 253, 109, 37),
+          foregroundColor: Colors.white,
+        ),
+        body: Center(
+          child: SizedBox(
+            width: 400,
+            child: LoginRequestCard(
+              onLanguageChanged: (Locale locale) {
+                widget.onLanguageChanged(locale);
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vé của tôi'),

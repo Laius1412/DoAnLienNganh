@@ -29,7 +29,7 @@ class _MainLayoutState extends State<MainLayout> {
     });
     _pages = [
       HomeScreen(),
-      const MyTicketScreen(),
+      MyTicketScreen(onLanguageChanged: widget.onLanguageChanged),
       DeliveryScreen(onLanguageChanged: widget.onLanguageChanged),
       PersonalScreen(onLanguageChanged: widget.onLanguageChanged),
     ];

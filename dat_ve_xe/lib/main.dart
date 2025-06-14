@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
           locale: _currentLocale, // Sử dụng _currentLocale
           home: MainLayout(onLanguageChanged: _changeLanguage),
           routes: {
-            '/myticket': (context) => const MyTicketScreen(),
+            '/myticket': (context) => MyTicketScreen(onLanguageChanged: _changeLanguage),
           },
         );
       },

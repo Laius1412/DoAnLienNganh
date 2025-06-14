@@ -185,6 +185,116 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   const SizedBox(height: 24),
 
+                  // Trip Information
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 255, 243, 232),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 253, 109, 37),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Thông tin chuyến đi',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 253, 109, 37),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (_booking != null) ...[
+                          Row(
+                            children: [
+                              const Icon(Icons.directions_bus, color: Color.fromARGB(255, 253, 109, 37)),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _booking!.seats.isNotEmpty && _booking!.seats[0].vehicle?.trip != null
+                                      ? _booking!.seats[0].vehicle!.trip!.nameTrip
+                                      : 'N/A',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today, color: Color.fromARGB(255, 253, 109, 37)),
+                              const SizedBox(width: 8),
+                              Text(
+                                DateFormat('dd/MM/yyyy').format(_booking!.createDate),
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.access_time, color: Color.fromARGB(255, 253, 109, 37)),
+                              const SizedBox(width: 8),
+                              Text(
+                                _booking!.seats.isNotEmpty && _booking!.seats[0].vehicle != null
+                                    ? '${_booking!.seats[0].vehicle!.startTime} - ${_booking!.seats[0].vehicle!.endTime}'
+                                    : 'N/A',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Điểm đón: ${_booking!.startLocationBooking}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Điểm trả: ${_booking!.endLocationBooking}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.event_seat, color: Color.fromARGB(255, 253, 109, 37)),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Ghế: ${_booking!.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(", ")}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
                   // Payment amount
                   Container(
                     padding: const EdgeInsets.all(16),
