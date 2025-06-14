@@ -60,5 +60,9 @@
     "confirmPassword": "Confirm Password",
     "passwordChangedSuccess": "Password changed successfully",
     "changePasswordFailed": "Failed to change password",
-    "passwordTooShort": "Password must be at least 6 characters"
+    "passwordTooShort": "Password must be at least 6 characters",
+    "deliveryPrice": "Delivery Price",
+    "createDelivery": "Create Delivery",
+    "trackDelivery": "Track Delivery",
+    "myDeliveries": "My Deliveries"
 }

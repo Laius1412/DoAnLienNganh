@@ -8,7 +8,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> _locations = ['Hà Nội', 'Nghệ An', 'Hồ Chí Minh', 'Đà Nẵng'];
+  final List<String> _locations = [
+    'Hà Nội',
+    'Nghệ An',
+    'Hồ Chí Minh',
+    'Đà Nẵng',
+  ];
 
   String? _selectedStart = 'Hà Nội';
   String? _selectedDestination = 'Nghệ An';
@@ -65,12 +70,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           iconEnabledColor: Colors.orange,
                           dropdownColor: Colors.white,
                           style: TextStyle(color: Colors.orange, fontSize: 16),
-                          items: _locations
-                              .map((loc) => DropdownMenuItem(
-                                    value: loc,
-                                    child: Text(loc),
-                                  ))
-                              .toList(),
+                          items:
+                              _locations
+                                  .map(
+                                    (loc) => DropdownMenuItem(
+                                      value: loc,
+                                      child: Text(loc),
+                                    ),
+                                  )
+                                  .toList(),
                           onChanged: (value) {
                             setState(() {
                               _selectedStart = value;
@@ -92,12 +100,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           iconEnabledColor: Colors.orange,
                           dropdownColor: Colors.white,
                           style: TextStyle(color: Colors.orange, fontSize: 16),
-                          items: _locations
-                              .map((loc) => DropdownMenuItem(
-                                    value: loc,
-                                    child: Text(loc),
-                                  ))
-                              .toList(),
+                          items:
+                              _locations
+                                  .map(
+                                    (loc) => DropdownMenuItem(
+                                      value: loc,
+                                      child: Text(loc),
+                                    ),
+                                  )
+                                  .toList(),
                           onChanged: (value) {
                             setState(() {
                               _selectedDestination = value;
@@ -139,7 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: _pickDate,
-                    child: Text('Chọn ngày', style: TextStyle(color: Colors.orange)),
+                    child: Text(
+                      'Chọn ngày',
+                      style: TextStyle(color: Colors.orange),
+                    ),
                   ),
                 ],
               ),
@@ -158,7 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 if (_selectedStart == _selectedDestination) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Điểm đi và đến không được trùng nhau')),
+                    SnackBar(
+                      content: Text('Điểm đi và đến không được trùng nhau'),
+                    ),
                   );
                   return;
                 }
@@ -174,11 +190,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => SearchResultScreen(
-                      startLocation: _selectedStart!,
-                      destination: _selectedDestination!,
-                      selectedDate: _selectedDate!,
-                    ),
+                    builder:
+                        (_) => SearchResultScreen(
+                          startLocation: _selectedStart!,
+                          destination: _selectedDestination!,
+                          selectedDate: _selectedDate!,
+                        ),
                   ),
                 );
               },
