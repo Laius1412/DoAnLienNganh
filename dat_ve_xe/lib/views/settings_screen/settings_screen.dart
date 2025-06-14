@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dat_ve_xe/views/settings_screen/change_password.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -133,15 +134,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            AppLocalizations.of(context)!.language, // Sử dụng localization
+            AppLocalizations.of(context)!.language,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
             value: _getDisplayLanguage(_selectedLanguageCode),
             decoration: InputDecoration(
+              filled: true,
+              fillColor: Theme.of(context).cardColor,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.orange, width: 2),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.orange, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.orange, width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 12,
@@ -163,55 +175,103 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            AppLocalizations.of(context)!.theme, // Sử dụng localization
+            AppLocalizations.of(context)!.theme,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.darkMode, // Sử dụng localization
-                style: const TextStyle(fontSize: 16),
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Colors.orange, width: 2),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.darkMode,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  FlutterSwitch(
+                    value: _isDarkMode,
+                    activeColor: const Color.fromARGB(255, 253, 109, 37),
+                    inactiveColor: Colors.grey.shade400,
+                    width: 60.0,
+                    height: 30.0,
+                    toggleSize: 25.0,
+                    borderRadius: 20.0,
+                    padding: 4.0,
+                    onToggle: _updateDarkMode,
+                  ),
+                ],
               ),
-              FlutterSwitch(
-                value: _isDarkMode,
-                activeColor: const Color.fromARGB(255, 253, 109, 37),
-                inactiveColor: Colors.grey.shade400,
-                width: 60.0,
-                height: 30.0,
-                toggleSize: 25.0,
-                borderRadius: 20.0,
-                padding: 4.0,
-                onToggle: _updateDarkMode,
-              ),
-            ],
+            ),
           ),
           const SizedBox(height: 24),
           Text(
-            AppLocalizations.of(context)!.notifications, // Sử dụng localization
+            AppLocalizations.of(context)!.account,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.notificationSettings,
-                style: const TextStyle(fontSize: 16),
+          if (FirebaseAuth.instance.currentUser != null)
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Colors.orange, width: 2),
               ),
-              FlutterSwitch(
-                value: _isNotificationEnabled,
-                activeColor: const Color.fromARGB(255, 253, 109, 37),
-                inactiveColor: Colors.grey.shade400,
-                width: 60.0,
-                height: 30.0,
-                toggleSize: 25.0,
-                borderRadius: 20.0,
-                padding: 4.0,
-                onToggle: _updateNotificationSettings,
+              child: ListTile(
+                leading: const Icon(Icons.lock, color: Colors.orange),
+                title: Text(AppLocalizations.of(context)!.changePassword),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.orange,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChangePasswordScreen(),
+                    ),
+                  );
+                },
               ),
-            ],
+            ),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context)!.notifications,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Colors.orange, width: 2),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.notificationSettings,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  FlutterSwitch(
+                    value: _isNotificationEnabled,
+                    activeColor: const Color.fromARGB(255, 253, 109, 37),
+                    inactiveColor: Colors.grey.shade400,
+                    width: 60.0,
+                    height: 30.0,
+                    toggleSize: 25.0,
+                    borderRadius: 20.0,
+                    padding: 4.0,
+                    onToggle: _updateNotificationSettings,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

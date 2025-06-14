@@ -31,8 +31,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tài khoản không chính xác hoặc không tồn tại",
     ),
     "birthDate": MessageLookupByLibrary.simpleMessage("Ngày sinh"),
+    "changePassword": MessageLookupByLibrary.simpleMessage("Đổi mật khẩu"),
+    "changePasswordFailed": MessageLookupByLibrary.simpleMessage(
+      "Đổi mật khẩu thất bại",
+    ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "Xác nhận mật khẩu",
+    ),
+    "currentPassword": MessageLookupByLibrary.simpleMessage(
+      "Mật khẩu hiện tại",
     ),
     "darkMode": MessageLookupByLibrary.simpleMessage("Chế độ tối"),
     "delivery": MessageLookupByLibrary.simpleMessage("Chuyển phát"),
@@ -78,15 +85,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "male": MessageLookupByLibrary.simpleMessage("Nam"),
     "myTickets": MessageLookupByLibrary.simpleMessage("Vé của tôi"),
     "name": MessageLookupByLibrary.simpleMessage("Họ và tên"),
+    "newPassword": MessageLookupByLibrary.simpleMessage("Mật khẩu mới"),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Cài đặt thông báo",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Thông báo"),
     "password": MessageLookupByLibrary.simpleMessage("Mật khẩu"),
+    "passwordChangedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Đổi mật khẩu thành công",
+    ),
     "passwordMismatch": MessageLookupByLibrary.simpleMessage(
       "Mật khẩu không trùng khớp!",
     ),
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "Mật khẩu phải có ít nhất 6 ký tự",
+    ),
     "phone": MessageLookupByLibrary.simpleMessage("Số điện thoại"),
+    "phoneAlreadyUsed": MessageLookupByLibrary.simpleMessage(
+      "Số điện thoại đã được sử dụng!",
+    ),
     "phoneVerification": MessageLookupByLibrary.simpleMessage(
       "Xác thực số điện thoại",
     ),

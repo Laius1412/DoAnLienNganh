@@ -53,5 +53,12 @@
     "accountDisabled": "accountDisabled",
     "logout": "Logout",
     "pleaseLogin": "Please login",
-    "phoneAlreadyUsed": "Phone have already been used!"
+    "phoneAlreadyUsed": "Phone have already been used!",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordChangedSuccess": "Password changed successfully",
+    "changePasswordFailed": "Failed to change password",
+    "passwordTooShort": "Password must be at least 6 characters"
 }

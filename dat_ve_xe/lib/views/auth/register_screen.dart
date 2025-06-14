@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:dat_ve_xe/views/auth/login_screen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -101,17 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (!mounted) return;
       widget.onLoginStateChanged(true);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => LoginScreen(
-                onLanguageChanged: widget.onLanguageChanged,
-                onLoginSuccess: widget.onLoginSuccess,
-                onLoginStateChanged: widget.onLoginStateChanged,
-              ),
-        ),
-      );
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       if (e.code == 'weak-password') {
