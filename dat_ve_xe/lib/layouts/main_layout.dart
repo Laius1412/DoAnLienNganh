@@ -5,6 +5,7 @@ import 'package:dat_ve_xe/views/home_screen/home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/myticket_screen/myticket_screen.dart';
 import 'package:dat_ve_xe/views/delivery_screen/delivery_screen.dart';
+import 'package:dat_ve_xe/widgets/floating_bubble.dart';
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -23,6 +24,9 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FloatingBubblesManager.show(context);
+    });
     _pages = [
       HomeScreen(),
       MyTicketScreen(onLanguageChanged: widget.onLanguageChanged),
@@ -87,6 +91,8 @@ class _MainLayoutState extends State<MainLayout> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
+                  // Nút đổi theme bên trái
+
                   // Logo hoặc tên app (căn giữa)
                   SizedBox(
                     height:

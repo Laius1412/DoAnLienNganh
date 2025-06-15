@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dat_ve_xe/views/auth/register_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 class PersonalScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -23,24 +24,32 @@ class _PersonalScreenState extends State<PersonalScreen> {
   String? _avatarUrl;
   bool _isLoading = true;
   bool _isLoginSuccess = false;
+  StreamSubscription<User?>? _authSubscription;
 
   @override
   void initState() {
     super.initState();
-    _loadLoginState();
-  }
-
-  Future<void> _loadLoginState() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoginSuccess = prefs.getBool('isLoginSuccess') ?? false;
+    _authSubscription = _auth.authStateChanges().listen((user) {
+      if (mounted) {
+        _loadUserData();
+      }
     });
     _loadUserData();
   }
 
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
+
   Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final user = _auth.currentUser;
-    if (user != null && _isLoginSuccess) {
+    if (user != null) {
       try {
         final doc = await _firestore.collection('users').doc(user.uid).get();
         if (doc.exists) {
@@ -48,14 +57,29 @@ class _PersonalScreenState extends State<PersonalScreen> {
             _userName = doc.data()?['name'] ?? 'Chưa cập nhật tên';
             _avatarUrl = doc.data()?['avt'];
           });
-          setState(() => _isLoading = false);
+        } else {
+          setState(() {
+            _userName = 'Người dùng mới';
+            _avatarUrl = null;
+          });
         }
       } catch (e) {
         print('Error loading user data: $e');
-        setState(() => _isLoading = false);
+        setState(() {
+          _userName = 'Lỗi tải dữ liệu';
+          _avatarUrl = null;
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     } else {
-      setState(() => _isLoading = false);
+      setState(() {
+        _userName = null;
+        _avatarUrl = null;
+        _isLoading = false;
+      });
     }
   }
 
@@ -65,7 +89,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
     setState(() {
       _isLoginSuccess = value;
     });
-    _loadUserData();
   }
 
   Future<void> _logout() async {
@@ -74,19 +97,16 @@ class _PersonalScreenState extends State<PersonalScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoginSuccess', false);
       setState(() {
-        _userName = null;
-        _avatarUrl = null;
         _isLoginSuccess = false;
       });
     } catch (e) {
-      print('Error signing out: $e');
+      print('Error logging out: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final isLoggedIn = _auth.currentUser != null;
 
     return Scaffold(
       // appBar: AppBar(
@@ -110,7 +130,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Center(child: CircularProgressIndicator()),
               )
-            else if (isLoggedIn)
+            else if (_auth.currentUser != null)
               _buildUserProfile()
             else
               _buildLoginButton(),
@@ -176,7 +196,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
                         (context) => LoginScreen(
                           onLanguageChanged: widget.onLanguageChanged,
                           onLoginSuccess: () {
-                            _loadUserData();
+                            // Không cần gọi _loadUserData() ở đây nữa
+                            // vì stream authStateChanges đã xử lý
+                            // Tuy nhiên, nếu bạn muốn cập nhật SharedPreferences ngay lập tức, có thể gọi setLoginSuccess(true);
+                            // _loadUserData();
                           },
                           onLoginStateChanged: setLoginSuccess,
                         ),
@@ -205,7 +228,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
                         builder:
                             (context) => RegisterScreen(
                               onLanguageChanged: widget.onLanguageChanged,
-                              onLoginSuccess: () {},
+                              onLoginSuccess: () {
+                                // Tương tự, không cần gọi _loadUserData() ở đây nữa
+                                // _loadUserData();
+                              },
                               onLoginStateChanged: setLoginSuccess,
                             ),
                       ),

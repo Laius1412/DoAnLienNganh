@@ -60,5 +60,15 @@
     "confirmPassword": "Xác nhận mật khẩu",
     "passwordChangedSuccess": "Đổi mật khẩu thành công",
     "changePasswordFailed": "Đổi mật khẩu thất bại",
-    "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự"
+    "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự",
+    "deliveryPrice": "Bảng giá chuyển phát",
+    "createDelivery": "Tạo đơn hàng",
+    "trackDelivery": "Tra cứu đơn hàng",
+    "myDeliveries": "Đơn hàng của tôi",
+    "minWeight": "Khối lượng tối thiểu(kg)",
+    "maxWeight": "Khối lượng tối đa(kg)",
+    "price": "Giá cước(VND)",
+    "localDeliveryPrice": "Bảng giá cước chuyển phát khu vực {regionName}",
+    "interRegionDeliveryPrice": "Bảng giá cước chuyển phát {fromRegionName} - {toRegionName}",
+    "noPriceDataAvailable": "Không có dữ liệu giá nào."
 }
