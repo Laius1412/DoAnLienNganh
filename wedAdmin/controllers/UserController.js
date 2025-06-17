@@ -142,26 +142,29 @@ const update = async (req, res) => {
 
     const userData = docSnap.data();
     const uid = userData.uid;
-    if (!uid) {
-      return res.status(400).send('Không tìm thấy UID để cập nhật người dùng');
-    }
 
     const cleanedPhone = phone.trim().replace(/\s+/g, '');
     const formattedPhone = cleanedPhone.startsWith('0') ? `+84${cleanedPhone.slice(1)}` : cleanedPhone;
 
-    await auth.updateUser(uid, {
-      displayName: name,
-      email: email,
-      phoneNumber: formattedPhone
-    });
+    // Nếu có UID thì cập nhật Firebase Authentication
+    if (uid) {
+      await auth.updateUser(uid, {
+        displayName: name,
+        email: email,
+        phoneNumber: formattedPhone,
+      });
+    } else {
+      console.warn(`⚠ Người dùng ${docId} không có UID, chỉ cập nhật Firestore`);
+    }
 
+    // Cập nhật Firestore
     await docRef.update({
       name,
       email,
-      phone: cleanedPhone,
+      phone: formattedPhone,
       gender,
       birth,
-      role
+      role,
     });
 
     res.redirect('/user');
@@ -235,6 +238,31 @@ const exportExcel = async (req, res) => {
     res.status(500).send('Lỗi khi xuất file Excel');
   }
 };
+// Đồng bộ thêm field uid cho các user thiếu
+const syncUidField = async (req, res) => {
+  try {
+    const snapshot = await db.collection('users').get();
+    let updated = 0;
+
+    const batch = db.batch();
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (!data.uid) {
+        const docRef = db.collection('users').doc(doc.id);
+        batch.update(docRef, { uid: doc.id });
+        updated++;
+      }
+    });
+
+    await batch.commit();
+
+    res.send(`✅ Đã cập nhật ${updated} người dùng bị thiếu UID.`);
+  } catch (error) {
+    console.error('Lỗi khi đồng bộ UID:', error);
+    res.status(500).send('Lỗi khi đồng bộ UID');
+  }
+};
 
 // ✅ Export đầy đủ, đúng cách
 module.exports = {
@@ -244,5 +272,6 @@ module.exports = {
   edit,
   update,
   deleteMultiple,
-  exportExcel
+  exportExcel,
+  syncUidField
 };
