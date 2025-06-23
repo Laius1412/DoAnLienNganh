@@ -204,6 +204,104 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
+  // Bước 2: Chọn điểm đón/trả
+  void _showLocationSelectionSheet(bool isStartLocation) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 2/3,
+      ),
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFF3E8),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 253, 109, 37),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    isStartLocation ? 'Chọn điểm đón' : 'Chọn điểm trả',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _locations.length,
+                itemBuilder: (context, index) {
+                  final location = _locations[index];
+                  final isSelected = isStartLocation 
+                      ? location == _selectedStartLocation
+                      : location == _selectedEndLocation;
+                  
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.location_on,
+                        color: isSelected 
+                            ? const Color.fromARGB(255, 253, 109, 37)
+                            : Colors.grey,
+                      ),
+                      title: Text(
+                        location,
+                        style: TextStyle(
+                          color: isSelected 
+                              ? const Color.fromARGB(255, 253, 109, 37)
+                              : Colors.black87,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          if (isStartLocation) {
+                            _selectedStartLocation = location;
+                          } else {
+                            _selectedEndLocation = location;
+                          }
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy');
@@ -444,56 +542,64 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: _selectedStartLocation,
-                      decoration: InputDecoration(
-                        labelText: 'Điểm đón',
-                        border: OutlineInputBorder(
+                    InkWell(
+                      onTap: () => _showLocationSelectionSheet(true),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 253, 109, 37),
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        prefixIcon: const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 253, 109, 37)),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _selectedStartLocation ?? 'Chọn điểm đón',
+                                style: TextStyle(
+                                  color: _selectedStartLocation != null ? Colors.black : Colors.grey,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.arrow_drop_down),
+                          ],
                         ),
                       ),
-                      items: _locations.map((String location) {
-                        return DropdownMenuItem<String>(
-                          value: location,
-                          child: Text(location),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedStartLocation = newValue;
-                        });
-                      },
                     ),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: _selectedEndLocation,
-                      decoration: InputDecoration(
-                        labelText: 'Điểm trả',
-                        border: OutlineInputBorder(
+                    InkWell(
+                      onTap: () => _showLocationSelectionSheet(false),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 253, 109, 37),
+                            width: 1,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        prefixIcon: const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color.fromARGB(255, 253, 109, 37)),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _selectedEndLocation ?? 'Chọn điểm trả',
+                                style: TextStyle(
+                                  color: _selectedEndLocation != null ? Colors.black : Colors.grey,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.arrow_drop_down),
+                          ],
                         ),
                       ),
-                      items: _locations.map((String location) {
-                        return DropdownMenuItem<String>(
-                          value: location,
-                          child: Text(location),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedEndLocation = newValue;
-                        });
-                      },
                     ),
                   ],
                 ),
