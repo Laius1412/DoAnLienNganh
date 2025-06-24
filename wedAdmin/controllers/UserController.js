@@ -11,20 +11,25 @@ const index = async (req, res) => {
     const snapshot = await db.collection('users').get();
     const users = [];
 
-    snapshot.forEach(doc => {
+    for (const doc of snapshot.docs) {
       const data = doc.data();
       const name = (data.name || '').toLowerCase();
       const phone = (data.phone || '').toLowerCase();
 
       if (!query || name.includes(query) || phone.includes(query)) {
-        users.push({ id: doc.id, ...data });
+        // Đếm số lần đặt vé của user này
+        const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
+        const bookingCount = bookingSnap.size;
+        users.push({ id: doc.id, ...data, bookingCount });
       }
-    });
+    }
 
     res.render('users/index', {
       users,
       query: req.query.q || '',
-      layout: 'layout'
+      layout: 'layout',
+      updated: req.query.updated,
+      added: req.query.added
     });
   } catch (error) {
     console.error(error);
@@ -64,7 +69,7 @@ const store = async (req, res) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    res.redirect('/user');
+    res.redirect('/user?added=1');
   } catch (error) {
     console.error('Chi tiết lỗi khi thêm người dùng:', error);
 
@@ -167,7 +172,7 @@ const update = async (req, res) => {
       role,
     });
 
-    res.redirect('/user');
+    res.redirect('/user?updated=1');
   } catch (error) {
     console.error('Lỗi khi cập nhật người dùng:', error);
     let message = 'Lỗi khi cập nhật người dùng';
