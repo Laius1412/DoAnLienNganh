@@ -8,12 +8,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> _locations = [
-    'Hà Nội',
-    'Nghệ An',
-    'Hồ Chí Minh',
-    'Đà Nẵng',
-  ];
+  final List<String> _locations = ['Hà Nội', 'Nghệ An', 'Hồ Chí Minh', 'Đà Nẵng'];
 
   String? _selectedStart = 'Hà Nội';
   String? _selectedDestination = 'Nghệ An';
@@ -33,6 +28,84 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showLocationPicker(bool isStart) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 253, 109, 37),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    isStart ? 'Chọn điểm đi' : 'Chọn điểm đến',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _locations.length,
+                itemBuilder: (context, index) {
+                  final location = _locations[index];
+                  final isSelected = isStart 
+                      ? location == _selectedStart 
+                      : location == _selectedDestination;
+                  
+                  return ListTile(
+                    title: Text(
+                      location,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected ? Color.fromARGB(255, 253, 109, 37) : Colors.black,
+                      ),
+                    ),
+                    trailing: isSelected 
+                        ? const Icon(Icons.check, color: Color.fromARGB(255, 253, 109, 37))
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        if (isStart) {
+                          _selectedStart = location;
+                        } else {
+                          _selectedDestination = location;
+                        }
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('EEEE, dd/MM/yyyy', 'vi');
@@ -42,8 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('Đặt vé xe', style: TextStyle(color: Colors.orange)),
-        iconTheme: IconThemeData(color: Colors.orange),
+        title: Text('Đặt vé xe', style: TextStyle(color: Color.fromARGB(255, 253, 109, 37))),
+        iconTheme: IconThemeData(color: Color.fromARGB(255, 253, 109, 37)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -52,77 +125,51 @@ class _HomeScreenState extends State<HomeScreen> {
             // Hộp chọn điểm đi & đến
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.orange, width: 1.5),
+                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 1.5),
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.radio_button_checked, color: Colors.orange),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: DropdownButton<String>(
-                          value: _selectedStart,
-                          isExpanded: true,
-                          iconEnabledColor: Colors.orange,
-                          dropdownColor: Colors.white,
-                          style: TextStyle(color: Colors.orange, fontSize: 16),
-                          items:
-                              _locations
-                                  .map(
-                                    (loc) => DropdownMenuItem(
-                                      value: loc,
-                                      child: Text(loc),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedStart = value;
-                            });
-                          },
+                  InkWell(
+                    onTap: () => _showLocationPicker(true),
+                    child: Row(
+                      children: [
+                        Icon(Icons.radio_button_checked, color: Color.fromARGB(255, 253, 109, 37)),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _selectedStart ?? 'Chọn điểm đi',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 253, 109, 37),
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        Icon(Icons.arrow_drop_down, color: Color.fromARGB(255, 253, 109, 37)),
+                      ],
+                    ),
                   ),
-                  Divider(color: Colors.orange),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, color: Colors.orange),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: DropdownButton<String>(
-                          value: _selectedDestination,
-                          isExpanded: true,
-                          iconEnabledColor: Colors.orange,
-                          dropdownColor: Colors.white,
-                          style: TextStyle(color: Colors.orange, fontSize: 16),
-                          items:
-                              _locations
-                                  .map(
-                                    (loc) => DropdownMenuItem(
-                                      value: loc,
-                                      child: Text(loc),
-                                    ),
-                                  )
-                                  .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedDestination = value;
-                            });
-                          },
+                  Divider(color: Color.fromARGB(255, 253, 109, 37)),
+                  InkWell(
+                    onTap: () => _showLocationPicker(false),
+                    child: Row(
+                      children: [
+                        Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _selectedDestination ?? 'Chọn điểm đến',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 253, 109, 37),
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ],
+                        Icon(Icons.arrow_drop_down, color: Color.fromARGB(255, 253, 109, 37)),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -131,29 +178,26 @@ class _HomeScreenState extends State<HomeScreen> {
             // Hộp chọn ngày
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.orange, width: 1.5),
+                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 1.5),
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
               ),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: Colors.orange),
+                  Icon(Icons.calendar_today, color: Color.fromARGB(255, 253, 109, 37)),
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       _selectedDate != null
                           ? 'Ngày đi: ${dateFormat.format(_selectedDate!)}'
                           : 'Chưa chọn ngày đi',
-                      style: TextStyle(color: Colors.orange),
+                      style: TextStyle(color: Color.fromARGB(255, 253, 109, 37)),
                     ),
                   ),
                   TextButton(
                     onPressed: _pickDate,
-                    child: Text(
-                      'Chọn ngày',
-                      style: TextStyle(color: Colors.orange),
-                    ),
+                    child: Text('Chọn ngày', style: TextStyle(color: Color.fromARGB(255, 253, 109, 37))),
                   ),
                 ],
               ),
@@ -162,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Nút tìm chuyến đi
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Color.fromARGB(255, 253, 109, 37),
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -172,9 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 if (_selectedStart == _selectedDestination) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Điểm đi và đến không được trùng nhau'),
-                    ),
+                    SnackBar(content: Text('Điểm đi và đến không được trùng nhau')),
                   );
                   return;
                 }
@@ -190,12 +232,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (_) => SearchResultScreen(
-                          startLocation: _selectedStart!,
-                          destination: _selectedDestination!,
-                          selectedDate: _selectedDate!,
-                        ),
+                    builder: (_) => SearchResultScreen(
+                      startLocation: _selectedStart!,
+                      destination: _selectedDestination!,
+                      selectedDate: _selectedDate!,
+                    ),
                   ),
                 );
               },

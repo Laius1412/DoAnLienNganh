@@ -519,6 +519,101 @@ class S {
       args: [],
     );
   }
+
+  /// `Delivery Price`
+  String get deliveryPrice {
+    return Intl.message(
+      'Delivery Price',
+      name: 'deliveryPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Delivery`
+  String get createDelivery {
+    return Intl.message(
+      'Create Delivery',
+      name: 'createDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track Delivery`
+  String get trackDelivery {
+    return Intl.message(
+      'Track Delivery',
+      name: 'trackDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Deliveries`
+  String get myDeliveries {
+    return Intl.message(
+      'My Deliveries',
+      name: 'myDeliveries',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Min Weight (kg)`
+  String get minWeight {
+    return Intl.message(
+      'Min Weight (kg)',
+      name: 'minWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max Weight (kg)`
+  String get maxWeight {
+    return Intl.message(
+      'Max Weight (kg)',
+      name: 'maxWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price (VND)`
+  String get price {
+    return Intl.message('Price (VND)', name: 'price', desc: '', args: []);
+  }
+
+  /// `Local Delivery Price for {regionName}`
+  String localDeliveryPrice(Object regionName) {
+    return Intl.message(
+      'Local Delivery Price for $regionName',
+      name: 'localDeliveryPrice',
+      desc: '',
+      args: [regionName],
+    );
+  }
+
+  /// `Delivery Price from {fromRegionName} to {toRegionName}`
+  String interRegionDeliveryPrice(Object fromRegionName, Object toRegionName) {
+    return Intl.message(
+      'Delivery Price from $fromRegionName to $toRegionName',
+      name: 'interRegionDeliveryPrice',
+      desc: '',
+      args: [fromRegionName, toRegionName],
+    );
+  }
+
+  /// `No price data available.`
+  String get noPriceDataAvailable {
+    return Intl.message(
+      'No price data available.',
+      name: 'noPriceDataAvailable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

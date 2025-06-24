@@ -20,6 +20,12 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'vi';
 
+  static String m0(fromRegionName, toRegionName) =>
+      "Bảng giá cước chuyển phát ${fromRegionName} - ${toRegionName}";
+
+  static String m1(regionName) =>
+      "Bảng giá cước chuyển phát khu vực ${regionName}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aboutUs": MessageLookupByLibrary.simpleMessage("Giới thiệu"),
@@ -38,11 +44,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "Xác nhận mật khẩu",
     ),
+    "createDelivery": MessageLookupByLibrary.simpleMessage("Tạo đơn hàng"),
     "currentPassword": MessageLookupByLibrary.simpleMessage(
       "Mật khẩu hiện tại",
     ),
     "darkMode": MessageLookupByLibrary.simpleMessage("Chế độ tối"),
     "delivery": MessageLookupByLibrary.simpleMessage("Chuyển phát"),
+    "deliveryPrice": MessageLookupByLibrary.simpleMessage(
+      "Bảng giá chuyển phát",
+    ),
     "editProfile": MessageLookupByLibrary.simpleMessage(
       "Chỉnh sửa thông tin cá nhân",
     ),
@@ -66,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ifDontHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Bạn chưa có tài khoản?",
     ),
+    "interRegionDeliveryPrice": m0,
     "invalidEmail": MessageLookupByLibrary.simpleMessage(
       "Email không đúng hoặc không tồn tại",
     ),
@@ -76,6 +87,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vui lòng nhập số điện thoại hợp lệ gồm 10 chữ số và bắt đầu bằng số 0",
     ),
     "language": MessageLookupByLibrary.simpleMessage("Ngôn ngữ"),
+    "localDeliveryPrice": m1,
     "login": MessageLookupByLibrary.simpleMessage("Đăng nhập"),
     "loginFailed": MessageLookupByLibrary.simpleMessage("Đăng nhập thất bại"),
     "loginSuccess": MessageLookupByLibrary.simpleMessage(
@@ -83,9 +95,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "logout": MessageLookupByLibrary.simpleMessage("Đăng xuất"),
     "male": MessageLookupByLibrary.simpleMessage("Nam"),
+    "maxWeight": MessageLookupByLibrary.simpleMessage("Khối lượng tối đa(kg)"),
+    "minWeight": MessageLookupByLibrary.simpleMessage(
+      "Khối lượng tối thiểu(kg)",
+    ),
+    "myDeliveries": MessageLookupByLibrary.simpleMessage("Đơn hàng của tôi"),
     "myTickets": MessageLookupByLibrary.simpleMessage("Vé của tôi"),
     "name": MessageLookupByLibrary.simpleMessage("Họ và tên"),
     "newPassword": MessageLookupByLibrary.simpleMessage("Mật khẩu mới"),
+    "noPriceDataAvailable": MessageLookupByLibrary.simpleMessage(
+      "Không có dữ liệu giá nào.",
+    ),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Cài đặt thông báo",
     ),
@@ -109,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "pleaseLogin": MessageLookupByLibrary.simpleMessage("Vui lòng đăng nhập"),
     "policy": MessageLookupByLibrary.simpleMessage("Chính sách"),
+    "price": MessageLookupByLibrary.simpleMessage("Giá cước(VND)"),
     "register": MessageLookupByLibrary.simpleMessage("Đăng ký"),
     "registerFailed": MessageLookupByLibrary.simpleMessage("Đăng ký thất bại!"),
     "registerSuccess": MessageLookupByLibrary.simpleMessage(
@@ -120,6 +141,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("Cài đặt"),
     "tapToSelect": MessageLookupByLibrary.simpleMessage("Chạm để chọn ngày"),
     "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),
+    "trackDelivery": MessageLookupByLibrary.simpleMessage("Tra cứu đơn hàng"),
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Xác thực thất bại",
     ),
