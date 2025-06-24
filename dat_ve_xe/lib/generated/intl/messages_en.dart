@@ -20,6 +20,11 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(fromRegionName, toRegionName) =>
+      "Delivery Price from ${fromRegionName} to ${toRegionName}";
+
+  static String m1(regionName) => "Local Delivery Price for ${regionName}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aboutUs": MessageLookupByLibrary.simpleMessage("About us"),
@@ -34,9 +39,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Failed to change password",
     ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+    "createDelivery": MessageLookupByLibrary.simpleMessage("Create Delivery"),
     "currentPassword": MessageLookupByLibrary.simpleMessage("Current Password"),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "delivery": MessageLookupByLibrary.simpleMessage("Delivery"),
+    "deliveryPrice": MessageLookupByLibrary.simpleMessage("Delivery Price"),
     "editProfile": MessageLookupByLibrary.simpleMessage("Edit profie"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "emailAlreadyUsed": MessageLookupByLibrary.simpleMessage(
@@ -58,20 +65,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "ifDontHaveAccount": MessageLookupByLibrary.simpleMessage(
       "You don\'t have an account?",
     ),
+    "interRegionDeliveryPrice": m0,
     "invalidEmail": MessageLookupByLibrary.simpleMessage("Invalid email!"),
     "invalidOtp": MessageLookupByLibrary.simpleMessage("Invalid OTP"),
     "invalidPhone": MessageLookupByLibrary.simpleMessage(
       "Please enter a valid 10-digit phone number starting with 0",
     ),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
+    "localDeliveryPrice": m1,
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "loginFailed": MessageLookupByLibrary.simpleMessage("Login Failed"),
     "loginSuccess": MessageLookupByLibrary.simpleMessage("Login success!"),
     "logout": MessageLookupByLibrary.simpleMessage("Logout"),
     "male": MessageLookupByLibrary.simpleMessage("Male"),
+    "maxWeight": MessageLookupByLibrary.simpleMessage("Max Weight (kg)"),
+    "minWeight": MessageLookupByLibrary.simpleMessage("Min Weight (kg)"),
+    "myDeliveries": MessageLookupByLibrary.simpleMessage("My Deliveries"),
     "myTickets": MessageLookupByLibrary.simpleMessage("My Tickets"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
+    "noPriceDataAvailable": MessageLookupByLibrary.simpleMessage(
+      "No price data available.",
+    ),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Notification Settings",
     ),
@@ -95,6 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "pleaseLogin": MessageLookupByLibrary.simpleMessage("Please login"),
     "policy": MessageLookupByLibrary.simpleMessage("Policy"),
+    "price": MessageLookupByLibrary.simpleMessage("Price (VND)"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registerFailed": MessageLookupByLibrary.simpleMessage("Register failed!"),
     "registerSuccess": MessageLookupByLibrary.simpleMessage(
@@ -106,6 +122,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "tapToSelect": MessageLookupByLibrary.simpleMessage("Tap to select"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),
+    "trackDelivery": MessageLookupByLibrary.simpleMessage("Track Delivery"),
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Verification Failed",
     ),
