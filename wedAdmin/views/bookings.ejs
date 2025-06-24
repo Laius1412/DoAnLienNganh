@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quản lý vé đã đặt</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Quản lý vé đã đặt</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Mã Booking</th>
+        <th>SĐT Khách hàng</th>
+        <th>Ngày đi</th>
+        <th>Giờ khởi hành</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% bookings.forEach(function(booking) { %>
+        <tr>
+          <td><%= booking.id %></td>
+          <td><%= booking.phone %></td>
+          <td><%= booking.date %></td>
+          <td><%= booking.startTime %></td>
+          <td><%= booking.totalPrice %></td>
+          <td><%= booking.statusBooking %></td>
+          <td>
+            <a href="/bookings/<%= booking.id %>">Xem chi tiết</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html> 
