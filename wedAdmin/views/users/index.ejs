@@ -79,7 +79,8 @@
                           data-phone="<%= user.phone %>"
                           data-gender="<%= user.gender %>"
                           data-birth="<%= user.birth %>"
-                          data-role="<%= user.role %>">
+                          data-role="<%= user.role %>"
+                          data-booking-count="<%= user.bookingCount %>">
                     Xem thông tin
                   </button>
                 </li>
@@ -119,40 +120,39 @@
 <!-- Form trượt từ dưới lên của phần thêm người dùng  -->
 <div id="userFormModal" class="modal-overlay">
   <div class="modal-content">
-    <h4 class="mb-3">Thêm người dùng</h4>
+    <h4 class="mb-3 modal-title-fixed">Thêm người dùng</h4>
     <form method="POST" action="/user">
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="name">Họ tên:</label>
-        <input type="text" name="name" class="form-control" required>
+        <input type="text" name="name" class="form-control form-control-sm" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="email">Email:</label>
-        <input type="email" name="email" class="form-control" required>
+        <input type="email" name="email" class="form-control form-control-sm" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="phone">Số điện thoại:</label>
-        <input type="text" name="phone" class="form-control" required>
+        <input type="text" name="phone" class="form-control form-control-sm" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="password">Mật khẩu:</label>
-        <input type="password" name="password" class="form-control" required>
+        <input type="password" name="password" class="form-control form-control-sm" required>
       </div>
-
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="gender">Giới tính:</label>
-        <select name="gender" class="form-control" required>
+        <select name="gender" class="form-control form-control-sm" required>
           <option value="">-- Chọn giới tính --</option>
           <option value="male">Nam</option>
           <option value="female">Nữ</option>
         </select>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="birth">Ngày sinh:</label>
-        <input type="date" name="birth" class="form-control" required>
+        <input type="date" name="birth" class="form-control form-control-sm" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="role">Vai trò:</label>
-        <select name="role" class="form-control" required>
+        <select name="role" class="form-control form-control-sm" required>
           <option value="">-- Chọn vai trò --</option>
           <option value="customer">Người dùng</option>
           <option value="admin">Quản trị</option>
@@ -245,6 +245,23 @@
     transform: translateY(100%);
     animation: slideUp 0.4s ease-out forwards;
     box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-title-fixed {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .modal-content form .mb-3, .modal-content form .mb-2 {
+    margin-bottom: 10px !important;
   }
 
   @keyframes slideUp {
@@ -399,6 +416,10 @@
         <label class="fw-bold">Vai trò:</label>
         <p id="viewRole"></p>
       </div>
+      <div class="mb-3">
+        <label class="fw-bold">Số lần đặt vé:</label>
+        <p id="viewBookingCount"></p>
+      </div>
     </div>
     <div class="d-flex justify-content-end">
       <button type="button" class="btn btn-secondary" id="closeViewUserForm">Đóng</button>
@@ -423,6 +444,7 @@ document.querySelectorAll('.btn-view-user').forEach(button => {
     document.getElementById('viewGender').textContent = data.gender === 'female' ? 'Nữ' : 'Nam';
     document.getElementById('viewBirth').textContent = data.birth ? new Date(data.birth).toLocaleDateString('vi-VN') : '';
     document.getElementById('viewRole').textContent = data.role === 'admin' ? 'Quản trị' : 'Người dùng';
+    document.getElementById('viewBookingCount').textContent = data.bookingCount || 0;
     
     // Hiển thị modal
     modal.classList.add('active');
@@ -450,4 +472,30 @@ document.querySelector('#viewUserModal .modal-content').addEventListener('click'
   e.stopPropagation();
 });
 </script>
+
+<% if (typeof updated !== 'undefined' && updated) { %>
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Cập nhật thành công',
+    text: 'Người dùng đã được cập nhật!',
+    timer: 2000,
+    showConfirmButton: false,
+    position: 'center'
+  });
+</script>
+<% } %>
+
+<% if (typeof added !== 'undefined' && added) { %>
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Thêm thành công',
+    text: 'Người dùng đã được thêm!',
+    timer: 2000,
+    showConfirmButton: false,
+    position: 'center'
+  });
+</script>
+<% } %>
 

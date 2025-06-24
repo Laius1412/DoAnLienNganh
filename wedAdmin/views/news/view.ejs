@@ -1,7 +1,44 @@
 <!-- view.ejs -->
 <div class="container mt-5">
-  <h2 class="text-primary mb-3"><%= newsItem.titles %></h2>
-  <img src="<%= newsItem.Img %>" alt="Ảnh bài viết" class="img-fluid mb-3">
-  <div><%- newsItem.contents %></div>
-  <a href="/news" class="btn btn-secondary mt-3">Quay lại danh sách</a>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold">
+      Chi tiết bài viết
+    </h2>
+    <a href="/news" class="btn btn-outline-primary px-4 py-2 rounded-3 shadow">
+      <i class="bi bi-arrow-left me-2"></i>Quay lại danh sách
+    </a>
+  </div>
+
+  <div class="card border-0 shadow rounded-4 p-4">
+    <!-- Tiêu đề + Ngày tạo -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+      <h3 class="fw-bold text-dark mb-0"><%= newsItem.titles %></h3>
+      <span class="badge bg-light text-dark border rounded-pill px-3 py-2 shadow-sm mt-2 mt-md-0">
+        <i class="bi bi-calendar-event me-1"></i>
+        <%= new Date(newsItem.createAt._seconds * 1000).toLocaleDateString('vi-VN', {
+          day: '2-digit', month: '2-digit', year: 'numeric'
+        }) %>
+      </span>
+    </div>
+
+    <!-- Ảnh bài viết -->
+    <div class="text-center mb-4">
+      <img src="<%= newsItem.Img %>" alt="Ảnh bài viết"
+           class="img-fluid rounded-4 shadow border border-2"
+           style="max-height: 400px; object-fit: cover;" />
+    </div>
+
+    <!-- Nội dung -->
+    <div class="mb-4">
+      <h5 class="fw-semibold mb-3 text-success">Nội dung bài viết</h5>
+      <div class="fs-5 lh-lg" style="white-space: pre-line;">
+        <%- newsItem.contents %>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Bootstrap Icons (nếu chưa thêm) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

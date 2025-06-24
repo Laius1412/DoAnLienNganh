@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chi tiết vé đã đặt</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #eee; }
+    .actions { margin-top: 20px; }
+    .actions form { display: inline; }
+  </style>
+</head>
+<body>
+  <h1>Chi tiết vé đã đặt</h1>
+  <table>
+    <tr><th>Mã Booking</th><td><%= booking.id %></td></tr>
+    <tr><th>Khách hàng</th><td>
+      <% if (booking.user) { %>
+        <div>Họ tên: <%= booking.user.name %></div>
+        <div>SĐT: <%= booking.user.phone %></div>
+        <div>Email: <%= booking.user.email %></div>
+      <% } else { %>
+        Không có thông tin khách hàng
+      <% } %>
+    </td></tr>
+    <tr><th>Ngày đi</th><td><%= booking.seatPosition?.date %></td></tr>
+    <tr><th>Số ghế</th><td><%= booking.seatPosition?.numberSeat %></td></tr>
+    <tr><th>Giờ khởi hành</th><td><%= booking.startTime %></td></tr>
+    <tr><th>Giờ kết thúc</th><td><%= booking.endTime %></td></tr>
+    <tr><th>Điểm đi</th><td><%= booking.pickUpPoint %></td></tr>
+    <tr><th>Điểm đến</th><td><%= booking.dropOffPoint %></td></tr>
+    <tr><th>Tổng tiền</th><td><%= booking.totalPrice %></td></tr>
+    <tr><th>Trạng thái</th><td><%= booking.statusBooking %></td></tr>
+    <tr><th>Thông tin xe</th><td>
+      <% if (booking.vehicle) { %>
+        <div>Tên xe: <%= booking.vehicle.nameVehicle %></div>
+        <div>Biển số: <%= booking.vehicle.plate %></div>
+        <div>Loại xe: <%= booking.vehicleType?.nameType %></div>
+        <div>Giá vé: <%= booking.vehicle.price %></div>
+      <% } else { %>
+        Không có thông tin xe
+      <% } %>
+    </td></tr>
+    <tr><th>Thông tin chuyến</th><td>
+      <% if (booking.trip) { %>
+        <div>Tên chuyến: <%= booking.trip.nameTrip %></div>
+        <div>Mã chuyến: <%= booking.trip.tripCode %></div>
+        <div>Điểm đi: <%= booking.trip.startLocation %></div>
+        <div>Điểm đến: <%= booking.trip.destination %></div>
+        <div>Loại tuyến: <%= booking.trip.vRouter %></div>
+      <% } else { %>
+        Không có thông tin chuyến
+      <% } %>
+    </td></tr>
+  </table>
+  <div class="actions">
+    <% if (booking.statusBooking === 'pending') { %>
+      <form method="post" action="/bookings/<%= booking.id %>/confirm">
+        <button type="submit">Xác nhận đặt vé</button>
+      </form>
+      <form method="post" action="/bookings/<%= booking.id %>/cancel">
+        <button type="submit">Hủy vé</button>
+      </form>
+    <% } %>
+    <a href="/bookings">Quay lại danh sách</a>
+  </div>
+</body>
+</html> 

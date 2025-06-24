@@ -9,6 +9,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const tripRoutes = require("./routes/trip");
 const vehicleRoutes = require('./routes/vehicle');
 const newsRouter = require('./routes/news');
+const bookingRoute = require('./routes/booking');
 
 // Middleware đọc dữ liệu từ form
 app.use(express.urlencoded({ extended: true }));
@@ -51,3 +52,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));
 
 app.use('/news', newsRouter);
+app.use('/bookings', bookingRoute);
