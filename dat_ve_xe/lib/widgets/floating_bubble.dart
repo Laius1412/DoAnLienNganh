@@ -47,7 +47,7 @@ class FloatingBubblesManager {
         ShakingWidget(
           child: CircleIconButton(
             color: Colors.deepPurple,
-            icon: Icons.smart_toy,
+            icon: Icons.chat,
             heroTag: "chat",
             onPressed: () {
               print("Đi tới Chatbot");

@@ -37,9 +37,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tài khoản không chính xác hoặc không tồn tại",
     ),
     "birthDate": MessageLookupByLibrary.simpleMessage("Ngày sinh"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Đóng"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Đổi mật khẩu"),
     "changePasswordFailed": MessageLookupByLibrary.simpleMessage(
       "Đổi mật khẩu thất bại",
+    ),
+    "checkConnection": MessageLookupByLibrary.simpleMessage(
+      "Vui lòng kiểm tra kết nối mạng của bạn",
     ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "Xác nhận mật khẩu",
@@ -103,6 +107,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "myTickets": MessageLookupByLibrary.simpleMessage("Vé của tôi"),
     "name": MessageLookupByLibrary.simpleMessage("Họ và tên"),
     "newPassword": MessageLookupByLibrary.simpleMessage("Mật khẩu mới"),
+    "noConnection": MessageLookupByLibrary.simpleMessage(
+      "Không có kết nối mạng",
+    ),
     "noPriceDataAvailable": MessageLookupByLibrary.simpleMessage(
       "Không có dữ liệu giá nào.",
     ),
@@ -137,6 +144,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "rememberMe": MessageLookupByLibrary.simpleMessage("Nhớ mật khẩu"),
     "requiredField": MessageLookupByLibrary.simpleMessage("Yêu cầu bắt buộc"),
+    "retry": MessageLookupByLibrary.simpleMessage("Thử lại"),
     "sendCode": MessageLookupByLibrary.simpleMessage("Gửi mã"),
     "settings": MessageLookupByLibrary.simpleMessage("Cài đặt"),
     "tapToSelect": MessageLookupByLibrary.simpleMessage("Chạm để chọn ngày"),

@@ -57,7 +57,6 @@
     "changePassword": "Đổi mật khẩu",
     "currentPassword": "Mật khẩu hiện tại",
     "newPassword": "Mật khẩu mới",
-    "confirmPassword": "Xác nhận mật khẩu",
     "passwordChangedSuccess": "Đổi mật khẩu thành công",
     "changePasswordFailed": "Đổi mật khẩu thất bại",
     "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự",
@@ -70,5 +69,9 @@
     "price": "Giá cước(VND)",
     "localDeliveryPrice": "Bảng giá cước chuyển phát khu vực {regionName}",
     "interRegionDeliveryPrice": "Bảng giá cước chuyển phát {fromRegionName} - {toRegionName}",
-    "noPriceDataAvailable": "Không có dữ liệu giá nào."
+    "noPriceDataAvailable": "Không có dữ liệu giá nào.",
+    "noConnection": "Không có kết nối mạng",
+    "retry": "Thử lại",
+    "cancel": "Đóng",
+    "checkConnection": "Vui lòng kiểm tra kết nối mạng của bạn"
 }
