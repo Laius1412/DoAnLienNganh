@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/widgets/success_overlay.dart';
-import 'package:dat_ve_xe/views/delivery_screen/delivery_screen.dart';
+import 'package:dat_ve_xe/layouts/main_layout.dart';
 
 class DetailsOrdersScreen extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -56,13 +56,17 @@ class DetailsOrdersScreen extends StatelessWidget {
                           (_) => SuccessOverlay(
                             message: loc.orderCreated,
                             onPressed: () {
-                              Navigator.of(context).push(
+                              Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                   builder:
-                                      (context) => DeliveryScreen(
-                                        onLanguageChanged: (Locale) {},
+                                      (context) => MainLayout(
+                                        selected: 2,
+                                        onLanguageChanged: (locale) {
+                                          // Implement your language change logic here
+                                        },
                                       ),
                                 ),
+                                (route) => false,
                               );
                             },
                           ),
