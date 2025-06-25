@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/personal_screen/login_request_card.dart';
+import 'package:dat_ve_xe/views/myticket_screen/detail_my_tickets.dart';
 
 class MyTicketScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
+
   const MyTicketScreen({Key? key, required this.onLanguageChanged}) : super(key: key);
 
   @override
@@ -92,27 +94,41 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
 
   List<Booking> _filterByDate(List<Booking> list) {
     if (_selectedDate == null) return list;
-    return list.where((b) =>
-      b.createDate.year == _selectedDate!.year &&
-      b.createDate.month == _selectedDate!.month &&
-      b.createDate.day == _selectedDate!.day).toList();
+    return list.where((b) {
+      final travelDate = b.getTravelDate();
+      return travelDate != null &&
+          travelDate.year == _selectedDate!.year &&
+          travelDate.month == _selectedDate!.month &&
+          travelDate.day == _selectedDate!.day;
+    }).toList();
   }
 
   Widget _buildTicketList(List<Booking> tickets) {
-    if (tickets.isEmpty) {
-      return const Center(
-        child: Text('Không có vé nào', style: TextStyle(fontSize: 16)),
-      );
+    final filteredTickets = _filterByDate(tickets);
+
+    if (filteredTickets.isEmpty) {
+      return const Center(child: Text('Không có vé nào', style: TextStyle(fontSize: 16)));
     }
 
     return RefreshIndicator(
       onRefresh: _loadBookings,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: tickets.length,
+        itemCount: filteredTickets.length,
         itemBuilder: (context, index) {
-          final booking = tickets[index];
-          return Card(
+          final booking = filteredTickets[index];
+          final travelDate = booking.getTravelDate();
+
+          return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailMyTicket(booking: booking),
+                  ),
+                );
+              },
+          child:  Card(
             elevation: 4,
             margin: const EdgeInsets.only(bottom: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -125,10 +141,8 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Mã vé: ${booking.id.substring(0, 8)}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
+                      Text('Mã vé: ${booking.id.substring(0, 8)}',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
@@ -146,6 +160,8 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                     ],
                   ),
                   const SizedBox(height: 12),
+
+                  // Body
                   if (booking.seats.isNotEmpty && booking.seats[0].vehicle != null)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +172,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                         const SizedBox(height: 4),
                         Text('Ghế: ${booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ')}'),
                         const SizedBox(height: 4),
-                        Text('Ngày đi: ${DateFormat('dd/MM/yyyy').format(booking.createDate)}'),
+                        Text('Ngày đi: ${travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'}'),
                         const SizedBox(height: 4),
                         Text(
                           'Tổng tiền: ${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)}đ',
@@ -170,10 +186,24 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                 ],
               ),
             ),
+          ),
           );
         },
       ),
     );
+  }
+
+  void _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2100),
+      locale: const Locale('vi', 'VN'),
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
   }
 
   @override
@@ -196,62 +226,68 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
     }
 
     final now = DateTime.now();
-    final currentTickets = _filterByDate(_bookings.where((b) => b.createDate.isAfter(now)).toList());
-    final pastTickets = _filterByDate(_bookings.where((b) => b.createDate.isBefore(now)).toList());
+    final currentTickets = _bookings.where((b) => b.getTravelDate()?.isAfter(now) ?? false).toList();
+    final pastTickets = _bookings.where((b) => b.getTravelDate()?.isBefore(now) ?? false).toList();
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          elevation: 0,
-          title: Row(
-            children: [
-              Expanded(child: Text(t.myTickets)),
-              IconButton(
-                icon: const Icon(Icons.calendar_today, color: Color.fromARGB(255, 253, 109, 37)),
-                onPressed: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate ?? DateTime.now(),
-                    firstDate: DateTime(2023),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _selectedDate = picked;
-                    });
-                  }
-                },
-              ),
-              if (_selectedDate != null)
+            title: Text(t.myTickets),
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black87,
+            elevation: 0,
+            actions: [
+                if (_selectedDate != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Center(
+                      child: Text(
+                        DateFormat('dd/MM/yyyy').format(_selectedDate!),
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (_selectedDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    tooltip: 'Xóa ngày đã chọn',
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = null;
+                      });
+                    },
+                  ),
                 IconButton(
-                  icon: const Icon(Icons.clear, color: Colors.grey),
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = null;
-                    });
-                  },
+                  icon: const Icon(Icons.calendar_today),
+                  tooltip: 'Chọn ngày',
+                  onPressed: _pickDate,
                 ),
-            ],
-          ),
-          bottom: TabBar(
-            controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black87,
-            indicator: BoxDecoration(
-              color: const Color.fromARGB(255, 253, 109, 37),
-              borderRadius: BorderRadius.circular(10),
+              ],
+
+            
+            bottom: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.black87,
+              indicator: BoxDecoration(
+                color: const Color.fromARGB(255, 253, 109, 37),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              tabs: const [
+                Tab(text: 'Vé hiện tại'),
+                Tab(text: 'Vé đã đi'),
+              ],
             ),
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            tabs: const [
-              Tab(text: 'Vé hiện tại'),
-              Tab(text: 'Vé đã đi'),
-            ],
+            
           ),
-        ),
+
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : TabBarView(
