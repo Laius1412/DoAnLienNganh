@@ -26,7 +26,7 @@ class BookingService {
     _expiryCheckTimer?.cancel();
   }
 
-  // Create a new booking with pending_payment status
+  // Create a new booking with pending_payment status (dùng transaction để tránh double booking)
   Future<String?> createBooking({
     required String userId,
     required String startLocationBooking,
@@ -35,102 +35,123 @@ class BookingService {
     required List<Map<String, dynamic>> seatDetails,
     required DateTime selectedDate,
   }) async {
+    final dateStr = "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+    final bookingRef = _firestore.collection('bookings').doc();
+    final now = DateTime.now();
+    final paymentDeadline = now.add(const Duration(minutes: 5));
+
     try {
-      final batch = _firestore.batch();
-      final bookingRef = _firestore.collection('bookings').doc();
-      final List<Map<String, dynamic>> seatsData = [];
-      
-      final dateStr = "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+      return await _firestore.runTransaction((transaction) async {
+        final List<Map<String, dynamic>> seatsData = [];
+        final List<DocumentReference> seatRefs = [];
+        final List<DocumentSnapshot?> seatDocs = [];
+        final List<Vehicle> vehicles = [];
 
-      // Check if seats are available
-      for (var detail in seatDetails) {
-        final numberSeat = detail['seatPosition']['numberSeat'] as String;
-        final vehicle = detail['vehicle'] as Vehicle;
-        
-        final existingSeatQuery = await _firestore
-            .collection('seatPositions')
-            .where('numberSeat', isEqualTo: numberSeat)
-            .where('vehicleId', isEqualTo: vehicle.id)
-            .where('isBooked', isEqualTo: true)
-            .where('date', isEqualTo: dateStr)
-            .get();
+        // 1. Đọc hết các seatPosition liên quan
+        for (var detail in seatDetails) {
+          final numberSeat = detail['seatPosition']['numberSeat'] as String;
+          final vehicle = detail['vehicle'] as Vehicle;
+          vehicles.add(vehicle);
 
-        if (existingSeatQuery.docs.isNotEmpty) {
-          throw Exception('Ghế $numberSeat đã được đặt cho ngày ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}');
+          final seatQuery = await _firestore
+              .collection('seatPositions')
+              .where('numberSeat', isEqualTo: numberSeat)
+              .where('vehicleId', isEqualTo: vehicle.id)
+              .where('date', isEqualTo: dateStr)
+              .get();
+
+          if (seatQuery.docs.isNotEmpty) {
+            seatRefs.add(seatQuery.docs.first.reference);
+            seatDocs.add(seatQuery.docs.first);
+          } else {
+            final seatRef = _firestore.collection('seatPositions').doc();
+            seatRefs.add(seatRef);
+            seatDocs.add(null);
+          }
         }
-      }
 
-      // Create seat positions with temporary booking
-      for (var detail in seatDetails) {
-        final numberSeat = detail['seatPosition']['numberSeat'] as String;
-        final vehicle = detail['vehicle'] as Vehicle;
-        
-        final seatRef = _firestore.collection('seatPositions').doc();
-        
-        final seatData = {
-          'numberSeat': numberSeat,
-          'isBooked': true,
-          'date': dateStr,
-          'vehicleId': vehicle.id,
-          'bookingId': bookingRef.id,
-          'status': 'pending_payment'
+        // 2. Kiểm tra logic (ghế đã bị đặt chưa)
+        for (int i = 0; i < seatDocs.length; i++) {
+          final doc = seatDocs[i];
+          final numberSeat = seatDetails[i]['seatPosition']['numberSeat'] as String;
+          if (doc != null && doc['isBooked'] == true) {
+            throw Exception('Ghế $numberSeat đã được đặt cho ngày ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}');
+          }
+        }
+
+        // 3. Ghi (set/update) các seatPosition và booking
+        for (int i = 0; i < seatRefs.length; i++) {
+          final seatRef = seatRefs[i];
+          final doc = seatDocs[i];
+          final numberSeat = seatDetails[i]['seatPosition']['numberSeat'] as String;
+          final vehicle = vehicles[i];
+
+          if (doc == null) {
+            // Nếu chưa có seatPosition, tạo mới
+            transaction.set(seatRef, {
+              'numberSeat': numberSeat,
+              'isBooked': true,
+              'date': dateStr,
+              'vehicleId': vehicle.id,
+              'bookingId': bookingRef.id,
+              'status': 'pending_payment',
+            });
+          } else {
+            // Nếu seatPosition đã tồn tại, cập nhật lại trạng thái
+            transaction.update(seatRef, {
+              'isBooked': true,
+              'bookingId': bookingRef.id,
+              'status': 'pending_payment',
+            });
+          }
+
+          // Add seat data to booking
+          seatsData.add({
+            'seatPosition': {
+              'id': seatRef.id,
+              'numberSeat': numberSeat,
+              'isBooked': true,
+              'date': dateStr,
+            },
+            'vehicle': {
+              'id': vehicle.id,
+              'nameVehicle': vehicle.nameVehicle,
+              'plate': vehicle.plate,
+              'price': vehicle.price,
+              'startTime': vehicle.startTime,
+              'endTime': vehicle.endTime,
+              if (vehicle.trip != null) 'trip': {
+                'id': vehicle.trip!.id,
+                'destination': vehicle.trip!.destination,
+                'nameTrip': vehicle.trip!.nameTrip,
+                'startLocation': vehicle.trip!.startLocation,
+                'tripCode': vehicle.trip!.tripCode,
+                'vRouter': vehicle.trip!.vRouter,
+              },
+              if (vehicle.vehicleType != null) 'vehicleType': {
+                'id': vehicle.vehicleType!.id,
+                'nameType': vehicle.vehicleType!.nameType,
+                'seatCount': vehicle.vehicleType!.seatCount,
+              },
+            },
+          });
+        }
+
+        // Tạo booking
+        final bookingData = {
+          'id': bookingRef.id,
+          'userId': userId,
+          'createDate': now.toIso8601String(),
+          'startLocationBooking': startLocationBooking,
+          'endLocationBooking': endLocationBooking,
+          'statusBooking': 'pending_payment',
+          'totalPrice': totalPrice,
+          'seats': seatsData,
+          'paymentDeadline': paymentDeadline.toIso8601String(),
         };
-
-        batch.set(seatRef, seatData);
-        
-        // Add seat data to booking
-        seatsData.add({
-          'seatPosition': {
-            'id': seatRef.id,
-            'numberSeat': numberSeat,
-            'isBooked': true,
-            'date': dateStr,
-          },
-          'vehicle': {
-            'id': vehicle.id,
-            'nameVehicle': vehicle.nameVehicle,
-            'plate': vehicle.plate,
-            'price': vehicle.price,
-            'startTime': vehicle.startTime,
-            'endTime': vehicle.endTime,
-            if (vehicle.trip != null) 'trip': {
-              'id': vehicle.trip!.id,
-              'destination': vehicle.trip!.destination,
-              'nameTrip': vehicle.trip!.nameTrip,
-              'startLocation': vehicle.trip!.startLocation,
-              'tripCode': vehicle.trip!.tripCode,
-              'vRouter': vehicle.trip!.vRouter,
-            },
-            if (vehicle.vehicleType != null) 'vehicleType': {
-              'id': vehicle.vehicleType!.id,
-              'nameType': vehicle.vehicleType!.nameType,
-              'seatCount': vehicle.vehicleType!.seatCount,
-            },
-          },
-        });
-      }
-
-      // Create booking with pending_payment status and 5-minute deadline
-      final now = DateTime.now();
-      final paymentDeadline = now.add(const Duration(minutes: 5));
-
-      final bookingData = {
-        'id': bookingRef.id,
-        'userId': userId,
-        'createDate': now.toIso8601String(),
-        'startLocationBooking': startLocationBooking,
-        'endLocationBooking': endLocationBooking,
-        'statusBooking': 'pending_payment',
-        'totalPrice': totalPrice,
-        'seats': seatsData,
-        'paymentDeadline': paymentDeadline.toIso8601String(),
-      };
-
-      batch.set(bookingRef, bookingData);
-      await batch.commit();
-
-      print('Created new booking: ${bookingRef.id} with deadline: $paymentDeadline');
-      return bookingRef.id;
+        transaction.set(bookingRef, bookingData);
+        return bookingRef.id;
+      });
     } catch (e) {
       print('Error creating booking: $e');
       return null;
