@@ -451,20 +451,28 @@ class BookingService {
   }
 
   // Cập nhật phương thức getBookedSeatsForVehicle
-  Future<List<String>> getBookedSeatsForVehicle(String vehicleId, DateTime date) async {
+  Future<List<String>> getBookedSeatsForVehicle(String vehicleId, DateTime date, {String? currentUserId}) async {
     try {
       final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-      
+      final now = DateTime.now();
       final querySnapshot = await _firestore
           .collection('seatPositions')
           .where('vehicleId', isEqualTo: vehicleId)
-          .where('isBooked', isEqualTo: true)
           .where('date', isEqualTo: dateStr)
           .get();
 
-      return querySnapshot.docs
-          .map((doc) => doc.data()['numberSeat'] as String)
-          .toList();
+      return querySnapshot.docs.where((doc) {
+        final data = doc.data();
+        final isBooked = data['isBooked'] == true;
+        final holdBy = data['holdBy'];
+        final holdUntilStr = data['holdUntil'];
+        DateTime? holdUntil;
+        if (holdUntilStr != null) {
+          holdUntil = DateTime.tryParse(holdUntilStr);
+        }
+        final isHoldActive = holdBy != null && holdUntil != null && holdUntil.isAfter(now) && holdBy != currentUserId;
+        return isBooked || isHoldActive;
+      }).map((doc) => doc.data()['numberSeat'] as String).toList();
     } catch (e) {
       print('Error getting booked seats: $e');
       return [];
@@ -520,6 +528,57 @@ class BookingService {
       }
     } catch (e) {
       print('Error deleting cancelled bookings: $e');
+    }
+  }
+
+  /// Giữ chỗ tạm thời cho ghế (hold seat for 1 minute)
+  Future<bool> holdSeat(String seatId, String userId) async {
+    try {
+      final seatDoc = await _firestore.collection('seatPositions').doc(seatId).get();
+      if (!seatDoc.exists) return false;
+      final data = seatDoc.data() as Map<String, dynamic>;
+      final now = DateTime.now();
+      final holdUntilStr = data['holdUntil'];
+      final holdBy = data['holdBy'];
+      DateTime? holdUntil;
+      if (holdUntilStr != null) {
+        holdUntil = DateTime.tryParse(holdUntilStr);
+      }
+      // Nếu ghế chưa bị giữ hoặc đã hết hạn giữ hoặc do chính user giữ
+      if (holdBy == null || holdUntil == null || holdUntil.isBefore(now) || holdBy == userId) {
+        final newHoldUntil = now.add(const Duration(minutes: 1));
+        await _firestore.collection('seatPositions').doc(seatId).update({
+          'holdBy': userId,
+          'holdUntil': newHoldUntil.toIso8601String(),
+        });
+        return true;
+      }
+      // Ghế đang bị giữ bởi người khác và chưa hết hạn
+      return false;
+    } catch (e) {
+      print('Error holding seat: $e');
+      return false;
+    }
+  }
+
+  /// Bỏ giữ chỗ (release seat hold)
+  Future<bool> releaseSeat(String seatId, String userId) async {
+    try {
+      final seatDoc = await _firestore.collection('seatPositions').doc(seatId).get();
+      if (!seatDoc.exists) return false;
+      final data = seatDoc.data() as Map<String, dynamic>;
+      final holdBy = data['holdBy'];
+      if (holdBy == userId) {
+        await _firestore.collection('seatPositions').doc(seatId).update({
+          'holdBy': null,
+          'holdUntil': null,
+        });
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error releasing seat: $e');
+      return false;
     }
   }
 }
