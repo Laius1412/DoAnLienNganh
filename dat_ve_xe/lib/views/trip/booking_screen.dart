@@ -619,8 +619,6 @@ class _BookingScreenState extends State<BookingScreen> {
                                 const SizedBox(width: 16),
                                 _buildSeatLegend(const Color.fromARGB(255, 253, 109, 37), 'Đang chọn'),
                                 const SizedBox(width: 16),
-                                _buildSeatLegend(Colors.blue[200]!, 'Đang giữ'),
-                                const SizedBox(width: 16),
                                 _buildSeatLegend(Colors.white, 'Giường trống', border: Colors.black),
                               ],
                             ),
