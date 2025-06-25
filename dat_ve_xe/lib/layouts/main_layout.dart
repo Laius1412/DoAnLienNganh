@@ -10,21 +10,27 @@ import 'package:dat_ve_xe/widgets/netwwork_status_banner.dart';
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
+  final int selected; // Thêm dòng này
 
-  const MainLayout({super.key, required this.onLanguageChanged});
+  const MainLayout({
+    super.key,
+    required this.onLanguageChanged,
+    this.selected = 0, // Thêm dòng này
+  });
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selected; // Sử dụng giá trị truyền vào
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FloatingBubblesManager.show(context);
     });
