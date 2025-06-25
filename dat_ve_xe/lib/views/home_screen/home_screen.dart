@@ -8,7 +8,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> _locations = ['Hà Nội', 'Nghệ An', 'Hồ Chí Minh', 'Đà Nẵng'];
+  final List<String> _locations = ['Hà Nội', 'Nghệ An', 'Ninh Bình', 'Thanh Hóa'];
 
   String? _selectedStart = 'Hà Nội';
   String? _selectedDestination = 'Nghệ An';

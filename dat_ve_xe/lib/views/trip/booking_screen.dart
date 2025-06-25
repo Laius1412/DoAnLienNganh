@@ -470,8 +470,8 @@ class _BookingScreenState extends State<BookingScreen> {
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: columns,
-                                childAspectRatio: 0.9,
-                                crossAxisSpacing: 6,
+                                childAspectRatio: 0.8,
+                                crossAxisSpacing: 15,
                                 mainAxisSpacing: 6,
                               ),
                               itemCount: seatsFloor1.length,
@@ -484,7 +484,24 @@ class _BookingScreenState extends State<BookingScreen> {
                               },
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          // Đường kẻ phân tách
+                          Container(
+                            width: 2,
+                            height: 400,
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 253, 91, 9).withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(1),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color.fromARGB(255, 253, 91, 9).withOpacity(0.2),
+                                  spreadRadius: 1,
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                          ),
                           // Tầng 2
                           Expanded(
                             child: GridView.builder(
@@ -492,8 +509,8 @@ class _BookingScreenState extends State<BookingScreen> {
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: columns,
-                                childAspectRatio: 0.9,
-                                crossAxisSpacing: 6,
+                                childAspectRatio: 0.8,
+                                crossAxisSpacing: 15,
                                 mainAxisSpacing: 6,
                               ),
                               itemCount: seatsFloor2.length,

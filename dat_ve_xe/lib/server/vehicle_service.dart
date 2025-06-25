@@ -30,31 +30,34 @@ class VehicleService {
         }
       }
 
-      // Kiểm tra điều kiện
-      if (trip != null &&
-          trip.startLocation.toLowerCase() == startLocation.toLowerCase() &&
-          trip.destination.toLowerCase() == destination.toLowerCase()) {
-
-        // Lấy dữ liệu vehicleType
-        if (vehicleTypeId != null) {
-          final vtDoc = await _firestore.collection('vehicleType').doc(vehicleTypeId).get();
-          if (vtDoc.exists) {
-            vehicleType = VehicleType.fromMap(vtDoc.id, vtDoc.data()!);
+      // Kiểm tra điều kiện mới
+      if (trip != null) {
+        final fromMatch = trip.startLocation.toLowerCase() == startLocation.toLowerCase() ||
+          trip.intermediateStops.map((e) => e.toLowerCase()).contains(startLocation.toLowerCase());
+        final toMatch = trip.destination.toLowerCase() == destination.toLowerCase() ||
+          trip.intermediateStops.map((e) => e.toLowerCase()).contains(destination.toLowerCase());
+        if (fromMatch && toMatch) {
+          // Lấy dữ liệu vehicleType
+          if (vehicleTypeId != null) {
+            final vtDoc = await _firestore.collection('vehicleType').doc(vehicleTypeId).get();
+            if (vtDoc.exists) {
+              vehicleType = VehicleType.fromMap(vtDoc.id, vtDoc.data()!);
+            }
           }
-        }
 
-        vehicles.add(
-          Vehicle(
-            id: doc.id,
-            nameVehicle: data['nameVehicle'],
-            plate: data['plate'],
-            price: data['price'],
-            startTime: data['startTime'],
-            endTime: data['endTime'],
-            trip: trip,
-            vehicleType: vehicleType,
-          ),
-        );
+          vehicles.add(
+            Vehicle(
+              id: doc.id,
+              nameVehicle: data['nameVehicle'],
+              plate: data['plate'],
+              price: data['price'],
+              startTime: data['startTime'],
+              endTime: data['endTime'],
+              trip: trip,
+              vehicleType: vehicleType,
+            ),
+          );
+        }
       }
     }
 
