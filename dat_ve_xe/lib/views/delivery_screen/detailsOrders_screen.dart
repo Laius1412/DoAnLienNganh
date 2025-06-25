@@ -1,8 +1,8 @@
 // File: lib/views/delivery_screen/detailsOrders_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:dat_ve_xe/widgets/success_overlay.dart';
 import 'package:dat_ve_xe/layouts/main_layout.dart';
+import 'package:dat_ve_xe/service/delivery_firestore_service.dart';
 
 class DetailsOrdersScreen extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -48,28 +48,28 @@ class DetailsOrdersScreen extends StatelessWidget {
                 _buildRow(loc.estimatedPrice, "${order['price']} VND"),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
                       builder:
-                          (_) => SuccessOverlay(
-                            message: loc.orderCreated,
-                            onPressed: () {
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => MainLayout(
-                                        selected: 2,
-                                        onLanguageChanged: (locale) {
-                                          // Implement your language change logic here
-                                        },
-                                      ),
-                                ),
-                                (route) => false,
-                              );
-                            },
-                          ),
+                          (_) =>
+                              const Center(child: CircularProgressIndicator()),
+                    );
+
+                    await DeliveryFirestoreService.createDelivery(order);
+
+                    Navigator.of(context).pop(); // Đóng loading dialog
+
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder:
+                            (context) => MainLayout(
+                              selected: 2,
+                              onLanguageChanged: (locale) {},
+                            ),
+                      ),
+                      (route) => false,
                     );
                   },
                   child: Text(loc.createOrder),

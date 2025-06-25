@@ -9,12 +9,16 @@ class SearchResultScreen extends StatefulWidget {
   final String startLocation;
   final String destination;
   final DateTime selectedDate;
+  final bool searchByStopsStart;
+  final bool searchByStopsEnd;
 
   const SearchResultScreen({
     Key? key,
     required this.startLocation,
     required this.destination,
     required this.selectedDate,
+    this.searchByStopsStart = false,
+    this.searchByStopsEnd = false,
   }) : super(key: key);
 
   @override
@@ -38,6 +42,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       _vehicleFuture = _vehicleService.searchVehiclesByLocation(
         startLocation: widget.startLocation,
         destination: widget.destination,
+        searchByStopsStart: widget.searchByStopsStart,
+        searchByStopsEnd: widget.searchByStopsEnd,
       ).then((vehicles) async {
         // Lấy số ghế còn trống cho mỗi xe
         for (var vehicle in vehicles) {
@@ -97,7 +103,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kết quả (${dateFormat.format(widget.selectedDate)})'),
+        title: Text('Danh sách chuyến (${dateFormat.format(widget.selectedDate)})'),
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
         foregroundColor: Colors.white,
       ),
@@ -219,7 +225,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         'Khởi hành',
                         style: TextStyle(
                           color: Colors.grey[200],
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -264,7 +270,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         'Đến nơi',
                         style: TextStyle(
                           color: Colors.grey[200],
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -308,7 +314,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -317,7 +323,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           vehicle.trip?.vRouter ?? '',
                           style: TextStyle(
                             color: Colors.grey[200],
-                            fontSize: 12,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -326,8 +333,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                       Text(
                         '$priceFormatted đ',
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 23,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -359,7 +366,7 @@ class Ticket extends StatelessWidget {
     this.borderRadius = 10,
     this.clipRadius = 12.5,
     this.smallClipRadius = 5,
-    this.numberOfSmallClips = 13,
+    this.numberOfSmallClips = 20,
     required this.child,
   }) : super(key: key);
 
@@ -399,7 +406,7 @@ class Ticket extends StatelessWidget {
 }
 
 class TicketClipper extends CustomClipper<Path> {
-  static const double clipPadding = 18;
+  static const double clipPadding = 5;
   final double borderRadius;
   final double clipRadius;
   final double smallClipRadius;

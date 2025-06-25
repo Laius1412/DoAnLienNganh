@@ -6,6 +6,7 @@ import 'package:dat_ve_xe/views/delivery_screen/detailsOrders_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class CreateDeliveryScreen extends StatefulWidget {
   const CreateDeliveryScreen({super.key});
@@ -117,13 +118,6 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
 
     setState(() => _isLoading = true);
 
-    // Hiển thị loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
-
     // Đảm bảo loading tối thiểu 3 giây
     final start = DateTime.now();
 
@@ -131,7 +125,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
         _fromOffice == null ||
         _toRegion == null ||
         _toOffice == null) {
-      Navigator.of(context).pop(); // Đóng dialog loading
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Vui lòng chọn đầy đủ nơi gửi và nơi nhận!')),
       );
@@ -139,6 +133,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
 
     if (_fromOffice == _toOffice) {
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Văn phòng gửi và nhận không được trùng nhau!')),
       );
@@ -147,6 +142,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
 
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) {
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Không tìm thấy tài khoản đăng nhập!')),
       );
@@ -162,7 +158,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
 
     final order = {
       'id': _orderId,
-      'userId': userId, // Lấy trực tiếp từ FirebaseAuth
+      'userId': userId,
       'nameFrom': _senderName,
       'phoneFrom': _senderPhone,
       'details': _descriptionController.text,
@@ -180,9 +176,11 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
       'typePayment': _typePayment,
       'cod': _codController.text,
       'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
     };
 
-    await DeliveryFirestoreService.createDelivery(order);
+    // Không showDialog nữa, chỉ dùng _isLoading để hiển thị overlay
+    // await DeliveryFirestoreService.createDelivery(order); // Nếu muốn gửi ở đây thì giữ lại, nếu không thì bỏ
 
     // Đợi cho đủ 3 giây nếu xử lý quá nhanh
     final elapsed = DateTime.now().difference(start);
@@ -193,7 +191,6 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
     }
 
     if (mounted) {
-      Navigator.of(context).pop(); // Đóng loading dialog
       setState(() => _isLoading = false);
       Navigator.push(
         context,
@@ -208,421 +205,448 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.createDelivery)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _infoField(loc.orderId, _orderId),
-              _infoField(loc.senderName, _senderName),
-              _infoField(loc.senderPhone, _senderPhone),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: loc.packageDescription),
-                validator:
-                    (val) => val == null || val.isEmpty ? loc.required : null,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                loc.estimatedWeight,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Slider(
-                  min: 0.1,
-                  max: 100.0,
-                  divisions: 999,
-                  value: _mass,
-                  label: _mass.toStringAsFixed(1),
-                  onChanged: (val) {
-                    setState(() {
-                      _mass = val;
-                      _massController.text = val.toStringAsFixed(1);
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _massController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(
-                  suffixText: 'kg',
-                  border: const OutlineInputBorder(),
-                ),
-                onChanged: (val) {
-                  final parsed = double.tryParse(val.replaceAll(',', '.'));
-                  if (parsed != null && parsed > 0) {
-                    setState(() {
-                      _mass = parsed.clamp(0.1, 100.0);
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nameToController,
-                decoration: InputDecoration(labelText: loc.receiverName),
-                validator:
-                    (val) => val == null || val.isEmpty ? loc.required : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneToController,
-                maxLength: 10,
-                decoration: InputDecoration(labelText: loc.receiverPhone),
-                keyboardType: TextInputType.phone,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                validator:
-                    (val) => val == null || val.isEmpty ? loc.required : null,
-              ),
-
-              const SizedBox(height: 16),
-              Text(
-                loc.goodsType,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Row(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Radio<String>(
-                    value: 'normal',
-                    groupValue: _type,
-                    onChanged: (val) => setState(() => _type = val!),
+                  _infoField(loc.orderId, _orderId),
+                  _infoField(loc.senderName, _senderName),
+                  _infoField(loc.senderPhone, _senderPhone),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      labelText: loc.packageDescription,
+                    ),
+                    validator:
+                        (val) =>
+                            val == null || val.isEmpty ? loc.required : null,
                   ),
-                  Text(loc.normalGoods),
-                  Radio<String>(
-                    value: 'highvalue',
-                    groupValue: _type,
-                    onChanged: (val) => setState(() => _type = val!),
+                  const SizedBox(height: 16),
+                  Text(
+                    loc.estimatedWeight,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(loc.highValueGoods),
-                ],
-              ),
-              if (_type == 'highvalue') ...[
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _orderValueController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(labelText: loc.orderValue),
-                  validator: (val) {
-                    if (_type == 'highvalue' && (val == null || val.isEmpty)) {
-                      return loc.required;
-                    }
-                    if (_type == 'highvalue' && int.tryParse(val!) == null) {
-                      return 'Chỉ nhập số';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _cccdController,
-                  maxLength: 12,
-                  decoration: InputDecoration(labelText: loc.senderCCCD),
-                  validator: (val) {
-                    if (_type == 'highvalue' && (val == null || val.isEmpty)) {
-                      return loc.required;
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    loc.insuranceNote,
-                    style: const TextStyle(color: Colors.red),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Slider(
+                      min: 0.1,
+                      max: 100.0,
+                      divisions: 999,
+                      value: _mass,
+                      label: _mass.toStringAsFixed(1),
+                      onChanged: (val) {
+                        setState(() {
+                          // Làm tròn về đúng bước 0.1
+                          _mass = double.parse(val.toStringAsFixed(1));
+                          _massController.text = _mass.toStringAsFixed(1);
+                        });
+                      },
+                    ),
                   ),
-                ),
-              ],
-              const SizedBox(height: 24),
-              // =================== NƠI GỬI ===================
-              Text(
-                loc.fromRegion,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-
-              // Khu vực gửi
-              _loadingRegions
-                  ? const CircularProgressIndicator()
-                  : DropdownButtonFormField<String>(
-                    value: _fromRegion,
-                    items:
-                        _regions
-                            .where(
-                              (region) =>
-                                  region['id'] != null &&
-                                  region['name'] != null,
-                            )
-                            .map(
-                              (region) => DropdownMenuItem<String>(
-                                value: region['id'].toString(),
-                                child: Text(region['name'].toString()),
-                              ),
-                            )
-                            .toList(),
-                    onChanged:
-                        (val) => setState(() {
-                          _fromRegion = val;
-                          _fromOffice = null;
-                        }),
-                    decoration: InputDecoration(labelText: loc.region),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _massController,
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: InputDecoration(
+                      suffixText: 'kg',
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (val) {
+                      final parsed = double.tryParse(val.replaceAll(',', '.'));
+                      if (parsed != null && parsed > 0) {
+                        setState(() {
+                          _mass = parsed.clamp(0.1, 100.0);
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _nameToController,
+                    decoration: InputDecoration(labelText: loc.receiverName),
+                    validator:
+                        (val) =>
+                            val == null || val.isEmpty ? loc.required : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _phoneToController,
+                    maxLength: 10,
+                    decoration: InputDecoration(labelText: loc.receiverPhone),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    validator:
+                        (val) =>
+                            val == null || val.isEmpty ? loc.required : null,
                   ),
 
-              const SizedBox(height: 12),
+                  const SizedBox(height: 16),
+                  Text(
+                    loc.goodsType,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      Radio<String>(
+                        value: 'normal',
+                        groupValue: _type,
+                        onChanged: (val) => setState(() => _type = val!),
+                      ),
+                      Text(loc.normalGoods),
+                      Radio<String>(
+                        value: 'highvalue',
+                        groupValue: _type,
+                        onChanged: (val) => setState(() => _type = val!),
+                      ),
+                      Text(loc.highValueGoods),
+                    ],
+                  ),
+                  if (_type == 'highvalue') ...[
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _orderValueController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(labelText: loc.orderValue),
+                      validator: (val) {
+                        if (_type == 'highvalue' &&
+                            (val == null || val.isEmpty)) {
+                          return loc.required;
+                        }
+                        if (_type == 'highvalue' &&
+                            int.tryParse(val!) == null) {
+                          return 'Chỉ nhập số';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _cccdController,
+                      maxLength: 12,
+                      decoration: InputDecoration(labelText: loc.senderCCCD),
+                      validator: (val) {
+                        if (_type == 'highvalue' &&
+                            (val == null || val.isEmpty)) {
+                          return loc.required;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        loc.insuranceNote,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  // =================== NƠI GỬI ===================
+                  Text(
+                    loc.fromRegion,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
 
-              // Văn phòng gửi
-              _loadingOffices
-                  ? const CircularProgressIndicator()
-                  : DropdownButtonFormField<String>(
-                    value:
-                        _offices.any(
-                              (o) =>
-                                  o['regionId'] == _fromRegion &&
-                                  o['officeId'] == _fromOffice,
-                            )
-                            ? _fromOffice
-                            : null,
-                    items:
-                        (_fromRegion == null || _offices.isEmpty)
-                            ? []
-                            : _offices
+                  // Khu vực gửi
+                  _loadingRegions
+                      ? const CircularProgressIndicator()
+                      : DropdownButtonFormField<String>(
+                        value: _fromRegion,
+                        items:
+                            _regions
                                 .where(
-                                  (office) =>
-                                      office['regionId'] == _fromRegion &&
-                                      office['officeName'] != null &&
-                                      office['address'] != null &&
-                                      office['officeId'] != _toOffice,
+                                  (region) =>
+                                      region['id'] != null &&
+                                      region['name'] != null,
                                 )
                                 .map(
-                                  (office) => DropdownMenuItem<String>(
-                                    value: office['officeId'],
-                                    child: Row(
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            '${office['officeName']} (${office['address']})',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  (region) => DropdownMenuItem<String>(
+                                    value: region['id'].toString(),
+                                    child: Text(region['name'].toString()),
                                   ),
                                 )
                                 .toList(),
-                    selectedItemBuilder: (context) {
-                      final filtered =
-                          (_fromRegion == null || _offices.isEmpty)
-                              ? []
-                              : _offices
-                                  .where(
-                                    (office) =>
-                                        office['regionId'] == _fromRegion &&
-                                        office['officeName'] != null &&
-                                        office['address'] != null &&
-                                        office['officeId'] != _toOffice,
-                                  )
-                                  .toList();
-                      return filtered
-                          .map(
-                            (office) => Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                office['officeName'],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            ),
-                          )
-                          .toList();
-                    },
-                    onChanged: (val) => setState(() => _fromOffice = val),
-                    decoration: InputDecoration(
-                      labelText: loc.office,
-                      hintText: 'Chọn một mục',
-                    ),
+                        onChanged:
+                            (val) => setState(() {
+                              _fromRegion = val;
+                              _fromOffice = null;
+                            }),
+                        decoration: InputDecoration(labelText: loc.region),
+                      ),
+
+                  const SizedBox(height: 12),
+
+                  // Văn phòng gửi
+                  _loadingOffices
+                      ? const CircularProgressIndicator()
+                      : DropdownButtonFormField<String>(
+                        value:
+                            _offices.any(
+                                  (o) =>
+                                      o['regionId'] == _fromRegion &&
+                                      o['officeId'] == _fromOffice,
+                                )
+                                ? _fromOffice
+                                : null,
+                        items:
+                            (_fromRegion == null || _offices.isEmpty)
+                                ? []
+                                : _offices
+                                    .where(
+                                      (office) =>
+                                          office['regionId'] == _fromRegion &&
+                                          office['officeName'] != null &&
+                                          office['address'] != null &&
+                                          office['officeId'] != _toOffice,
+                                    )
+                                    .map(
+                                      (office) => DropdownMenuItem<String>(
+                                        value: office['officeId'],
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                '${office['officeName']} (${office['address']})',
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                        selectedItemBuilder: (context) {
+                          final filtered =
+                              (_fromRegion == null || _offices.isEmpty)
+                                  ? []
+                                  : _offices
+                                      .where(
+                                        (office) =>
+                                            office['regionId'] == _fromRegion &&
+                                            office['officeName'] != null &&
+                                            office['address'] != null &&
+                                            office['officeId'] != _toOffice,
+                                      )
+                                      .toList();
+                          return filtered
+                              .map(
+                                (office) => Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    office['officeName'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              )
+                              .toList();
+                        },
+                        onChanged: (val) => setState(() => _fromOffice = val),
+                        decoration: InputDecoration(
+                          labelText: loc.office,
+                          hintText: 'Chọn một mục',
+                        ),
+                      ),
+
+                  const SizedBox(height: 20),
+
+                  // =================== NƠI NHẬN ===================
+                  Text(
+                    loc.toRegion,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
 
-              const SizedBox(height: 20),
-
-              // =================== NƠI NHẬN ===================
-              Text(
-                loc.toRegion,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-
-              // Khu vực nhận
-              _loadingRegions
-                  ? const CircularProgressIndicator()
-                  : DropdownButtonFormField<String>(
-                    value: _toRegion,
-                    items:
-                        _regions
-                            .where(
-                              (region) =>
-                                  region['id'] != null &&
-                                  region['name'] != null,
-                            )
-                            .map(
-                              (region) => DropdownMenuItem<String>(
-                                value: region['id'].toString(),
-                                child: Text(region['name'].toString()),
-                              ),
-                            )
-                            .toList(),
-                    onChanged:
-                        (val) => setState(() {
-                          _toRegion = val;
-                          _toOffice = null;
-                        }),
-                    decoration: InputDecoration(labelText: loc.region),
-                  ),
-
-              const SizedBox(height: 12),
-
-              // Văn phòng nhận
-              _loadingOffices
-                  ? const CircularProgressIndicator()
-                  : DropdownButtonFormField<String>(
-                    value:
-                        _offices.any(
-                              (o) =>
-                                  o['regionId'] == _toRegion &&
-                                  o['officeId'] == _toOffice,
-                            )
-                            ? _toOffice
-                            : null,
-                    items:
-                        (_toRegion == null || _offices.isEmpty)
-                            ? []
-                            : _offices
+                  // Khu vực nhận
+                  _loadingRegions
+                      ? const CircularProgressIndicator()
+                      : DropdownButtonFormField<String>(
+                        value: _toRegion,
+                        items:
+                            _regions
                                 .where(
-                                  (office) =>
-                                      office['regionId'] == _toRegion &&
-                                      office['officeName'] != null &&
-                                      office['address'] != null &&
-                                      office['officeId'] != _fromOffice,
+                                  (region) =>
+                                      region['id'] != null &&
+                                      region['name'] != null,
                                 )
                                 .map(
-                                  (office) => DropdownMenuItem<String>(
-                                    value: office['officeId'],
-                                    child: Row(
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            '${office['officeName']} (${office['address']})',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  (region) => DropdownMenuItem<String>(
+                                    value: region['id'].toString(),
+                                    child: Text(region['name'].toString()),
                                   ),
                                 )
                                 .toList(),
-                    selectedItemBuilder: (context) {
-                      final filtered =
-                          (_toRegion == null || _offices.isEmpty)
-                              ? []
-                              : _offices
-                                  .where(
-                                    (office) =>
-                                        office['regionId'] == _toRegion &&
-                                        office['officeName'] != null &&
-                                        office['address'] != null &&
-                                        office['officeId'] != _fromOffice,
-                                  )
-                                  .toList();
-                      return filtered
-                          .map(
-                            (office) => Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                office['officeName'],
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            ),
-                          )
-                          .toList();
-                    },
-                    onChanged: (val) => setState(() => _toOffice = val),
+                        onChanged:
+                            (val) => setState(() {
+                              _toRegion = val;
+                              _toOffice = null;
+                            }),
+                        decoration: InputDecoration(labelText: loc.region),
+                      ),
+
+                  const SizedBox(height: 12),
+
+                  // Văn phòng nhận
+                  _loadingOffices
+                      ? const CircularProgressIndicator()
+                      : DropdownButtonFormField<String>(
+                        value:
+                            _offices.any(
+                                  (o) =>
+                                      o['regionId'] == _toRegion &&
+                                      o['officeId'] == _toOffice,
+                                )
+                                ? _toOffice
+                                : null,
+                        items:
+                            (_toRegion == null || _offices.isEmpty)
+                                ? []
+                                : _offices
+                                    .where(
+                                      (office) =>
+                                          office['regionId'] == _toRegion &&
+                                          office['officeName'] != null &&
+                                          office['address'] != null &&
+                                          office['officeId'] != _fromOffice,
+                                    )
+                                    .map(
+                                      (office) => DropdownMenuItem<String>(
+                                        value: office['officeId'],
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                '${office['officeName']} (${office['address']})',
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                        selectedItemBuilder: (context) {
+                          final filtered =
+                              (_toRegion == null || _offices.isEmpty)
+                                  ? []
+                                  : _offices
+                                      .where(
+                                        (office) =>
+                                            office['regionId'] == _toRegion &&
+                                            office['officeName'] != null &&
+                                            office['address'] != null &&
+                                            office['officeId'] != _fromOffice,
+                                      )
+                                      .toList();
+                          return filtered
+                              .map(
+                                (office) => Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    office['officeName'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              )
+                              .toList();
+                        },
+                        onChanged: (val) => setState(() => _toOffice = val),
+                        decoration: InputDecoration(
+                          labelText: loc.office,
+                          hintText: 'Chọn một mục',
+                        ),
+                      ),
+
+                  const SizedBox(height: 20),
+
+                  Text(
+                    loc.paymentMethod,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      Radio<String>(
+                        value: 'postPayment', // Người gửi trả
+                        groupValue: _typePayment,
+                        onChanged: (val) => setState(() => _typePayment = val!),
+                      ),
+                      Text(loc.senderPays),
+                      Radio<String>(
+                        value: 'recievePayment', // Người nhận trả
+                        groupValue: _typePayment,
+                        onChanged: (val) => setState(() => _typePayment = val!),
+                      ),
+                      Text(loc.receiverPays),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _codController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
-                      labelText: loc.office,
-                      hintText: 'Chọn một mục',
+                      labelText: loc.cod,
+                      suffixText: 'VND',
+                      border: const OutlineInputBorder(),
                     ),
+                    validator: (val) {
+                      if (val != null && val.isNotEmpty) {
+                        final parsed = int.tryParse(val);
+                        if (parsed == null || parsed < 0)
+                          return 'Số tiền không hợp lệ';
+                      }
+                      // Nếu để trống thì hợp lệ
+                      return null;
+                    },
                   ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                loc.paymentMethod,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Radio<String>(
-                    value: 'postPayment', // Người gửi trả
-                    groupValue: _typePayment,
-                    onChanged: (val) => setState(() => _typePayment = val!),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed:
+                        (_fromRegion == null ||
+                                _fromOffice == null ||
+                                _toRegion == null ||
+                                _toOffice == null)
+                            ? null
+                            : _submit,
+                    child: Text(loc.continueLabel),
                   ),
-                  Text(loc.senderPays),
-                  Radio<String>(
-                    value: 'recievePayment', // Người nhận trả
-                    groupValue: _typePayment,
-                    onChanged: (val) => setState(() => _typePayment = val!),
-                  ),
-                  Text(loc.receiverPays),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _codController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  labelText: loc.cod,
-                  suffixText: 'VND',
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (val) {
-                  if (val != null && val.isNotEmpty) {
-                    final parsed = int.tryParse(val);
-                    if (parsed == null || parsed < 0)
-                      return 'Số tiền không hợp lệ';
-                  }
-                  // Nếu để trống thì hợp lệ
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed:
-                    (_fromRegion == null ||
-                            _fromOffice == null ||
-                            _toRegion == null ||
-                            _toOffice == null)
-                        ? null
-                        : _submit,
-                child: Text(loc.continueLabel),
-              ),
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: LoadingAnimationWidget.inkDrop(
+                    color: Colors.orange,
+                    size: 60,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
