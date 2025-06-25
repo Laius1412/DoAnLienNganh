@@ -26,6 +26,24 @@
       <path d="M8 4a.5.5 0 0 1 .5.5v3.793l2.146 2.147a.5.5 0 0 1-.708.708L7.5 8.707V4.5A.5.5 0 0 1 8 4z"/>
     </svg>
   </button>
+    <!-- Nút sắp xếp -->
+    <div class="dropdown">
+      <button class="btn btn-outline-primary" type="button" id="sortDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Sắp xếp">
+        <i class="bi bi-funnel"></i>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="sortDropdownBtn">
+        <li>
+          <a class="dropdown-item sort-option" href="#" data-sort="name-asc">
+            <i class="bi bi-sort-alpha-down"></i> Tên (A-Z)
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item sort-option" href="#" data-sort="booking-desc">
+            <i class="bi bi-sort-numeric-down-alt"></i> Số lần đặt vé (Giảm dần)
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -498,4 +516,16 @@ document.querySelector('#viewUserModal .modal-content').addEventListener('click'
   });
 </script>
 <% } %>
+<!-- // sắp xếp -->
+<script>
+  document.querySelectorAll('.sort-option').forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      const sortType = this.getAttribute('data-sort');
+      let url = new URL(window.location.href);
+      url.searchParams.set('sort', sortType);
+      window.location.href = url.toString();
+    });
+  });
+</script>
 

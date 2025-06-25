@@ -8,6 +8,7 @@ const auth = admin.auth();
 const index = async (req, res) => {
   try {
     const query = (req.query.q || '').toLowerCase();
+    const sort = req.query.sort || '';
     const snapshot = await db.collection('users').get();
     const users = [];
 
@@ -22,6 +23,21 @@ const index = async (req, res) => {
         const bookingCount = bookingSnap.size;
         users.push({ id: doc.id, ...data, bookingCount });
       }
+    }
+
+    // Sắp xếp theo yêu cầu
+    if (sort === 'name-asc') {
+      // Sắp xếp theo tên (từ cuối cùng trong họ tên)
+      users.sort((a, b) => {
+        const getLastName = (fullName) => {
+          if (!fullName) return '';
+          const parts = fullName.trim().split(' ');
+          return parts[parts.length - 1].toLowerCase();
+        };
+        return getLastName(a.name).localeCompare(getLastName(b.name), 'vi', { sensitivity: 'base' });
+      });
+    } else if (sort === 'booking-desc') {
+      users.sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0));
     }
 
     res.render('users/index', {
