@@ -33,18 +33,7 @@ class _BookingScreenState extends State<BookingScreen> {
   int _step = 1; // 1: chọn ghế, 2: chọn điểm lên/xuống
   
   // Danh sách các điểm dừng
-  final List<String> _locations = [
-    'Hà Nội',
-    'Hồ Chí Minh',
-    'Đà Nẵng',
-    'Hải Phòng',
-    'Cần Thơ',
-    'Nha Trang',
-    'Đà Lạt',
-    'Huế',
-    'Quy Nhơn',
-    'Phan Thiết',
-  ];
+  List<String> get _locations => widget.vehicle.trip?.stops ?? [];
 
   String? _selectedStartLocation;
   String? _selectedEndLocation;
@@ -54,12 +43,13 @@ class _BookingScreenState extends State<BookingScreen> {
     super.initState();
     _loadBookedSeats();
     // Set initial locations from widget, ensuring they exist in the list
-    _selectedStartLocation = _locations.contains(widget.startLocation) 
-        ? widget.startLocation 
-        : _locations.first;
-    _selectedEndLocation = _locations.contains(widget.destination)
+    final locations = _locations;
+    _selectedStartLocation = locations.contains(widget.startLocation)
+        ? widget.startLocation
+        : (locations.isNotEmpty ? locations.first : null);
+    _selectedEndLocation = locations.contains(widget.destination)
         ? widget.destination
-        : _locations.last;
+        : (locations.isNotEmpty ? locations.last : null);
   }
 
   Future<void> _loadBookedSeats() async {

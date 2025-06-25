@@ -236,6 +236,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       startLocation: _selectedStart!,
                       destination: _selectedDestination!,
                       selectedDate: _selectedDate!,
+                      searchByStopsStart: true,
+                      searchByStopsEnd: true,
                     ),
                   ),
                 );

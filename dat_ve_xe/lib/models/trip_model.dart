@@ -5,7 +5,7 @@ class Trip {
   final String startLocation;
   final String tripCode;
   final String vRouter;
-  final List<String> intermediateStops;
+  final List<String> stops;
 
   Trip({
     required this.id,
@@ -14,7 +14,7 @@ class Trip {
     required this.startLocation,
     required this.tripCode,
     required this.vRouter,
-    required this.intermediateStops,
+    required this.stops,
   });
 
   factory Trip.fromMap(String id, Map<String, dynamic> data) {
@@ -25,8 +25,8 @@ class Trip {
       startLocation: data['startLocation'],
       tripCode: data['tripCode'],
       vRouter: data['vRouter'],
-      intermediateStops: data['intermediateStops'] != null
-        ? List<String>.from(data['intermediateStops'])
+      stops: data['stops'] != null
+        ? List<String>.from(data['stops'])
         : <String>[],
     );
   }

@@ -9,6 +9,8 @@ class VehicleService {
   Future<List<Vehicle>> searchVehiclesByLocation({
     required String startLocation,
     required String destination,
+    bool searchByStopsStart = false,
+    bool searchByStopsEnd = false,
   }) async {
     List<Vehicle> vehicles = [];
 
@@ -32,11 +34,27 @@ class VehicleService {
 
       // Kiểm tra điều kiện mới
       if (trip != null) {
-        final fromMatch = trip.startLocation.toLowerCase() == startLocation.toLowerCase() ||
-          trip.intermediateStops.map((e) => e.toLowerCase()).contains(startLocation.toLowerCase());
-        final toMatch = trip.destination.toLowerCase() == destination.toLowerCase() ||
-          trip.intermediateStops.map((e) => e.toLowerCase()).contains(destination.toLowerCase());
-        if (fromMatch && toMatch) {
+        final stopsLower = trip.stops.map((e) => e.toLowerCase()).toList();
+        int fromIndex = -1;
+        int toIndex = -1;
+        if (searchByStopsStart) {
+          fromIndex = stopsLower.indexOf(startLocation.toLowerCase());
+        } else {
+          fromIndex = trip.startLocation.toLowerCase() == startLocation.toLowerCase()
+              ? 0
+              : -1;
+        }
+        if (searchByStopsEnd) {
+          toIndex = stopsLower.indexOf(destination.toLowerCase());
+        } else {
+          toIndex = trip.destination.toLowerCase() == destination.toLowerCase()
+              ? stopsLower.length - 1
+              : -1;
+        }
+        final fromMatch = fromIndex != -1;
+        final toMatch = toIndex != -1;
+        // startLocation phải đứng trước destination trong danh sách stops
+        if (fromMatch && toMatch && fromIndex < toIndex) {
           // Lấy dữ liệu vehicleType
           if (vehicleTypeId != null) {
             final vtDoc = await _firestore.collection('vehicleType').doc(vehicleTypeId).get();

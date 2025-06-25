@@ -9,12 +9,16 @@ class SearchResultScreen extends StatefulWidget {
   final String startLocation;
   final String destination;
   final DateTime selectedDate;
+  final bool searchByStopsStart;
+  final bool searchByStopsEnd;
 
   const SearchResultScreen({
     Key? key,
     required this.startLocation,
     required this.destination,
     required this.selectedDate,
+    this.searchByStopsStart = false,
+    this.searchByStopsEnd = false,
   }) : super(key: key);
 
   @override
@@ -38,6 +42,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       _vehicleFuture = _vehicleService.searchVehiclesByLocation(
         startLocation: widget.startLocation,
         destination: widget.destination,
+        searchByStopsStart: widget.searchByStopsStart,
+        searchByStopsEnd: widget.searchByStopsEnd,
       ).then((vehicles) async {
         // Lấy số ghế còn trống cho mỗi xe
         for (var vehicle in vehicles) {
