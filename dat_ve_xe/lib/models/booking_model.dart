@@ -27,28 +27,30 @@ class BookingSeat {
       'price': vehicle.price,
       'startTime': vehicle.startTime,
       'endTime': vehicle.endTime,
-      if (vehicle.trip != null) 'trip': {
-        'id': vehicle.trip!.id,
-        'destination': vehicle.trip!.destination,
-        'nameTrip': vehicle.trip!.nameTrip,
-        'startLocation': vehicle.trip!.startLocation,
-        'tripCode': vehicle.trip!.tripCode,
-        'vRouter': vehicle.trip!.vRouter,
-      },
-      if (vehicle.vehicleType != null) 'vehicleType': {
-        'id': vehicle.vehicleType!.id,
-        'nameType': vehicle.vehicleType!.nameType,
-        'seatCount': vehicle.vehicleType!.seatCount,
-      },
+      if (vehicle.trip != null)
+        'trip': {
+          'id': vehicle.trip!.id,
+          'destination': vehicle.trip!.destination,
+          'nameTrip': vehicle.trip!.nameTrip,
+          'startLocation': vehicle.trip!.startLocation,
+          'tripCode': vehicle.trip!.tripCode,
+          'vRouter': vehicle.trip!.vRouter,
+        },
+      if (vehicle.vehicleType != null)
+        'vehicleType': {
+          'id': vehicle.vehicleType!.id,
+          'nameType': vehicle.vehicleType!.nameType,
+          'seatCount': vehicle.vehicleType!.seatCount,
+        },
     };
   }
 
   factory BookingSeat.fromMap(Map<String, dynamic> map) {
     return BookingSeat(
-      seatPosition: map['seatPosition'] != null 
-          ? SeatPosition.fromMap(map['seatPosition']['id'], map['seatPosition']) 
+      seatPosition: map['seatPosition'] != null
+          ? SeatPosition.fromMap(map['seatPosition']['id'], map['seatPosition'])
           : null,
-      vehicle: map['vehicle'] != null 
+      vehicle: map['vehicle'] != null
           ? Vehicle(
               id: map['vehicle']['id'],
               nameVehicle: map['vehicle']['nameVehicle'],
@@ -57,16 +59,10 @@ class BookingSeat {
               startTime: map['vehicle']['startTime'],
               endTime: map['vehicle']['endTime'],
               trip: map['vehicle']['trip'] != null
-                  ? Trip.fromMap(
-                      map['vehicle']['trip']['id'],
-                      map['vehicle']['trip'],
-                    )
+                  ? Trip.fromMap(map['vehicle']['trip']['id'], map['vehicle']['trip'])
                   : null,
               vehicleType: map['vehicle']['vehicleType'] != null
-                  ? VehicleType.fromMap(
-                      map['vehicle']['vehicleType']['id'],
-                      map['vehicle']['vehicleType'],
-                    )
+                  ? VehicleType.fromMap(map['vehicle']['vehicleType']['id'], map['vehicle']['vehicleType'])
                   : null,
             )
           : null,
@@ -80,10 +76,10 @@ class Booking {
   final DateTime createDate;
   final String startLocationBooking;
   final String endLocationBooking;
-  final String statusBooking; // 'pending', 'pending_payment', 'confirmed', 'cancelled'
+  final String statusBooking;
   final int totalPrice;
   final List<BookingSeat> seats;
-  final DateTime? paymentDeadline; // New field for payment deadline
+  final DateTime? paymentDeadline;
 
   Booking({
     required this.id,
@@ -96,6 +92,18 @@ class Booking {
     required this.seats,
     this.paymentDeadline,
   });
+
+  ///  Hàm lấy ngày đi thực tế từ seatPosition.date
+  DateTime? getTravelDate() {
+    if (seats.isNotEmpty && seats[0].seatPosition?.date != null) {
+      try {
+        return DateTime.parse(seats[0].seatPosition!.date);
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -123,9 +131,8 @@ class Booking {
       seats: (map['seats'] as List<dynamic>)
           .map((e) => BookingSeat.fromMap(e as Map<String, dynamic>))
           .toList(),
-      paymentDeadline: map['paymentDeadline'] != null 
-          ? DateTime.parse(map['paymentDeadline']) 
-          : null,
+      paymentDeadline:
+          map['paymentDeadline'] != null ? DateTime.parse(map['paymentDeadline']) : null,
     );
   }
 }

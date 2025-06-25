@@ -37,14 +37,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tài khoản không chính xác hoặc không tồn tại",
     ),
     "birthDate": MessageLookupByLibrary.simpleMessage("Ngày sinh"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Đóng"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Đổi mật khẩu"),
     "changePasswordFailed": MessageLookupByLibrary.simpleMessage(
       "Đổi mật khẩu thất bại",
     ),
+    "checkConnection": MessageLookupByLibrary.simpleMessage(
+      "Vui lòng kiểm tra kết nối mạng của bạn",
+    ),
+    "cod": MessageLookupByLibrary.simpleMessage("COD"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "Xác nhận mật khẩu",
     ),
+    "continueLabel": MessageLookupByLibrary.simpleMessage("Tiếp tục"),
     "createDelivery": MessageLookupByLibrary.simpleMessage("Tạo đơn hàng"),
+    "createOrder": MessageLookupByLibrary.simpleMessage("Tạo đơn hàng"),
     "currentPassword": MessageLookupByLibrary.simpleMessage(
       "Mật khẩu hiện tại",
     ),
@@ -69,12 +76,22 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enterOtp": MessageLookupByLibrary.simpleMessage("Nhập mã OTP"),
     "enterPhone": MessageLookupByLibrary.simpleMessage("Nhập số điện thoại"),
+    "estimatedPrice": MessageLookupByLibrary.simpleMessage("Giá ước tính"),
+    "estimatedWeight": MessageLookupByLibrary.simpleMessage(
+      "Khối lượng ước tính",
+    ),
     "female": MessageLookupByLibrary.simpleMessage("Nữ"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Quên mật khẩu?"),
+    "fromRegion": MessageLookupByLibrary.simpleMessage("Nơi gửi"),
     "gender": MessageLookupByLibrary.simpleMessage("Giới tính"),
+    "goodsType": MessageLookupByLibrary.simpleMessage("Loại hàng"),
+    "highValueGoods": MessageLookupByLibrary.simpleMessage("Hàng giá trị cao"),
     "home": MessageLookupByLibrary.simpleMessage("Trang chủ"),
     "ifDontHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Bạn chưa có tài khoản?",
+    ),
+    "insuranceNote": MessageLookupByLibrary.simpleMessage(
+      "Với mặt hàng giá trị cao, chúng tôi phụ thu 100.000 VND cho bảo hiểm đơn hàng.",
     ),
     "interRegionDeliveryPrice": m0,
     "invalidEmail": MessageLookupByLibrary.simpleMessage(
@@ -103,13 +120,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "myTickets": MessageLookupByLibrary.simpleMessage("Vé của tôi"),
     "name": MessageLookupByLibrary.simpleMessage("Họ và tên"),
     "newPassword": MessageLookupByLibrary.simpleMessage("Mật khẩu mới"),
+    "noConnection": MessageLookupByLibrary.simpleMessage(
+      "Không có kết nối mạng",
+    ),
     "noPriceDataAvailable": MessageLookupByLibrary.simpleMessage(
       "Không có dữ liệu giá nào.",
     ),
+    "normalGoods": MessageLookupByLibrary.simpleMessage("Hàng thường"),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Cài đặt thông báo",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Thông báo"),
+    "office": MessageLookupByLibrary.simpleMessage("Văn phòng"),
+    "orderCreated": MessageLookupByLibrary.simpleMessage(
+      "Tạo đơn hàng thành công!",
+    ),
+    "orderDetails": MessageLookupByLibrary.simpleMessage("Chi tiết đơn hàng"),
+    "orderId": MessageLookupByLibrary.simpleMessage("Mã đơn hàng"),
+    "orderValue": MessageLookupByLibrary.simpleMessage(
+      "Giá trị đơn hàng (VND)",
+    ),
+    "packageDescription": MessageLookupByLibrary.simpleMessage(
+      "Mô tả kiện hàng",
+    ),
     "password": MessageLookupByLibrary.simpleMessage("Mật khẩu"),
     "passwordChangedSuccess": MessageLookupByLibrary.simpleMessage(
       "Đổi mật khẩu thành công",
@@ -119,6 +152,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "Mật khẩu phải có ít nhất 6 ký tự",
+    ),
+    "paymentMethod": MessageLookupByLibrary.simpleMessage(
+      "Phương thức thanh toán",
     ),
     "phone": MessageLookupByLibrary.simpleMessage("Số điện thoại"),
     "phoneAlreadyUsed": MessageLookupByLibrary.simpleMessage(
@@ -130,17 +166,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseLogin": MessageLookupByLibrary.simpleMessage("Vui lòng đăng nhập"),
     "policy": MessageLookupByLibrary.simpleMessage("Chính sách"),
     "price": MessageLookupByLibrary.simpleMessage("Giá cước(VND)"),
+    "receiverName": MessageLookupByLibrary.simpleMessage("Tên người nhận"),
+    "receiverPays": MessageLookupByLibrary.simpleMessage("Người nhận trả"),
+    "receiverPhone": MessageLookupByLibrary.simpleMessage(
+      "Số điện thoại người nhận",
+    ),
+    "region": MessageLookupByLibrary.simpleMessage("Khu vực"),
     "register": MessageLookupByLibrary.simpleMessage("Đăng ký"),
     "registerFailed": MessageLookupByLibrary.simpleMessage("Đăng ký thất bại!"),
     "registerSuccess": MessageLookupByLibrary.simpleMessage(
       "Đăng ký thành công!",
     ),
     "rememberMe": MessageLookupByLibrary.simpleMessage("Nhớ mật khẩu"),
+    "required": MessageLookupByLibrary.simpleMessage("Trường này là bắt buộc"),
     "requiredField": MessageLookupByLibrary.simpleMessage("Yêu cầu bắt buộc"),
+    "retry": MessageLookupByLibrary.simpleMessage("Thử lại"),
     "sendCode": MessageLookupByLibrary.simpleMessage("Gửi mã"),
+    "senderCCCD": MessageLookupByLibrary.simpleMessage("CCCD người gửi"),
+    "senderName": MessageLookupByLibrary.simpleMessage("Tên người gửi"),
+    "senderPays": MessageLookupByLibrary.simpleMessage("Người gửi trả"),
+    "senderPhone": MessageLookupByLibrary.simpleMessage(
+      "Số điện thoại người gửi",
+    ),
     "settings": MessageLookupByLibrary.simpleMessage("Cài đặt"),
+    "successMessage": MessageLookupByLibrary.simpleMessage(
+      "Đơn hàng của bạn đã được tạo thành công.",
+    ),
+    "successTitle": MessageLookupByLibrary.simpleMessage("Thành công"),
     "tapToSelect": MessageLookupByLibrary.simpleMessage("Chạm để chọn ngày"),
     "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),
+    "toRegion": MessageLookupByLibrary.simpleMessage("Nơi nhận"),
     "trackDelivery": MessageLookupByLibrary.simpleMessage("Tra cứu đơn hàng"),
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Xác thực thất bại",

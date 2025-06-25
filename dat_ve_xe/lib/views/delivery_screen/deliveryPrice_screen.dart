@@ -136,7 +136,7 @@ class _DeliveryPriceScreenState extends State<DeliveryPriceScreen> {
                             style: TextStyle(color: Colors.red),
                           ),
                           Text(
-                            '3. Chúng tôi sẽ kiểm tra hàng kỹ và đóng gói cho khách hàng.', // Hardcoded Vietnamese
+                            '3. Chúng tôi sẽ kiểm tra hàng kỹ trước khi đóng gói cho khách hàng.', // Hardcoded Vietnamese
                             style: TextStyle(color: Colors.red),
                           ),
                           Text(

@@ -614,6 +614,266 @@ class S {
       args: [],
     );
   }
+
+  /// `No network connection`
+  String get noConnection {
+    return Intl.message(
+      'No network connection',
+      name: 'noConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message('Retry', name: 'retry', desc: '', args: []);
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Please check your network connection`
+  String get checkConnection {
+    return Intl.message(
+      'Please check your network connection',
+      name: 'checkConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order ID`
+  String get orderId {
+    return Intl.message('Order ID', name: 'orderId', desc: '', args: []);
+  }
+
+  /// `Sender Name`
+  String get senderName {
+    return Intl.message('Sender Name', name: 'senderName', desc: '', args: []);
+  }
+
+  /// `Sender Phone`
+  String get senderPhone {
+    return Intl.message(
+      'Sender Phone',
+      name: 'senderPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Package Description`
+  String get packageDescription {
+    return Intl.message(
+      'Package Description',
+      name: 'packageDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This field is required`
+  String get required {
+    return Intl.message(
+      'This field is required',
+      name: 'required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Estimated Weight`
+  String get estimatedWeight {
+    return Intl.message(
+      'Estimated Weight',
+      name: 'estimatedWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receiver Name`
+  String get receiverName {
+    return Intl.message(
+      'Receiver Name',
+      name: 'receiverName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receiver Phone`
+  String get receiverPhone {
+    return Intl.message(
+      'Receiver Phone',
+      name: 'receiverPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Goods Type`
+  String get goodsType {
+    return Intl.message('Goods Type', name: 'goodsType', desc: '', args: []);
+  }
+
+  /// `Normal`
+  String get normalGoods {
+    return Intl.message('Normal', name: 'normalGoods', desc: '', args: []);
+  }
+
+  /// `High Value`
+  String get highValueGoods {
+    return Intl.message(
+      'High Value',
+      name: 'highValueGoods',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Value (VND)`
+  String get orderValue {
+    return Intl.message(
+      'Order Value (VND)',
+      name: 'orderValue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sender ID (CCCD)`
+  String get senderCCCD {
+    return Intl.message(
+      'Sender ID (CCCD)',
+      name: 'senderCCCD',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `For high-value items, a surcharge of 100,000 VND applies for insurance.`
+  String get insuranceNote {
+    return Intl.message(
+      'For high-value items, a surcharge of 100,000 VND applies for insurance.',
+      name: 'insuranceNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue`
+  String get continueLabel {
+    return Intl.message('Continue', name: 'continueLabel', desc: '', args: []);
+  }
+
+  /// `Success`
+  String get successTitle {
+    return Intl.message('Success', name: 'successTitle', desc: '', args: []);
+  }
+
+  /// `Your order has been successfully created.`
+  String get successMessage {
+    return Intl.message(
+      'Your order has been successfully created.',
+      name: 'successMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Method`
+  String get paymentMethod {
+    return Intl.message(
+      'Payment Method',
+      name: 'paymentMethod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sender Pays`
+  String get senderPays {
+    return Intl.message('Sender Pays', name: 'senderPays', desc: '', args: []);
+  }
+
+  /// `Receiver Pays`
+  String get receiverPays {
+    return Intl.message(
+      'Receiver Pays',
+      name: 'receiverPays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `COD`
+  String get cod {
+    return Intl.message('COD', name: 'cod', desc: '', args: []);
+  }
+
+  /// `Estimated Price`
+  String get estimatedPrice {
+    return Intl.message(
+      'Estimated Price',
+      name: 'estimatedPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order created successfully!`
+  String get orderCreated {
+    return Intl.message(
+      'Order created successfully!',
+      name: 'orderCreated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Order`
+  String get createOrder {
+    return Intl.message(
+      'Create Order',
+      name: 'createOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order Details`
+  String get orderDetails {
+    return Intl.message(
+      'Order Details',
+      name: 'orderDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From Region`
+  String get fromRegion {
+    return Intl.message('From Region', name: 'fromRegion', desc: '', args: []);
+  }
+
+  /// `To Region`
+  String get toRegion {
+    return Intl.message('To Region', name: 'toRegion', desc: '', args: []);
+  }
+
+  /// `Region`
+  String get region {
+    return Intl.message('Region', name: 'region', desc: '', args: []);
+  }
+
+  /// `Office`
+  String get office {
+    return Intl.message('Office', name: 'office', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

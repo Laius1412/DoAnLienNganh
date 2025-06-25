@@ -47,7 +47,7 @@ class FloatingBubblesManager {
         ShakingWidget(
           child: CircleIconButton(
             color: Colors.deepPurple,
-            icon: Icons.smart_toy,
+            icon: Icons.support_agent_rounded,
             heroTag: "chat",
             onPressed: () {
               print("Đi tới Chatbot");
@@ -58,7 +58,7 @@ class FloatingBubblesManager {
         ShakingWidget(
           child: CircleIconButton(
             color: Colors.green,
-            icon: Icons.call,
+            icon: Icons.call_end_rounded,
             heroTag: "call",
             onPressed: () async {
               await FlutterPhoneDirectCaller.callNumber("0838541528");
@@ -88,11 +88,11 @@ class _ShakingWidgetState extends State<ShakingWidget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 900),
     )..repeat(reverse: true);
     _animation = Tween<double>(
-      begin: -3,
-      end: 3,
+      begin: -2,
+      end: 2,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticIn));
   }
 

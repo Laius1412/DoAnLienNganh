@@ -6,24 +6,31 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/myticket_screen/myticket_screen.dart';
 import 'package:dat_ve_xe/views/delivery_screen/delivery_screen.dart';
 import 'package:dat_ve_xe/widgets/floating_bubble.dart';
+import 'package:dat_ve_xe/widgets/netwwork_status_banner.dart';
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
+  final int selected; // Thêm dòng này
 
-  const MainLayout({super.key, required this.onLanguageChanged});
+  const MainLayout({
+    super.key,
+    required this.onLanguageChanged,
+    this.selected = 0, // Thêm dòng này
+  });
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selected; // Sử dụng giá trị truyền vào
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FloatingBubblesManager.show(context);
     });
@@ -81,118 +88,134 @@ class _MainLayoutState extends State<MainLayout> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: Color.fromARGB(255, 253, 109, 37),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Nút đổi theme bên trái
-
-                  // Logo hoặc tên app (căn giữa)
-                  SizedBox(
-                    height:
-                        70, // Đảm bảo banner có kích thước giống với thanh AppBar
-                    width: 200, // Đặt chiều rộng mong muốn
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Image.asset(
-                        'assets/app_icon/bannerApp.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+      child: Stack(
+        children: [
+          Scaffold(
+            body: Column(
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
+                  color: Color.fromARGB(255, 253, 109, 37),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Nút đổi theme bên trái
 
-                  // Icon thông báo bên phải
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.notifications,
-                        color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black
-                                : Colors.white,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationScreen(),
+                      // Logo hoặc tên app (căn giữa)
+                      SizedBox(
+                        height:
+                            70, // Đảm bảo banner có kích thước giống với thanh AppBar
+                        width: 200, // Đặt chiều rộng mong muốn
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Image.asset(
+                            'assets/app_icon/bannerApp.png',
+                            fit: BoxFit.cover,
                           ),
-                        ); // Mở trang thông báo
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                        ),
+                      ),
 
-            // Body
-            Expanded(child: _pages[_selectedIndex]),
-
-            // Bottom Navigation
-            Container(
-              padding: const EdgeInsets.only(
-                left: 10,
-                right: 10,
-                bottom: 10,
-                top: 4,
-              ),
-              color: Colors.transparent,
-              child: PhysicalModel(
-                color: Color.fromARGB(255, 253, 109, 37),
-                elevation: 8,
-                borderRadius: BorderRadius.circular(15),
-                shadowColor: Colors.black.withOpacity(0.3),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: BottomNavigationBar(
-                    backgroundColor: Color.fromARGB(255, 253, 109, 37),
-                    selectedItemColor: isDark ? Colors.white : Colors.black,
-                    unselectedItemColor: isDark ? Colors.black : Colors.white,
-                    showUnselectedLabels: true,
-                    currentIndex: _selectedIndex,
-                    onTap: _onItemTapped,
-                    type: BottomNavigationBarType.fixed,
-                    selectedFontSize: 14,
-                    unselectedFontSize: 14,
-                    items: [
-                      _navItem(
-                        Icons.home,
-                        AppLocalizations.of(context)!.home,
-                        0,
-                        isDark,
-                      ),
-                      _navItem(
-                        Icons.local_activity,
-                        AppLocalizations.of(context)!.myTickets,
-                        1,
-                        isDark,
-                      ),
-                      _navItem(
-                        Icons.local_shipping,
-                        AppLocalizations.of(context)!.delivery,
-                        2,
-                        isDark,
-                      ),
-                      _navItem(
-                        Icons.person,
-                        AppLocalizations.of(context)!.account,
-                        3,
-                        isDark,
+                      // Icon thông báo bên phải
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.notifications,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const NotificationScreen(),
+                              ),
+                            ); // Mở trang thông báo
+                          },
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
+
+                // Body
+                Expanded(child: _pages[_selectedIndex]),
+
+                // Bottom Navigation
+                Container(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    bottom: 10,
+                    top: 4,
+                  ),
+                  color: Colors.transparent,
+                  child: PhysicalModel(
+                    color: Color.fromARGB(255, 253, 109, 37),
+                    elevation: 8,
+                    borderRadius: BorderRadius.circular(15),
+                    shadowColor: Colors.black.withOpacity(0.3),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: BottomNavigationBar(
+                        backgroundColor: Color.fromARGB(255, 253, 109, 37),
+                        selectedItemColor: isDark ? Colors.white : Colors.black,
+                        unselectedItemColor:
+                            isDark ? Colors.black : Colors.white,
+                        showUnselectedLabels: true,
+                        currentIndex: _selectedIndex,
+                        onTap: _onItemTapped,
+                        type: BottomNavigationBarType.fixed,
+                        selectedFontSize: 14,
+                        unselectedFontSize: 14,
+                        items: [
+                          _navItem(
+                            Icons.home,
+                            AppLocalizations.of(context)!.home,
+                            0,
+                            isDark,
+                          ),
+                          _navItem(
+                            Icons.local_activity,
+                            AppLocalizations.of(context)!.myTickets,
+                            1,
+                            isDark,
+                          ),
+                          _navItem(
+                            Icons.local_shipping,
+                            AppLocalizations.of(context)!.delivery,
+                            2,
+                            isDark,
+                          ),
+                          _navItem(
+                            Icons.person,
+                            AppLocalizations.of(context)!.account,
+                            3,
+                            isDark,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          // Lớp phủ banner trên cùng màn hình
+          const Positioned(
+            top: 300,
+            left: 0,
+            right: 0,
+            child: NetworkStatusBanner(),
+          ),
+        ],
       ),
     );
   }
