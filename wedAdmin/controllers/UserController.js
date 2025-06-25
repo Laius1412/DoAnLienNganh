@@ -222,9 +222,28 @@ const exportExcel = async (req, res) => {
   try {
     const snapshot = await db.collection('users').get();
     const users = [];
-    snapshot.forEach(doc => {
-      users.push({ id: doc.id, ...doc.data() });
-    });
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      // Đếm số lần đặt vé của user này
+      const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
+      const bookingCount = bookingSnap.size;
+      users.push({ id: doc.id, ...data, bookingCount });
+    }
+
+    // Sắp xếp theo yêu cầu
+    const sort = req.query.sort;
+    if (sort === 'name-asc') {
+      users.sort((a, b) => {
+        const getLastName = (fullName) => {
+          if (!fullName) return '';
+          const parts = fullName.trim().split(' ');
+          return parts[parts.length - 1].toLowerCase();
+        };
+        return getLastName(a.name).localeCompare(getLastName(b.name), 'vi', { sensitivity: 'base' });
+      });
+    } else if (sort === 'booking-desc') {
+      users.sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0));
+    }
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Users');
@@ -235,6 +254,7 @@ const exportExcel = async (req, res) => {
       { header: 'Giới tính', key: 'gender', width: 10 },
       { header: 'Ngày sinh', key: 'birth', width: 15 },
       { header: 'Số điện thoại', key: 'phone', width: 20 },
+      { header: 'Số vé', key: 'bookingCount', width: 10 },
       { header: 'Vai trò', key: 'role', width: 15 },
     ];
 
@@ -245,6 +265,7 @@ const exportExcel = async (req, res) => {
         gender: user.gender === 'female' ? 'Nữ' : 'Nam',
         birth: user.birth ? new Date(user.birth).toLocaleDateString('vi-VN') : '',
         phone: user.phone,
+        bookingCount: user.bookingCount || 0,
         role: user.role,
       });
     });
