@@ -3,66 +3,124 @@
 <head>
   <title>Chi tiết vé đã đặt</title>
   <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background: #eee; }
-    .actions { margin-top: 20px; }
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 0; }
+    .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px 24px; }
+    h1 { text-align: center; margin-bottom: 24px; }
+    .tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 24px; }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 0;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 16px;
+      cursor: pointer;
+      transition: border 0.2s, color 0.2s;
+    }
+    .tab-btn.active {
+      border-bottom: 2px solid #007bff;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f1f3f4; width: 180px; }
+    .actions { margin-top: 20px; text-align: center; }
     .actions form { display: inline; }
+    .actions button, .actions a {
+      margin: 0 8px;
+      padding: 8px 18px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .actions button[type="submit"]:hover, .actions a:hover { background: #0056b3; }
+    .actions button[type="submit"]:last-child { background: #dc3545; }
+    .actions button[type="submit"]:last-child:hover { background: #a71d2a; }
   </style>
 </head>
 <body>
-  <h1>Chi tiết vé đã đặt</h1>
-  <table>
-    <tr><th>Mã Booking</th><td><%= booking.id %></td></tr>
-    <tr><th>Khách hàng</th><td>
-      <% if (booking.user) { %>
-        <div>Họ tên: <%= booking.user.name %></div>
-        <div>SĐT: <%= booking.user.phone %></div>
-        <div>Email: <%= booking.user.email %></div>
-      <% } else { %>
-        Không có thông tin khách hàng
-      <% } %>
-    </td></tr>
-    <tr><th>Ngày đi</th><td><%= booking.seatPosition?.date %></td></tr>
-    <tr><th>Số ghế</th><td><%= booking.seatPosition?.numberSeat %></td></tr>
-    <tr><th>Giờ khởi hành</th><td><%= booking.startTime %></td></tr>
-    <tr><th>Giờ kết thúc</th><td><%= booking.endTime %></td></tr>
-    <tr><th>Điểm đi</th><td><%= booking.pickUpPoint %></td></tr>
-    <tr><th>Điểm đến</th><td><%= booking.dropOffPoint %></td></tr>
-    <tr><th>Tổng tiền</th><td><%= booking.totalPrice %></td></tr>
-    <tr><th>Trạng thái</th><td><%= booking.statusBooking %></td></tr>
-    <tr><th>Thông tin xe</th><td>
-      <% if (booking.vehicle) { %>
-        <div>Tên xe: <%= booking.vehicle.nameVehicle %></div>
-        <div>Biển số: <%= booking.vehicle.plate %></div>
-        <div>Loại xe: <%= booking.vehicleType?.nameType %></div>
-        <div>Giá vé: <%= booking.vehicle.price %></div>
-      <% } else { %>
-        Không có thông tin xe
-      <% } %>
-    </td></tr>
-    <tr><th>Thông tin chuyến</th><td>
-      <% if (booking.trip) { %>
-        <div>Tên chuyến: <%= booking.trip.nameTrip %></div>
-        <div>Mã chuyến: <%= booking.trip.tripCode %></div>
-        <div>Điểm đi: <%= booking.trip.startLocation %></div>
-        <div>Điểm đến: <%= booking.trip.destination %></div>
-        <div>Loại tuyến: <%= booking.trip.vRouter %></div>
-      <% } else { %>
-        Không có thông tin chuyến
-      <% } %>
-    </td></tr>
-  </table>
-  <div class="actions">
-    <% if (booking.statusBooking === 'pending') { %>
-      <form method="post" action="/bookings/<%= booking.id %>/confirm">
-        <button type="submit">Xác nhận đặt vé</button>
-      </form>
-      <form method="post" action="/bookings/<%= booking.id %>/cancel">
-        <button type="submit">Hủy vé</button>
-      </form>
-    <% } %>
-    <a href="/bookings">Quay lại danh sách</a>
+  <div class="container">
+    <h1>Chi tiết vé đã đặt</h1>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab(0)">Thông tin chung</button>
+      <button class="tab-btn" onclick="showTab(1)">Thông tin chi tiết</button>
+    </div>
+    <div class="tab-content active">
+      <table>
+        <tr><th>Mã Booking</th><td><%= booking.id %></td></tr>
+        <tr><th>Khách hàng</th><td>
+          <% if (booking.user) { %>
+            <div>Họ tên: <%= booking.user.name %></div>
+            <div>SĐT: <%= booking.user.phone %></div>
+            <div>Email: <%= booking.user.email %></div>
+          <% } else { %>
+            Không có thông tin khách hàng
+          <% } %>
+        </td></tr>
+        <tr><th>Ngày đi</th><td><%= booking.seatPosition?.date %></td></tr>
+        <tr><th>Số ghế</th><td><%= booking.seatPosition?.numberSeat %></td></tr>
+        <tr><th>Giờ khởi hành</th><td><%= booking.startTime %></td></tr>
+        <tr><th>Giờ kết thúc</th><td><%= booking.endTime %></td></tr>
+        <tr><th>Điểm đi</th><td><%= booking.pickUpPoint %></td></tr>
+        <tr><th>Điểm đến</th><td><%= booking.dropOffPoint %></td></tr>
+      </table>
+    </div>
+    <div class="tab-content">
+      <table>
+        <tr><th>Tổng tiền</th><td><%= booking.totalPrice %></td></tr>
+        <tr><th>Trạng thái</th><td><%= booking.statusBooking %></td></tr>
+        <tr><th>Thông tin xe</th><td>
+          <% if (booking.vehicle) { %>
+            <div>Tên xe: <%= booking.vehicle.nameVehicle %></div>
+            <div>Biển số: <%= booking.vehicle.plate %></div>
+            <div>Loại xe: <%= booking.vehicleType?.nameType %></div>
+            <div>Giá vé: <%= booking.vehicle.price %></div>
+          <% } else { %>
+            Không có thông tin xe
+          <% } %>
+        </td></tr>
+        <tr><th>Thông tin chuyến</th><td>
+          <% if (booking.trip) { %>
+            <div>Tên chuyến: <%= booking.trip.nameTrip %></div>
+            <div>Mã chuyến: <%= booking.trip.tripCode %></div>
+            <div>Điểm đi: <%= booking.trip.startLocation %></div>
+            <div>Điểm đến: <%= booking.trip.destination %></div>
+            <div>Loại tuyến: <%= booking.trip.vRouter %></div>
+          <% } else { %>
+            Không có thông tin chuyến
+          <% } %>
+        </td></tr>
+      </table>
+      <div class="actions">
+        <% if (booking.statusBooking === 'pending') { %>
+          <form method="post" action="/bookings/<%= booking.id %>/confirm">
+            <button type="submit">Xác nhận đặt vé</button>
+          </form>
+          <form method="post" action="/bookings/<%= booking.id %>/cancel">
+            <button type="submit">Hủy vé</button>
+          </form>
+        <% } %>
+        <a href="/bookings">Quay lại danh sách</a>
+      </div>
+    </div>
   </div>
+  <script>
+    function showTab(idx) {
+      var tabs = document.querySelectorAll('.tab-btn');
+      var contents = document.querySelectorAll('.tab-content');
+      tabs.forEach((t, i) => {
+        t.classList.toggle('active', i === idx);
+        contents[i].classList.toggle('active', i === idx);
+      });
+    }
+  </script>
 </body>
 </html> 
