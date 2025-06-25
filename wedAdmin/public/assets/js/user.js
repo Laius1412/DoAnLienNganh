@@ -1,6 +1,10 @@
 // chức năng xuất file excel
 document.getElementById('exportExcelBtn').addEventListener('click', () => {
-  window.location.href = '/user/export-excel';
+  const url = new URL(window.location.href);
+  const sort = url.searchParams.get('sort');
+  let exportUrl = '/user/export-excel';
+  if (sort) exportUrl += `?sort=${sort}`;
+  window.location.href = exportUrl;
 });
 
 
