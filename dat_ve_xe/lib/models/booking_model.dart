@@ -2,6 +2,7 @@ import 'vehicle_type_model.dart';
 import 'seat_position_model.dart';
 import 'vehicle_model.dart';
 import 'trip_model.dart';
+import 'package:intl/intl.dart';
 
 class BookingSeat {
   final SeatPosition? seatPosition;
@@ -93,7 +94,7 @@ class Booking {
     this.paymentDeadline,
   });
 
-  ///  Hàm lấy ngày đi thực tế từ seatPosition.date
+  /// Lấy ngày đi (Date) không bao gồm giờ
   DateTime? getTravelDate() {
     if (seats.isNotEmpty && seats[0].seatPosition?.date != null) {
       try {
@@ -103,6 +104,25 @@ class Booking {
       }
     }
     return null;
+  }
+
+  /// Lấy ngày + giờ đầy đủ để so sánh chính xác với DateTime.now()
+  DateTime? getTravelDateTime() {
+    if (seats.isEmpty ||
+        seats.first.seatPosition?.date == null ||
+        seats.first.vehicle?.startTime == null) {
+      return null;
+    }
+
+    final dateStr = seats.first.seatPosition!.date; // "2025-06-26"
+    final timeStr = seats.first.vehicle!.startTime; // "14:00"
+
+    try {
+      final fullStr = "$dateStr $timeStr"; // "2025-06-26 14:00"
+      return DateFormat("yyyy-MM-dd HH:mm").parse(fullStr);
+    } catch (_) {
+      return null;
+    }
   }
 
   Map<String, dynamic> toMap() {

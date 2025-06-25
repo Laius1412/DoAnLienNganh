@@ -226,8 +226,26 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
     }
 
     final now = DateTime.now();
-    final currentTickets = _bookings.where((b) => b.getTravelDate()?.isAfter(now) ?? false).toList();
-    final pastTickets = _bookings.where((b) => b.getTravelDate()?.isBefore(now) ?? false).toList();
+
+      final currentTickets = _bookings.where((b) {
+        final travelDate = b.getTravelDate();
+        final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
+        if (travelDate != null && startTime != null) {
+          final fullDateTime = DateTime.parse('${DateFormat('yyyy-MM-dd').format(travelDate)} ${startTime.padLeft(5, '0')}');
+          return fullDateTime.isAfter(now);
+        }
+        return false;
+      }).toList();
+
+      final pastTickets = _bookings.where((b) {
+        final travelDate = b.getTravelDate();
+        final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
+        if (travelDate != null && startTime != null) {
+          final fullDateTime = DateTime.parse('${DateFormat('yyyy-MM-dd').format(travelDate)} ${startTime.padLeft(5, '0')}');
+          return fullDateTime.isBefore(now);
+        }
+        return false;
+      }).toList();
 
     return DefaultTabController(
       length: 2,

@@ -2,18 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
+import 'package:dat_ve_xe/server/user_service.dart';
+import 'package:dat_ve_xe/models/user_model.dart';
 
-class DetailMyTicket extends StatelessWidget {
+class DetailMyTicket extends StatefulWidget {
   final Booking booking;
 
   const DetailMyTicket({Key? key, required this.booking}) : super(key: key);
 
   @override
+  State<DetailMyTicket> createState() => _DetailMyTicketState();
+}
+
+class _DetailMyTicketState extends State<DetailMyTicket> {
+  String? userName;
+  bool _loadingUser = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    final user = await UserService().getUserById(widget.booking.userId);
+    setState(() {
+      userName = user?.name ?? 'Không rõ';
+      _loadingUser = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final booking = widget.booking;
     final travelDate = booking.getTravelDate();
     final seatNumbers = booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ');
     final tripName = booking.seats.first.vehicle?.trip?.nameTrip ?? 'N/A';
     final plate = booking.seats.first.vehicle?.plate ?? 'N/A';
+    final startTime = booking.seats.first.vehicle?.startTime ?? 'Không rõ';
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F8FB),
@@ -66,7 +92,9 @@ class DetailMyTicket extends StatelessWidget {
                 const Divider(),
 
                 _buildDetailRow("Mã vé", booking.id),
+                _buildDetailRow("Người đặt", _loadingUser ? "Đang tải..." : (userName ?? "Không rõ")),
                 _buildDetailRow("Ngày đi", travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'),
+                _buildDetailRow("Giờ xuất phát", startTime),
                 _buildDetailRow("Biển số xe", plate),
                 _buildDetailRow("Ghế ngồi", seatNumbers),
                 _buildDetailRow("Tổng tiền", "${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)} đ"),
