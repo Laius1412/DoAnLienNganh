@@ -240,91 +240,95 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             Expanded(
-              child: Row(
-                children: [
-                  // Danh sách tỉnh/thành
-                  Container(
-                    width: 140,
-                    color: Colors.white,
-                    child: ListView.builder(
-                      itemCount: _stops.length,
-                      itemBuilder: (context, index) {
-                        final stop = _stops[index];
-                        final isSelected = (isStartLocation
-                            ? stop.city == _selectedStartCity
-                            : stop.city == _selectedEndCity);
-                        return Material(
-                          color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
-                          child: ListTile(
-                            title: Text(
-                              stop.city,
-                              style: TextStyle(
-                                color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                if (isStartLocation) {
-                                  _selectedStartCity = stop.city;
-                                  _selectedStartLocation = stop.locations.isNotEmpty ? stop.locations.first : null;
-                                } else {
-                                  _selectedEndCity = stop.city;
-                                  _selectedEndLocation = stop.locations.isNotEmpty ? stop.locations.first : null;
-                                }
-                              });
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  // Danh sách điểm đón/trả chi tiết
-                  Expanded(
-                    child: Builder(
-                      builder: (context) {
-                        final selectedStop = isStartLocation
-                            ? _stops.firstWhere((s) => s.city == _selectedStartCity, orElse: () => _stops.first)
-                            : _stops.firstWhere((s) => s.city == _selectedEndCity, orElse: () => _stops.last);
-                        final locations = selectedStop.locations;
-                        final selectedLocation = isStartLocation ? _selectedStartLocation : _selectedEndLocation;
-                        return ListView.builder(
-                          itemCount: locations.length,
+              child: StatefulBuilder(
+                builder: (context, setModalState) {
+                  return Row(
+                    children: [
+                      // Danh sách tỉnh/thành
+                      Container(
+                        width: 140,
+                        color: Colors.white,
+                        child: ListView.builder(
+                          itemCount: _stops.length,
                           itemBuilder: (context, index) {
-                            final location = locations[index];
-                            final isSelected = location == selectedLocation;
+                            final stop = _stops[index];
+                            final isSelected = (isStartLocation
+                                ? stop.city == _selectedStartCity
+                                : stop.city == _selectedEndCity);
                             return Material(
                               color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
                               child: ListTile(
-                                leading: Icon(
-                                  Icons.location_on,
-                                  color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.grey,
-                                ),
                                 title: Text(
-                                  location,
+                                  stop.city,
                                   style: TextStyle(
                                     color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                   ),
                                 ),
                                 onTap: () {
-                                  setState(() {
+                                  setModalState(() {
                                     if (isStartLocation) {
-                                      _selectedStartLocation = location;
+                                      _selectedStartCity = stop.city;
+                                      _selectedStartLocation = stop.locations.isNotEmpty ? stop.locations.first : null;
                                     } else {
-                                      _selectedEndLocation = location;
+                                      _selectedEndCity = stop.city;
+                                      _selectedEndLocation = stop.locations.isNotEmpty ? stop.locations.first : null;
                                     }
                                   });
-                                  Navigator.pop(context);
                                 },
                               ),
                             );
                           },
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                        ),
+                      ),
+                      // Danh sách điểm đón/trả chi tiết
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            final selectedStop = isStartLocation
+                                ? _stops.firstWhere((s) => s.city == _selectedStartCity, orElse: () => _stops.first)
+                                : _stops.firstWhere((s) => s.city == _selectedEndCity, orElse: () => _stops.last);
+                            final locations = selectedStop.locations;
+                            final selectedLocation = isStartLocation ? _selectedStartLocation : _selectedEndLocation;
+                            return ListView.builder(
+                              itemCount: locations.length,
+                              itemBuilder: (context, index) {
+                                final location = locations[index];
+                                final isSelected = location == selectedLocation;
+                                return Material(
+                                  color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.location_on,
+                                      color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.grey,
+                                    ),
+                                    title: Text(
+                                      location,
+                                      style: TextStyle(
+                                        color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
+                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        if (isStartLocation) {
+                                          _selectedStartLocation = location;
+                                        } else {
+                                          _selectedEndLocation = location;
+                                        }
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -568,13 +572,14 @@ class _BookingScreenState extends State<BookingScreen> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
+                  border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 2),
+                  borderRadius: BorderRadius.circular(12),
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 3,
-                      offset: const Offset(0, -2),
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
@@ -597,7 +602,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color.fromARGB(255, 253, 109, 37),
-                            width: 1,
+                            width: 2,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -629,7 +634,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color.fromARGB(255, 253, 109, 37),
-                            width: 1,
+                            width: 2,
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),

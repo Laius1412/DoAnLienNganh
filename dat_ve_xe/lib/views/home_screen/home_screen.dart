@@ -112,12 +112,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text('Đặt vé xe', style: TextStyle(color: Color.fromARGB(255, 253, 109, 37))),
-        iconTheme: IconThemeData(color: Color.fromARGB(255, 253, 109, 37)),
       ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Chào bạn',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 25, // to hơn
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 1),
+              Text(
+                'Đã có vé về quê chưa',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 39, 38, 38),
+                  fontSize: 16, // nhỏ hơn
+                ),
+              ),
+            ],
+          ),
+          iconTheme: IconThemeData(color: Color.fromARGB(255, 253, 109, 37)),
+        ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -125,9 +146,16 @@ class _HomeScreenState extends State<HomeScreen> {
             // Hộp chọn điểm đi & đến
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 1.5),
+                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 2),
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -178,9 +206,16 @@ class _HomeScreenState extends State<HomeScreen> {
             // Hộp chọn ngày
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 1.5),
+                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 2),
                 borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
