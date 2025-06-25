@@ -1,3 +1,5 @@
+import 'stop_model.dart';
+
 class Trip {
   final String id;
   final String destination;
@@ -5,7 +7,7 @@ class Trip {
   final String startLocation;
   final String tripCode;
   final String vRouter;
-  final List<String> stops;
+  final List<Stop> stops;
 
   Trip({
     required this.id,
@@ -26,8 +28,8 @@ class Trip {
       tripCode: data['tripCode'],
       vRouter: data['vRouter'],
       stops: data['stops'] != null
-        ? List<String>.from(data['stops'])
-        : <String>[],
+        ? List<Map<String, dynamic>>.from(data['stops']).map((e) => Stop.fromMap(e)).toList()
+        : <Stop>[],
     );
   }
 }

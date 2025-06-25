@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'package:dat_ve_xe/views/trip/payment_screen.dart';
+import 'package:dat_ve_xe/models/stop_model.dart';
 
 class BookingScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -32,10 +33,12 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _isInitializing = true;
   int _step = 1; // 1: chọn ghế, 2: chọn điểm lên/xuống
   
-  // Danh sách các điểm dừng
-  List<String> get _locations => widget.vehicle.trip?.stops ?? [];
+  // Danh sách các điểm dừng (Stop)
+  List<Stop> get _stops => widget.vehicle.trip?.stops ?? [];
 
+  String? _selectedStartCity;
   String? _selectedStartLocation;
+  String? _selectedEndCity;
   String? _selectedEndLocation;
 
   @override
@@ -43,13 +46,13 @@ class _BookingScreenState extends State<BookingScreen> {
     super.initState();
     _loadBookedSeats();
     // Set initial locations from widget, ensuring they exist in the list
-    final locations = _locations;
-    _selectedStartLocation = locations.contains(widget.startLocation)
-        ? widget.startLocation
-        : (locations.isNotEmpty ? locations.first : null);
-    _selectedEndLocation = locations.contains(widget.destination)
-        ? widget.destination
-        : (locations.isNotEmpty ? locations.last : null);
+    final stops = _stops;
+    if (stops.isNotEmpty) {
+      _selectedStartCity = stops.first.city;
+      _selectedEndCity = stops.last.city;
+      _selectedStartLocation = stops.first.locations.isNotEmpty ? stops.first.locations.first : null;
+      _selectedEndLocation = stops.last.locations.isNotEmpty ? stops.last.locations.first : null;
+    }
   }
 
   Future<void> _loadBookedSeats() async {
@@ -155,8 +158,8 @@ class _BookingScreenState extends State<BookingScreen> {
 
       final bookingId = await _bookingService.createBooking(
         userId: user.uid,
-        startLocationBooking: _selectedStartLocation!,
-        endLocationBooking: _selectedEndLocation!,
+        startLocationBooking: '${_selectedStartLocation!} (${_selectedStartCity ?? ''})',
+        endLocationBooking: '${_selectedEndLocation!} (${_selectedEndCity ?? ''})',
         totalPrice: _totalPrice,
         seatDetails: seatDetails,
         selectedDate: widget.selectedDate,
@@ -194,7 +197,7 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  // Bước 2: Chọn điểm đón/trả
+  // Bước 2: Chọn điểm đón/trả (nested city/location)
   void _showLocationSelectionSheet(bool isStartLocation) {
     showModalBottomSheet(
       context: context,
@@ -222,7 +225,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isStartLocation ? 'Chọn điểm đón' : 'Chọn điểm trả',
+                    isStartLocation ? 'Chọn tỉnh/thành điểm đón' : 'Chọn tỉnh/thành điểm trả',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -237,53 +240,91 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: _locations.length,
-                itemBuilder: (context, index) {
-                  final location = _locations[index];
-                  final isSelected = isStartLocation 
-                      ? location == _selectedStartLocation
-                      : location == _selectedEndLocation;
-                  
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.location_on,
-                        color: isSelected 
-                            ? const Color.fromARGB(255, 253, 109, 37)
-                            : Colors.grey,
-                      ),
-                      title: Text(
-                        location,
-                        style: TextStyle(
-                          color: isSelected 
-                              ? const Color.fromARGB(255, 253, 109, 37)
-                              : Colors.black87,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          if (isStartLocation) {
-                            _selectedStartLocation = location;
-                          } else {
-                            _selectedEndLocation = location;
-                          }
-                        });
-                        Navigator.pop(context);
+              child: Row(
+                children: [
+                  // Danh sách tỉnh/thành
+                  Container(
+                    width: 140,
+                    color: Colors.white,
+                    child: ListView.builder(
+                      itemCount: _stops.length,
+                      itemBuilder: (context, index) {
+                        final stop = _stops[index];
+                        final isSelected = (isStartLocation
+                            ? stop.city == _selectedStartCity
+                            : stop.city == _selectedEndCity);
+                        return Material(
+                          color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
+                          child: ListTile(
+                            title: Text(
+                              stop.city,
+                              style: TextStyle(
+                                color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                if (isStartLocation) {
+                                  _selectedStartCity = stop.city;
+                                  _selectedStartLocation = stop.locations.isNotEmpty ? stop.locations.first : null;
+                                } else {
+                                  _selectedEndCity = stop.city;
+                                  _selectedEndLocation = stop.locations.isNotEmpty ? stop.locations.first : null;
+                                }
+                              });
+                            },
+                          ),
+                        );
                       },
                     ),
-                  );
-                },
+                  ),
+                  // Danh sách điểm đón/trả chi tiết
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final selectedStop = isStartLocation
+                            ? _stops.firstWhere((s) => s.city == _selectedStartCity, orElse: () => _stops.first)
+                            : _stops.firstWhere((s) => s.city == _selectedEndCity, orElse: () => _stops.last);
+                        final locations = selectedStop.locations;
+                        final selectedLocation = isStartLocation ? _selectedStartLocation : _selectedEndLocation;
+                        return ListView.builder(
+                          itemCount: locations.length,
+                          itemBuilder: (context, index) {
+                            final location = locations[index];
+                            final isSelected = location == selectedLocation;
+                            return Material(
+                              color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
+                              child: ListTile(
+                                leading: Icon(
+                                  Icons.location_on,
+                                  color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.grey,
+                                ),
+                                title: Text(
+                                  location,
+                                  style: TextStyle(
+                                    color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    if (isStartLocation) {
+                                      _selectedStartLocation = location;
+                                    } else {
+                                      _selectedEndLocation = location;
+                                    }
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -566,7 +607,9 @@ class _BookingScreenState extends State<BookingScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                _selectedStartLocation ?? 'Chọn điểm đón',
+                                _selectedStartLocation != null && _selectedStartCity != null
+                                    ? '${_selectedStartLocation!} (${_selectedStartCity!})'
+                                    : 'Chọn điểm đón',
                                 style: TextStyle(
                                   color: _selectedStartLocation != null ? Colors.black : Colors.grey,
                                   fontSize: 16,
@@ -596,7 +639,9 @@ class _BookingScreenState extends State<BookingScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                _selectedEndLocation ?? 'Chọn điểm trả',
+                                _selectedEndLocation != null && _selectedEndCity != null
+                                    ? '${_selectedEndLocation!} (${_selectedEndCity!})'
+                                    : 'Chọn điểm trả',
                                 style: TextStyle(
                                   color: _selectedEndLocation != null ? Colors.black : Colors.grey,
                                   fontSize: 16,
