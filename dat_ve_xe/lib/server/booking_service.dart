@@ -18,6 +18,7 @@ class BookingService {
     // Check every 30 seconds
     _expiryCheckTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       checkAndCancelExpiredBookings();
+      deleteCancelledBookings();
     });
   }
 
@@ -481,6 +482,23 @@ class BookingService {
       }
     } catch (e) {
       print('Error checking expired bookings: $e');
+    }
+  }
+
+  // Xóa tất cả booking có trạng thái cancelled
+  Future<void> deleteCancelledBookings() async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('bookings')
+          .where('statusBooking', isEqualTo: 'cancelled')
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        await _firestore.collection('bookings').doc(doc.id).delete();
+        print('Deleted cancelled booking: \'${doc.id}\'');
+      }
+    } catch (e) {
+      print('Error deleting cancelled bookings: $e');
     }
   }
 }

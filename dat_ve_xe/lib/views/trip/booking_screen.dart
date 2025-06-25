@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'package:dat_ve_xe/views/trip/payment_screen.dart';
 import 'package:dat_ve_xe/models/stop_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingScreen extends StatefulWidget {
   final Vehicle vehicle;
