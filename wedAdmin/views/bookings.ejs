@@ -1,16 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Quản lý vé đã đặt</title>
-  <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background: #eee; }
-  </style>
-</head>
-<body>
-  <h1>Quản lý vé đã đặt</h1>
-  <table>
+<style>
+  .bookings-container {
+    max-width: 4000px;
+    margin: 32px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #0002;
+    padding: 32px 20px;
+  }
+  .bookings-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 28px;
+    color: #007bff;
+    letter-spacing: 1px;
+  }
+  .bookings-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px #0001;
+  }
+  .bookings-table th, .bookings-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e3e3e3;
+    text-align: left;
+  }
+  .bookings-table th {
+    background: #e9ecef;
+    color: #333;
+    font-weight: 600;
+  }
+  .bookings-table tr:last-child td {
+    border-bottom: none;
+  }
+  .bookings-table tbody tr:hover {
+    background: #e3f0ff;
+    transition: background 0.2s;
+  }
+  .action-link {
+    background: #007bff;
+    color: #fff !important;
+    padding: 6px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin: 0 2px;
+    display: inline-block;
+  }
+  .action-link:hover {
+    background: #0056b3;
+  }
+</style>
+<div class="bookings-container">
+  <div class="bookings-title">Quản lý vé đã đặt</div>
+  <table class="bookings-table">
     <thead>
       <tr>
         <th>Mã Booking</th>
@@ -32,11 +79,10 @@
           <td><%= booking.totalPrice %></td>
           <td><%= booking.statusBooking %></td>
           <td>
-            <a href="/bookings/<%= booking.id %>">Xem chi tiết</a>
+            <a class="action-link" href="/bookings/<%= booking.id %>">Xem chi tiết</a>
           </td>
         </tr>
       <% }) %>
     </tbody>
   </table>
-</body>
-</html> 
+</div> 
