@@ -47,7 +47,7 @@ class FloatingBubblesManager {
         ShakingWidget(
           child: CircleIconButton(
             color: Colors.deepPurple,
-            icon: Icons.smart_toy,
+            icon: Icons.support_agent_rounded,
             heroTag: "chat",
             onPressed: () {
               print("Đi tới Chatbot");
@@ -58,7 +58,7 @@ class FloatingBubblesManager {
         ShakingWidget(
           child: CircleIconButton(
             color: Colors.green,
-            icon: Icons.call,
+            icon: Icons.call_end_rounded,
             heroTag: "call",
             onPressed: () async {
               await FlutterPhoneDirectCaller.callNumber("0838541528");

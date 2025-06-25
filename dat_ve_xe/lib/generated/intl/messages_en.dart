@@ -34,9 +34,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Account not found",
     ),
     "birthDate": MessageLookupByLibrary.simpleMessage("Birth date"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePasswordFailed": MessageLookupByLibrary.simpleMessage(
       "Failed to change password",
+    ),
+    "checkConnection": MessageLookupByLibrary.simpleMessage(
+      "Please check your network connection",
     ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
     "createDelivery": MessageLookupByLibrary.simpleMessage("Create Delivery"),
@@ -84,6 +88,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "myTickets": MessageLookupByLibrary.simpleMessage("My Tickets"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
+    "noConnection": MessageLookupByLibrary.simpleMessage(
+      "No network connection",
+    ),
     "noPriceDataAvailable": MessageLookupByLibrary.simpleMessage(
       "No price data available.",
     ),
@@ -118,6 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
     "requiredField": MessageLookupByLibrary.simpleMessage("Required field"),
+    "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "sendCode": MessageLookupByLibrary.simpleMessage("Send code"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "tapToSelect": MessageLookupByLibrary.simpleMessage("Tap to select"),

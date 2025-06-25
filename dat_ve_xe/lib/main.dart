@@ -7,11 +7,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'views/myticket_screen/myticket_screen.dart';
+import 'package:provider/provider.dart';
+import 'service/connectivity_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ConnectivityService(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -100,7 +107,8 @@ class _MyAppState extends State<MyApp> {
           locale: _currentLocale, // Sử dụng _currentLocale
           home: MainLayout(onLanguageChanged: _changeLanguage),
           routes: {
-            '/myticket': (context) => MyTicketScreen(onLanguageChanged: _changeLanguage),
+            '/myticket':
+                (context) => MyTicketScreen(onLanguageChanged: _changeLanguage),
           },
         );
       },

@@ -57,7 +57,6 @@
     "changePassword": "Change Password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "confirmPassword": "Confirm Password",
     "passwordChangedSuccess": "Password changed successfully",
     "changePasswordFailed": "Failed to change password",
     "passwordTooShort": "Password must be at least 6 characters",
@@ -70,5 +69,9 @@
     "price": "Price (VND)",
     "localDeliveryPrice": "Local Delivery Price for {regionName}",
     "interRegionDeliveryPrice": "Delivery Price from {fromRegionName} to {toRegionName}",
-    "noPriceDataAvailable": "No price data available."
+    "noPriceDataAvailable": "No price data available.",
+    "noConnection": "No network connection",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "checkConnection": "Please check your network connection"
 }

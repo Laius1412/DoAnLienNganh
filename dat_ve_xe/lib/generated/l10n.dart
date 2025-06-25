@@ -614,6 +614,36 @@ class S {
       args: [],
     );
   }
+
+  /// `No network connection`
+  String get noConnection {
+    return Intl.message(
+      'No network connection',
+      name: 'noConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message('Retry', name: 'retry', desc: '', args: []);
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Please check your network connection`
+  String get checkConnection {
+    return Intl.message(
+      'Please check your network connection',
+      name: 'checkConnection',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
