@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dat_ve_xe/views/auth/register_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:dat_ve_xe/views/personal_screen/edit_profile_screen.dart';
 
 class PersonalScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -266,7 +267,12 @@ class _PersonalScreenState extends State<PersonalScreen> {
         const SizedBox(height: 8),
         TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/edit-profile');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EditProfileScreen(),
+              ),
+            );
           },
           child: Text(AppLocalizations.of(context)!.editProfile),
         ),
