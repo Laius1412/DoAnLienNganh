@@ -103,5 +103,22 @@
     "toRegion": "Nơi nhận",
     "region": "Khu vực",
     "office": "Văn phòng",
+<<<<<<< Updated upstream
+=======
+    "resetPassword": "Khôi phục mật khẩu",
+    "enterYourEmail": "Nhập email của bạn",
+    "sendResetCode": "Gửi mã",
+    "emailNotRegistered": "Tài khoản email không tồn tại",
+    "sendCodeError": "Gửi mã thất bại",
+    "checkYourEmailForCode": "Kiểm tra email của bạn để nhận mã",
+    "enterCode": "Nhập mã",
+    "verifyCode": "Xác nhận mã",
+    "enterNewPassword": "Nhập mật khẩu mới",
+    "passwordNotMatch": "Mật khẩu không trùng khớp",
+    "resetPasswordError": "Khôi phục mật khẩu thất bại",
+    "success": "Khôi phục thành công",
+    "checkEmailToReset": "Kiểm tra email và làm theo hướng dẫn",
+    "ok": "OK",
+>>>>>>> Stashed changes
     "statistics": "Thống kê"
 }
