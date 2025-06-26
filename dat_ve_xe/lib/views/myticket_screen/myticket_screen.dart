@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/views/personal_screen/login_request_card.dart';
 import 'package:dat_ve_xe/views/myticket_screen/detail_my_tickets.dart';
+import 'package:dat_ve_xe/views/myticket_screen/statistic_tab.dart';
 
 class MyTicketScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -27,7 +28,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
 
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null && user.uid != _currentUser?.uid) {
@@ -128,67 +129,81 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                   ),
                 );
               },
-          child:  Card(
-            elevation: 4,
-            margin: const EdgeInsets.only(bottom: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Card(
+                elevation: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Mã vé: ${booking.id.substring(0, 8)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(booking.statusBooking).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          _getStatusText(booking.statusBooking),
-                          style: TextStyle(
-                            color: _getStatusColor(booking.statusBooking),
-                            fontWeight: FontWeight.w600,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Mã vé: ${booking.id.substring(0, 8)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(booking.statusBooking).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _getStatusText(booking.statusBooking),
+                              style: TextStyle(
+                                color: _getStatusColor(booking.statusBooking),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
+                      const SizedBox(height: 12),
+                      if (booking.seats.isNotEmpty && booking.seats[0].vehicle != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Tuyến: ${booking.seats[0].vehicle!.trip?.nameTrip ?? 'N/A'}'),
+                            const SizedBox(height: 4),
+                            Text('Biển số: ${booking.seats[0].vehicle!.plate}'),
+                            const SizedBox(height: 4),
+                            Text('Ghế: ${booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ')}'),
+                            const SizedBox(height: 4),
+                            Text('Ngày đi: ${travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'}'),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tổng tiền: ${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)}đ',
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 253, 109, 37),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-
-                  // Body
-                  if (booking.seats.isNotEmpty && booking.seats[0].vehicle != null)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Tuyến: ${booking.seats[0].vehicle!.trip?.nameTrip ?? 'N/A'}'),
-                        const SizedBox(height: 4),
-                        Text('Biển số: ${booking.seats[0].vehicle!.plate}'),
-                        const SizedBox(height: 4),
-                        Text('Ghế: ${booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ')}'),
-                        const SizedBox(height: 4),
-                        Text('Ngày đi: ${travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'}'),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Tổng tiền: ${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)}đ',
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 253, 109, 37),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          ),
-          );
+                ),
+              ));
         },
+      ),
+    );
+  }
+
+  Widget _buildStatisticTab() {
+    final totalTickets = _bookings.length;
+    final totalMoney = _bookings.fold<int>(0, (sum, b) => sum + b.totalPrice);
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Tổng số vé: $totalTickets', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text('Tổng tiền đã thanh toán: ${NumberFormat("#,###", "vi_VN").format(totalMoney)}đ',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+        ],
       ),
     );
   }
@@ -227,85 +242,82 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
 
     final now = DateTime.now();
 
-      final currentTickets = _bookings.where((b) {
-        final travelDate = b.getTravelDate();
-        final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
-        if (travelDate != null && startTime != null) {
-          final fullDateTime = DateTime.parse('${DateFormat('yyyy-MM-dd').format(travelDate)} ${startTime.padLeft(5, '0')}');
-          return fullDateTime.isAfter(now);
-        }
-        return false;
-      }).toList();
+    final currentTickets = _bookings.where((b) {
+      final travelDate = b.getTravelDate();
+      final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
+      if (travelDate != null && startTime != null) {
+        final fullDateTime = DateTime.parse('${DateFormat('yyyy-MM-dd').format(travelDate)} ${startTime.padLeft(5, '0')}');
+        return fullDateTime.isAfter(now);
+      }
+      return false;
+    }).toList();
 
-      final pastTickets = _bookings.where((b) {
-        final travelDate = b.getTravelDate();
-        final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
-        if (travelDate != null && startTime != null) {
-          final fullDateTime = DateTime.parse('${DateFormat('yyyy-MM-dd').format(travelDate)} ${startTime.padLeft(5, '0')}');
-          return fullDateTime.isBefore(now);
-        }
-        return false;
-      }).toList();
+    final pastTickets = _bookings.where((b) {
+      final travelDate = b.getTravelDate();
+      final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
+      if (travelDate != null && startTime != null) {
+        final fullDateTime = DateTime.parse('${DateFormat('yyyy-MM-dd').format(travelDate)} ${startTime.padLeft(5, '0')}');
+        return fullDateTime.isBefore(now);
+      }
+      return false;
+    }).toList();
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-            title: Text(t.myTickets),
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            elevation: 0,
-            actions: [
-                if (_selectedDate != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Center(
-                      child: Text(
-                        DateFormat('dd/MM/yyyy').format(_selectedDate!),
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
+          title: Text(t.myTickets),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          elevation: 0,
+          actions: [
+            if (_selectedDate != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Center(
+                  child: Text(
+                    DateFormat('dd/MM/yyyy').format(_selectedDate!),
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
                   ),
-                if (_selectedDate != null)
-                  IconButton(
-                    icon: const Icon(Icons.clear),
-                    tooltip: 'Xóa ngày đã chọn',
-                    onPressed: () {
-                      setState(() {
-                        _selectedDate = null;
-                      });
-                    },
-                  ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  tooltip: 'Chọn ngày',
-                  onPressed: _pickDate,
                 ),
-              ],
-
-            
-            bottom: TabBar(
-              controller: _tabController,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.black87,
-              indicator: BoxDecoration(
-                color: const Color.fromARGB(255, 253, 109, 37),
-                borderRadius: BorderRadius.circular(10),
               ),
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-              tabs: const [
-                Tab(text: 'Vé hiện tại'),
-                Tab(text: 'Vé đã đi'),
-              ],
+            if (_selectedDate != null)
+              IconButton(
+                icon: const Icon(Icons.clear),
+                tooltip: 'Xóa ngày đã chọn',
+                onPressed: () {
+                  setState(() {
+                    _selectedDate = null;
+                  });
+                },
+              ),
+            IconButton(
+              icon: const Icon(Icons.calendar_today),
+              tooltip: 'Chọn ngày',
+              onPressed: _pickDate,
             ),
-            
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.black87,
+            indicator: BoxDecoration(
+              color: const Color.fromARGB(255, 253, 109, 37),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            tabs: const [
+              Tab(text: 'Vé hiện tại'),
+              Tab(text: 'Vé đã đi'),
+              Tab(text: 'Thống kê'),
+            ],
           ),
-
+        ),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : TabBarView(
@@ -313,6 +325,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                 children: [
                   _buildTicketList(currentTickets),
                   _buildTicketList(pastTickets),
+                  StatisticTab(bookings: _bookings),
                 ],
               ),
       ),

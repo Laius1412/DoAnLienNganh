@@ -102,5 +102,6 @@
     "fromRegion": "From Region",
     "toRegion": "To Region",
     "region": "Region",
-    "office": "Office"
+    "office": "Office",
+    "statistics": "Statistics"
 }

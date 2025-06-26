@@ -102,5 +102,6 @@
     "fromRegion": "Nơi gửi",
     "toRegion": "Nơi nhận",
     "region": "Khu vực",
-    "office": "Văn phòng"
+    "office": "Văn phòng",
+    "statistics": "Thống kê"
 }

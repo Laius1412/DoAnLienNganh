@@ -55,6 +55,7 @@ dependencies:
   connectivity_plus: ^6.1.4
   provider: ^6.1.5
   qr_flutter: ^4.1.0
+  fl_chart: ^0.63.0
 
 dev_dependencies:
   flutter_test:
