@@ -103,9 +103,6 @@
     "toRegion": "To Region",
     "region": "Region",
     "office": "Office",
-<<<<<<< Updated upstream
-    "statistics": "Statistics"
-=======
     "statistics": "Statistics",
     "resetPassword": "Reset Password",
     "enterYourEmail": "Enter your email to reset password",
@@ -121,5 +118,4 @@
     "success": "Success",
     "checkEmailToReset": "Please check your email and follow the instructions to reset your password.",
     "ok": "OK"
->>>>>>> Stashed changes
 }

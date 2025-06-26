@@ -103,8 +103,6 @@
     "toRegion": "Nơi nhận",
     "region": "Khu vực",
     "office": "Văn phòng",
-<<<<<<< Updated upstream
-=======
     "resetPassword": "Khôi phục mật khẩu",
     "enterYourEmail": "Nhập email của bạn",
     "sendResetCode": "Gửi mã",
@@ -119,6 +117,5 @@
     "success": "Khôi phục thành công",
     "checkEmailToReset": "Kiểm tra email và làm theo hướng dẫn",
     "ok": "OK",
->>>>>>> Stashed changes
     "statistics": "Thống kê"
 }
