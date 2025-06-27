@@ -103,5 +103,19 @@
     "toRegion": "To Region",
     "region": "Region",
     "office": "Office",
-    "statistics": "Statistics"
+    "statistics": "Statistics",
+    "resetPassword": "Reset Password",
+    "enterYourEmail": "Enter your email to reset password",
+    "sendResetCode": "Send reset code",
+    "emailNotRegistered": "This email is not registered.",
+    "sendCodeError": "Failed to send reset code. Please try again.",
+    "checkYourEmailForCode": "Check your email for the reset code.",
+    "enterCode": "Enter code",
+    "verifyCode": "Verify code",
+    "enterNewPassword": "Enter your new password",
+    "passwordNotMatch": "Passwords do not match.",
+    "resetPasswordError": "Failed to reset password.",
+    "success": "Success",
+    "checkEmailToReset": "Please check your email and follow the instructions to reset your password.",
+    "ok": "OK"
 }
