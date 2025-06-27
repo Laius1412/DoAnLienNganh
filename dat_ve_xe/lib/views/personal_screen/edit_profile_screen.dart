@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dat_ve_xe/server/user_service.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:dat_ve_xe/service/cloudinary_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -18,6 +21,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   DateTime? _birth;
   String _gender = 'Nam';
   bool _loading = false;
+  File? _avatarFile;
+  String? _avatarUrl;
 
   @override
   void initState() {
@@ -35,6 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _emailController.text = userModel.email;
           _birth = userModel.birth;
           _gender = userModel.gender.isNotEmpty ? userModel.gender : 'Nam';
+          _avatarUrl = userModel.avt;
         });
       }
     }
@@ -56,16 +62,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (picked != null) {
+      setState(() {
+        _avatarFile = File(picked.path);
+      });
+    }
+  }
+
+  Future<String?> _uploadAvatarToCloudinary(File file) async {
+    const cloudName = 'daturixq2';
+    const uploadPreset = 'giap15';
+    return await CloudinaryService.uploadImage(file, uploadPreset, cloudName);
+  }
+
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate() || _birth == null) return;
     setState(() { _loading = true; });
     final user = FirebaseAuth.instance.currentUser;
+    String? newAvatarUrl = _avatarUrl;
+    if (_avatarFile != null) {
+      final url = await _uploadAvatarToCloudinary(_avatarFile!);
+      if (url != null) {
+        newAvatarUrl = url;
+      }
+    }
     if (user != null) {
       final success = await UserService().updateUser(
         user.uid,
         name: _nameController.text.trim(),
         birth: _birth!,
         gender: _gender,
+        avt: newAvatarUrl,
       );
       setState(() { _loading = false; });
       if (success) {
@@ -97,6 +127,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 key: _formKey,
                 child: ListView(
                   children: [
+                    Center(
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 48,
+                            backgroundImage: _avatarFile != null
+                                ? FileImage(_avatarFile!)
+                                : (_avatarUrl != null && _avatarUrl!.isNotEmpty
+                                    ? NetworkImage(_avatarUrl!)
+                                    : const AssetImage('assets/images/default_avatar.png')) as ImageProvider,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: InkWell(
+                              onTap: _pickImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: Colors.orange,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.edit, color: Colors.white, size: 20),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(

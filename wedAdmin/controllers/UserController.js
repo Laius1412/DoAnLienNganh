@@ -21,7 +21,7 @@ const index = async (req, res) => {
         // Đếm số lần đặt vé của user này
         const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
         const bookingCount = bookingSnap.size;
-        users.push({ id: doc.id, ...data, bookingCount });
+        users.push({ id: doc.id, ...data, bookingCount, avatar: data.avt });
       }
     }
 
@@ -227,7 +227,7 @@ const exportExcel = async (req, res) => {
       // Đếm số lần đặt vé của user này
       const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
       const bookingCount = bookingSnap.size;
-      users.push({ id: doc.id, ...data, bookingCount });
+      users.push({ id: doc.id, ...data, bookingCount, avatar: data.avt });
     }
 
     // Sắp xếp theo yêu cầu

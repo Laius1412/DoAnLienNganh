@@ -100,7 +100,8 @@
                           data-gender="<%= user.gender %>"
                           data-birth="<%= user.birth %>"
                           data-role="<%= user.role %>"
-                          data-booking-count="<%= user.bookingCount %>">
+                          data-booking-count="<%= user.bookingCount %>"
+                          data-avatar="<%= user.avatar || '/assets/img/160x160/img1.jpg' %>">
                     Xem thông tin
                   </button>
                 </li>
@@ -412,6 +413,9 @@
   <div class="modal-content">
     <h4 class="mb-3">Thông tin người dùng</h4>
     <div class="user-info">
+      <div class="mb-3 text-center">
+        <img id="viewAvatar" src="/assets/img/160x160/img1.jpg" alt="Avatar" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #eee;">
+      </div>
       <div class="mb-3">
         <label class="fw-bold">Họ tên:</label>
         <p id="viewName"></p>
@@ -465,6 +469,7 @@ document.querySelectorAll('.btn-view-user').forEach(button => {
     document.getElementById('viewBirth').textContent = data.birth ? new Date(data.birth).toLocaleDateString('vi-VN') : '';
     document.getElementById('viewRole').textContent = data.role === 'admin' ? 'Quản trị' : 'Người dùng';
     document.getElementById('viewBookingCount').textContent = data.bookingCount || 0;
+    document.getElementById('viewAvatar').src = data.avatar || '/assets/img/160x160/img1.jpg';
     
     // Hiển thị modal
     modal.classList.add('active');

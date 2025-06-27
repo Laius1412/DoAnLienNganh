@@ -31,13 +31,20 @@ class UserService {
     }
   }
 
-  Future<bool> updateUser(String userId, {required String name, required DateTime birth, required String gender}) async {
+  Future<bool> updateUser(String userId, {
+    required String name,
+    required DateTime birth,
+    required String gender,
+    String? avt,
+  }) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
+      final data = {
         'name': name,
         'birth': birth.toIso8601String(),
         'gender': gender,
-      });
+      };
+      if (avt != null) data['avt'] = avt;
+      await _firestore.collection('users').doc(userId).update(data);
       return true;
     } catch (e) {
       print('Error updating user: $e');
