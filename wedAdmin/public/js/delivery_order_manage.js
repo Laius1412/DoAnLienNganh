@@ -9,15 +9,15 @@ let users = [];
 // Lấy danh sách đơn hàng, offices, regions, users khi load trang
 async function fetchInitialData() {
   const [ordersRes, officesRes, regionsRes, usersRes] = await Promise.all([
-    fetch('/api/delivery-orders').then(r => r.json()),
-    fetch('/api/offices').then(r => r.json()),
-    fetch('/api/regions').then(r => r.json()),
-    fetch('/api/users').then(r => r.json()),
+    fetch('/delivery/api/delivery-orders').then(r => r.json()),
+    fetch('/delivery/api/offices').then(r => r.json()),
+    fetch('/delivery/api/regions').then(r => r.json()),
+    fetch('/delivery/api/users').then(r => r.json()),
   ]);
-  orders = ordersRes.data;
-  offices = officesRes.data;
-  regions = regionsRes.data;
-  users = usersRes.data;
+  offices = officesRes?.data || [];
+  regions = regionsRes?.data || [];
+  users = usersRes?.data || [];
+  orders = ordersRes?.data || [];
   renderOrdersTable(orders);
 }
 
