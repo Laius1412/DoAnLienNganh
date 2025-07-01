@@ -4,6 +4,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'package:dat_ve_xe/server/user_service.dart';
 import 'package:dat_ve_xe/models/user_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DetailMyTicket extends StatefulWidget {
   final Booking booking;
@@ -34,6 +35,7 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final booking = widget.booking;
     final travelDate = booking.getTravelDate();
     final seatNumbers = booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ');
@@ -44,7 +46,7 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F8FB),
       appBar: AppBar(
-        title: const Text('Chi tiết vé'),
+        title: Text(t.ticketDetail),
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
       ),
       body: SingleChildScrollView(
@@ -91,21 +93,21 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
 
                 const Divider(),
 
-                _buildDetailRow("Mã vé", booking.id),
-                _buildDetailRow("Người đặt", _loadingUser ? "Đang tải..." : (userName ?? "Không rõ")),
-                _buildDetailRow("Ngày đi", travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'),
-                _buildDetailRow("Giờ xuất phát", startTime),
-                _buildDetailRow("Biển số xe", plate),
-                _buildDetailRow("Ghế ngồi", seatNumbers),
-                _buildDetailRow("Tổng tiền", "${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)} đ"),
-                _buildDetailRow("Điểm đi", booking.startLocationBooking),
-                _buildDetailRow("Điểm đến", booking.endLocationBooking),
+                _buildDetailRow(t.ticketId, booking.id),
+                _buildDetailRow(t.ticketUser, _loadingUser ? "Đang tải..." : (userName ?? "Không rõ")),
+                _buildDetailRow(t.ticketDate, travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'),
+                _buildDetailRow(t.ticketStartTime, startTime),
+                _buildDetailRow(t.ticketPlate, plate),
+                _buildDetailRow(t.ticketSeats, seatNumbers),
+                _buildDetailRow(t.ticketTotal, "${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)} đ"),
+                _buildDetailRow(t.ticketStart, booking.startLocationBooking),
+                _buildDetailRow(t.ticketEnd, booking.endLocationBooking),
 
                 const SizedBox(height: 32),
                 Center(
                   child: Column(
                     children: [
-                      const Text("Quét mã QR này tại cổng soát vé",
+                      Text(t.ticketQrGuide,
                           style: TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 12),
                       QrImageView(
@@ -141,15 +143,16 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
   }
 
   String _getStatusText(String status) {
+    final t = AppLocalizations.of(context)!;
     switch (status) {
       case 'pending':
-        return 'Chờ xác nhận';
+        return t.pending;
       case 'pending_payment':
-        return 'Chờ thanh toán';
+        return t.pendingPayment;
       case 'confirmed':
-        return 'Đã xác nhận';
+        return t.confirmed;
       case 'cancelled':
-        return 'Đã hủy';
+        return t.cancelled;
       default:
         return status;
     }

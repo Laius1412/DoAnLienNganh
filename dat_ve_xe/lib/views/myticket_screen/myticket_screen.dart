@@ -64,15 +64,16 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
   }
 
   String _getStatusText(String status) {
+    final t = AppLocalizations.of(context)!;
     switch (status) {
       case 'pending':
-        return 'Đang chờ xác nhận';
+        return t.pending;
       case 'pending_payment':
-        return 'Chờ thanh toán';
+        return t.pendingPayment;
       case 'confirmed':
-        return 'Đã xác nhận';
+        return t.confirmed;
       case 'cancelled':
-        return 'Đã hủy';
+        return t.cancelled;
       default:
         return status;
     }
@@ -106,9 +107,10 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
 
   Widget _buildTicketList(List<Booking> tickets) {
     final filteredTickets = _filterByDate(tickets);
+    final t = AppLocalizations.of(context)!;
 
     if (filteredTickets.isEmpty) {
-      return const Center(child: Text('Không có vé nào', style: TextStyle(fontSize: 16)));
+      return Center(child: Text(t.noTicket, style: const TextStyle(fontSize: 16)));
     }
 
     return RefreshIndicator(
@@ -141,7 +143,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Mã vé: ${booking.id.substring(0, 8)}',
+                          Text('${t.ticketCode}: ${booking.id.substring(0, 8)}',
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -164,16 +166,16 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Tuyến: ${booking.seats[0].vehicle!.trip?.nameTrip ?? 'N/A'}'),
+                            Text('${t.route}: ${booking.seats[0].vehicle!.trip?.nameTrip ?? 'N/A'}'),
                             const SizedBox(height: 4),
-                            Text('Biển số: ${booking.seats[0].vehicle!.plate}'),
+                            Text('${t.ticketPlate}: ${booking.seats[0].vehicle!.plate}'),
                             const SizedBox(height: 4),
-                            Text('Ghế: ${booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ')}'),
+                            Text('${t.ticketSeats}: ${booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ')}'),
                             const SizedBox(height: 4),
-                            Text('Ngày đi: ${travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'}'),
+                            Text('${t.ticketDate}: ${travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'}'),
                             const SizedBox(height: 4),
                             Text(
-                              'Tổng tiền: ${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)}đ',
+                              '${t.ticketTotal}: ${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)}đ',
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 253, 109, 37),
                                 fontWeight: FontWeight.bold,
@@ -311,10 +313,10 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
               borderRadius: BorderRadius.circular(10),
             ),
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            tabs: const [
-              Tab(text: 'Vé hiện tại'),
-              Tab(text: 'Vé đã đi'),
-              Tab(text: 'Thống kê'),
+            tabs: [
+              Tab(text: t.ticketCurrent),
+              Tab(text: t.ticketUsed),
+              Tab(text: t.statistics),
             ],
           ),
         ),
