@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Chào bạn',
+                'Xin chào',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 25, // to hơn
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 1),
               Text(
-                'Đã có vé về quê chưa',
+                'Bạn đã sẵn sàng về quê chưa',
                 style: TextStyle(
                   color: const Color.fromARGB(255, 39, 38, 38),
                   fontSize: 16, // nhỏ hơn
@@ -150,13 +150,12 @@ class _HomeScreenState extends State<HomeScreen> {
             // Hộp chọn điểm đi & đến
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 2),
+                color: Color.fromARGB(255, 253, 109, 37),
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 12,
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 24,
                     offset: Offset(0, 4),
                   ),
                 ],
@@ -168,38 +167,38 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => _showLocationPicker(true),
                     child: Row(
                       children: [
-                        Icon(Icons.radio_button_checked, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.radio_button_checked, color: Colors.white),
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             _selectedStart ?? 'Chọn điểm đi',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 253, 109, 37),
-                              fontSize: 16,
+                              color: Colors.white,
+                              fontSize: 20,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_drop_down, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.arrow_drop_down, color: Colors.white),
                       ],
                     ),
                   ),
-                  Divider(color: Color.fromARGB(255, 253, 109, 37)),
+                  Divider(color: Colors.white),
                   InkWell(
                     onTap: () => _showLocationPicker(false),
                     child: Row(
                       children: [
-                        Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.location_on, color: Colors.white),
                         SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             _selectedDestination ?? 'Chọn điểm đến',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 253, 109, 37),
-                              fontSize: 16,
+                              color: Colors.white,
+                              fontSize: 20,
                             ),
                           ),
                         ),
-                        Icon(Icons.arrow_drop_down, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.arrow_drop_down, color: Colors.white),
                       ],
                     ),
                   ),
@@ -210,13 +209,12 @@ class _HomeScreenState extends State<HomeScreen> {
             // Hộp chọn ngày
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 2),
+                color: Color.fromARGB(255, 253, 109, 37),
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 12,
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 24,
                     offset: Offset(0, 4),
                   ),
                 ],
@@ -224,19 +222,20 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: Color.fromARGB(255, 253, 109, 37)),
+                  Icon(Icons.calendar_today, color: Colors.white),
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       _selectedDate != null
                           ? 'Ngày đi: ${dateFormat.format(_selectedDate!)}'
                           : 'Chưa chọn ngày đi',
-                      style: TextStyle(color: Color.fromARGB(255, 253, 109, 37)),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                   TextButton(
                     onPressed: _pickDate,
-                    child: Text('Chọn ngày', style: TextStyle(color: Color.fromARGB(255, 253, 109, 37))),
+                    style: TextButton.styleFrom(foregroundColor: Colors.white),
+                    child: Text('Chọn ngày', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
