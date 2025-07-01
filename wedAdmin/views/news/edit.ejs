@@ -1,5 +1,5 @@
-<!-- edit.ejs -->
 <div class="container mt-5">
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-warning fw-bold">Chỉnh sửa bài viết</h2>
     <a href="/news" class="btn btn-outline-secondary px-4 py-2 rounded-3 shadow">
@@ -7,29 +7,60 @@
     </a>
   </div>
 
+  <!-- Form -->
   <div class="card shadow rounded-4 p-4 border-0">
     <form action="/news/update/<%= newsItem.id %>" method="POST" enctype="multipart/form-data">
       <!-- Tiêu đề -->
       <div class="mb-4">
         <label for="titles" class="form-label fw-semibold">Tiêu đề</label>
-        <input type="text" id="titles" name="titles" value="<%= newsItem.titles %>" class="form-control shadow-sm" required>
+        <input
+          type="text"
+          id="titles"
+          name="titles"
+          value="<%= newsItem.titles %>"
+          class="form-control shadow-sm"
+          required
+        />
       </div>
 
       <!-- Nội dung -->
       <div class="mb-4">
         <label for="editor" class="form-label fw-semibold">Nội dung</label>
-        <textarea id="editor" name="contents" class="form-control shadow-sm" rows="5" required><%= newsItem.contents %></textarea>
+        <textarea
+          id="editor"
+          name="contents"
+          class="form-control shadow-sm"
+          rows="10"
+          required
+        ><%= newsItem.contents %></textarea>
       </div>
 
-      <!-- Ảnh -->
+      <!-- Ảnh hiện tại + Upload ảnh -->
       <div class="mb-4">
-        <label class="form-label fw-semibold">Ảnh hiện tại</label><br>
-        <img src="<%= newsItem.Img %>" alt="Ảnh hiện tại"
-             class="img-thumbnail rounded-3 shadow-sm mb-3" style="width: 200px; height: auto; object-fit: cover;">
-        <input type="file" name="image" class="form-control shadow-sm">
+        <label class="form-label fw-semibold">Ảnh đại diện hiện tại</label>
+        <div class="mb-3">
+          <% if (newsItem.Img) { %>
+            <img
+              src="<%= newsItem.Img %>"
+              alt="Ảnh hiện tại"
+              class="rounded-4 border border-2 shadow-sm"
+              style="max-width: 250px; height: auto; object-fit: cover;"
+            />
+          <% } else { %>
+            <p class="text-muted fst-italic">Không có ảnh đại diện</p>
+          <% } %>
+        </div>
+        <label for="image" class="form-label fw-semibold">Thay ảnh đại diện (nếu muốn)</label>
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          class="form-control shadow-sm"
+        />
       </div>
 
-      <!-- Nút -->
+      <!-- Hành động -->
       <div class="d-flex justify-content-end gap-3">
         <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
           <i class="bi bi-save me-1"></i>Cập nhật
@@ -42,17 +73,16 @@
   </div>
 </div>
 
-<!-- CKEditor 5 CDN -->
+<!-- CKEditor 5 với hỗ trợ upload ảnh -->
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
-  ClassicEditor
-    .create(document.querySelector('#editor'))
-    .catch(error => {
-      console.error(error);
-    });
+  ClassicEditor.create(document.querySelector('#editor'), {
+    ckfinder: {
+      uploadUrl: '/upload-image'
+    }
+  }).catch(error => console.error(error));
 </script>
 
-<!-- Bootstrap Icons (nếu chưa có) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Bootstrap JS (nếu chưa có) -->
+<!-- Bootstrap Icons & JS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,33 +1,38 @@
-
 const { getFirestore } = require('firebase-admin/firestore');
 const db = getFirestore();
+const upload = require('../middlewares/uploadImage');
 
+// Hiển thị danh sách bài viết
 exports.index = async (req, res) => {
   const snapshot = await db.collection('news').orderBy('createAt', 'desc').get();
   const news = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   res.render('news/index', { news });
 };
 
+// Giao diện tạo bài viết
 exports.create = (req, res) => {
   res.render('news/create');
 };
 
+// Lưu bài viết mới
 exports.store = async (req, res) => {
   try {
     const { titles, contents } = req.body;
-    const Img = req.file?.path || ''; // path là Cloudinary URL khi dùng CloudinaryStorage
-
-    // Nếu cần chắc chắn hơn, bạn có thể log ra để kiểm tra:
-    // console.log('File upload:', req.file);
+    let imageUrl = null;
 
     if (!titles || !contents) {
       return res.status(400).send('Tiêu đề và nội dung là bắt buộc.');
     }
 
+    // Xử lý upload ảnh nếu có
+    if (req.file) {
+      imageUrl = req.file.path;
+    }
+
     await db.collection('news').add({
       titles,
       contents,
-      Img,
+      Img: imageUrl,
       createAt: new Date()
     });
 
@@ -38,45 +43,77 @@ exports.store = async (req, res) => {
   }
 };
 
-
-// chỉnh sửa
+// Giao diện chỉnh sửa bài viết
 exports.edit = async (req, res) => {
-  const id = req.params.id;
-  const doc = await db.collection('news').doc(id).get();
+  try {
+    const id = req.params.id;
+    const doc = await db.collection('news').doc(id).get();
 
-  if (!doc.exists) {
-    return res.status(404).send('Không tìm thấy bài viết');
+    if (!doc.exists) {
+      return res.status(404).send('Không tìm thấy bài viết');
+    }
+
+    res.render('news/edit', {
+      newsItem: { id: doc.id, ...doc.data() }
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy thông tin bài viết:', error);
+    res.status(500).send('Có lỗi khi lấy thông tin bài viết');
   }
-
-  res.render('news/edit', {
-    newsItem: { id: doc.id,...doc.data()}
-  });
 };
-// update
+
+// Cập nhật bài viết
 exports.update = async (req, res) => {
-  const id = req.params.id;
-  const {titles,contents} = req.body;
-  const Img = req.file?.path || null;
+  try {
+    const id = req.params.id;
+    const { titles, contents } = req.body;
 
+    if (!titles || !contents) {
+      return res.status(400).send('Tiêu đề và nội dung là bắt buộc.');
+    }
 
-  const dataUpdate = {titles,contents};
-  if(Img) dataUpdate.Img = Img;
+    const dataUpdate = { 
+      titles, 
+      contents,
+      updateAt: new Date()
+    };
 
-  await db.collection('news').doc(id).update(dataUpdate);
-  res.redirect('/news');
-}
-// xoa bai viet
-exports.destroy = async (req, res) => {
-  const id = req.params.id;
-  await db.collection('news').doc(id).delete();
-  res.redirect('/news');
+    // Xử lý upload ảnh mới nếu có
+    if (req.file) {
+      dataUpdate.Img = req.file.path;
+    }
+
+    await db.collection('news').doc(id).update(dataUpdate);
+
+    res.redirect('/news');
+  } catch (error) {
+    console.error('Lỗi khi cập nhật bài viết:', error);
+    res.status(500).send('Có lỗi khi cập nhật bài viết');
+  }
 };
 
-// xem chi tiết bài viết 
+// Xóa bài viết
+exports.destroy = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await db.collection('news').doc(id).delete();
+    res.redirect('/news');
+  } catch (error) {
+    console.error('Lỗi khi xóa bài viết:', error);
+    res.status(500).send('Có lỗi khi xóa bài viết');
+  }
+};
+
+// Xem chi tiết bài viết
 exports.view = async (req, res) => {
-  const id = req.params.id;
-  const doc = await db.collection('news').doc(id).get();
-  if (!doc.exists) return res.status(404).send('Không tìm thấy bài viết');
-  const data = doc.data();
-  res.render('news/view', { newsItem: { id, ...data } });
+  try {
+    const id = req.params.id;
+    const doc = await db.collection('news').doc(id).get();
+    if (!doc.exists) return res.status(404).send('Không tìm thấy bài viết');
+    const data = doc.data();
+    res.render('news/view', { newsItem: { id, ...data } });
+  } catch (error) {
+    console.error('Lỗi khi xem bài viết:', error);
+    res.status(500).send('Có lỗi khi xem bài viết');
+  }
 };
