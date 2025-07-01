@@ -42,6 +42,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkConnection": MessageLookupByLibrary.simpleMessage(
       "Please check your network connection",
     ),
+    "checkEmailToReset": MessageLookupByLibrary.simpleMessage(
+      "Please check your email and follow the instructions to reset your password.",
+    ),
+    "checkYourEmailForCode": MessageLookupByLibrary.simpleMessage(
+      "Check your email for the reset code.",
+    ),
     "cod": MessageLookupByLibrary.simpleMessage("COD"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
     "continueLabel": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -56,6 +62,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "emailAlreadyUsed": MessageLookupByLibrary.simpleMessage(
       "Email has been used!",
     ),
+    "emailNotRegistered": MessageLookupByLibrary.simpleMessage(
+      "This email is not registered.",
+    ),
     "emailOrPhone": MessageLookupByLibrary.simpleMessage(
       "Email or phone number",
     ),
@@ -63,8 +72,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterAllFields": MessageLookupByLibrary.simpleMessage(
       "Please enter all fields",
     ),
+    "enterCode": MessageLookupByLibrary.simpleMessage("Enter code"),
+    "enterNewPassword": MessageLookupByLibrary.simpleMessage(
+      "Enter your new password",
+    ),
     "enterOtp": MessageLookupByLibrary.simpleMessage("Enter OTP"),
     "enterPhone": MessageLookupByLibrary.simpleMessage("Enter your phone"),
+    "enterYourEmail": MessageLookupByLibrary.simpleMessage(
+      "Enter your email to reset password",
+    ),
     "estimatedPrice": MessageLookupByLibrary.simpleMessage("Estimated Price"),
     "estimatedWeight": MessageLookupByLibrary.simpleMessage("Estimated Weight"),
     "female": MessageLookupByLibrary.simpleMessage("Female"),
@@ -111,6 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "office": MessageLookupByLibrary.simpleMessage("Office"),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "orderCreated": MessageLookupByLibrary.simpleMessage(
       "Order created successfully!",
     ),
@@ -126,6 +143,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "passwordMismatch": MessageLookupByLibrary.simpleMessage(
       "Passwords do not match!",
+    ),
+    "passwordNotMatch": MessageLookupByLibrary.simpleMessage(
+      "Passwords do not match.",
     ),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "Password must be at least 6 characters",
@@ -153,13 +173,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
     "required": MessageLookupByLibrary.simpleMessage("This field is required"),
     "requiredField": MessageLookupByLibrary.simpleMessage("Required field"),
+    "resetPassword": MessageLookupByLibrary.simpleMessage("Reset Password"),
+    "resetPasswordError": MessageLookupByLibrary.simpleMessage(
+      "Failed to reset password.",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "sendCode": MessageLookupByLibrary.simpleMessage("Send code"),
+    "sendCodeError": MessageLookupByLibrary.simpleMessage(
+      "Failed to send reset code. Please try again.",
+    ),
+    "sendResetCode": MessageLookupByLibrary.simpleMessage("Send reset code"),
     "senderCCCD": MessageLookupByLibrary.simpleMessage("Sender ID (CCCD)"),
     "senderName": MessageLookupByLibrary.simpleMessage("Sender Name"),
     "senderPays": MessageLookupByLibrary.simpleMessage("Sender Pays"),
     "senderPhone": MessageLookupByLibrary.simpleMessage("Sender Phone"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "success": MessageLookupByLibrary.simpleMessage("Success"),
     "successMessage": MessageLookupByLibrary.simpleMessage(
       "Your order has been successfully created.",
     ),
@@ -172,6 +202,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Verification Failed",
     ),
     "verify": MessageLookupByLibrary.simpleMessage("Verify"),
+    "verifyCode": MessageLookupByLibrary.simpleMessage("Verify code"),
     "vietnamese": MessageLookupByLibrary.simpleMessage("Vietnamese"),
     "weakPassword": MessageLookupByLibrary.simpleMessage(
       "Password is too weak!",

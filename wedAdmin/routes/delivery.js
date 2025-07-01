@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const deliveryController = require('../controllers/DeliveryController');
 const priceDeliveryController = require('../controllers/PriceDeliveryController');
+const DeliveryController = require('../controllers/DeliveryController');
+
+console.log('deliveryController:', deliveryController);
+console.log('priceDeliveryController:', priceDeliveryController);
 
 router.get('/', deliveryController.index);
 router.get('/regions', deliveryController.getRegions);
@@ -23,5 +27,19 @@ router.get('/price_delivery/list', priceDeliveryController.getPriceDeliveryList)
 router.post('/price_delivery', priceDeliveryController.createPriceDelivery);
 router.put('/price_delivery/:id', priceDeliveryController.updatePriceDelivery);
 router.delete('/price_delivery', priceDeliveryController.deletePriceDeliveries);
+
+// Order route
+
+router.get('/order_manage', DeliveryController.orderManagePage)
+// API lấy danh sách đơn hàng
+router.get('/api/delivery-orders', deliveryController.getDeliveryOrders);
+// API cập nhật đơn hàng
+router.put('/api/delivery-orders/:id', deliveryController.updateDeliveryOrder);
+// API lấy danh sách offices
+router.get('/api/offices', deliveryController.getOffices);
+// API lấy danh sách regions
+router.get('/api/regions', deliveryController.getRegions);
+// API lấy danh sách users
+router.get('/api/users', deliveryController.getUsers);
 
 module.exports = router;

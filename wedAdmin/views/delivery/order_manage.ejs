@@ -1,0 +1,139 @@
+
+  <div class="container mt-4">
+    <h2 class="mb-4">Quản lý đơn hàng giao hàng</h2>
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <input type="date" id="filter-date" class="form-control" placeholder="Chọn ngày">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary" id="btn-filter-date">Tìm kiếm</button>
+      </div>
+    </div>
+    <table class="table table-bordered table-hover" id="orders-table">
+      <thead class="table-light">
+        <tr>
+          <th>Mã đơn hàng</th>
+          <th>SĐT người gửi</th>
+          <th>Ngày tạo</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dữ liệu sẽ được render bằng JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal xem/chỉnh sửa đơn hàng -->
+  <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalLabel">Chi tiết đơn hàng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="orderDetailForm">
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Mã đơn hàng</label>
+                <input type="text" class="form-control" id="order-id" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Ngày tạo</label>
+                <input type="text" class="form-control" id="order-createdAt" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Người gửi</label>
+                <input type="text" class="form-control" id="order-nameFrom" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">SĐT người gửi</label>
+                <input type="text" class="form-control" id="order-phoneFrom" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Nơi gửi</label>
+                <input type="text" class="form-control" id="order-from" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Người nhận</label>
+                <input type="text" class="form-control" id="order-nameTo" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">SĐT người nhận</label>
+                <input type="text" class="form-control" id="order-phoneTo" readonly>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Nơi nhận</label>
+                <input type="text" class="form-control" id="order-to" readonly>
+              </div>
+              <div class="col-md-12 mb-2">
+                <label class="form-label">Chi tiết đơn hàng</label>
+                <input type="text" class="form-control" id="order-details" readonly>
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="form-label">Khối lượng (kg)</label>
+                <input type="number" class="form-control" id="order-mass" readonly>
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="form-label">Loại hàng</label>
+                <input type="text" class="form-control" id="order-type" readonly>
+              </div>
+              <div class="col-md-4 mb-2 d-none" id="cccd-group">
+                <label class="form-label">CCCD người gửi</label>
+                <input type="text" class="form-control" id="order-cccd" readonly>
+              </div>
+              <div class="col-md-4 mb-2 d-none" id="ordervalue-group">
+                <label class="form-label">Giá trị đơn hàng</label>
+                <input type="text" class="form-control" id="order-ordervalue" readonly>
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="form-label">Hình thức thanh toán</label>
+                <input type="text" class="form-control" id="order-paymentType" readonly>
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="form-label">Phí thu hộ</label>
+                <input type="text" class="form-control" id="order-cod" readonly>
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="form-label">Giá cước chuyển phát</label>
+                <input type="text" class="form-control" id="order-price" readonly>
+              </div>
+              <div class="col-md-4 mb-2">
+                <label class="form-label">Trạng thái</label>
+                <input type="text" class="form-control" id="order-status" readonly>
+              </div>
+            </div>
+            <div class="row mt-3 d-none" id="edit-fields">
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Khối lượng (kg)</label>
+                <input type="number" class="form-control" id="edit-mass">
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Trạng thái</label>
+                <select class="form-select" id="edit-status">
+                  <option value="pending">Chờ xác nhận</option>
+                  <option value="confirmed">Đã xác nhận</option>
+                  <option value="accepted">Đã tiếp nhận</option>
+                  <option value="delivering">Đang vận chuyển</option>
+                  <option value="delivered">Đã tới nơi</option>
+                  <option value="returning">Đang hoàn trả</option>
+                  <option value="returned">Đã hoàn trả</option>
+                  <option value="received">Người nhận đã nhận hàng</option>
+                  <option value="refused">Từ chối nhận hàng</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary d-none" id="btn-save-edit">Lưu chỉnh sửa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/delivery_order_manage.js"></script>

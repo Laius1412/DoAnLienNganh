@@ -874,6 +874,131 @@ class S {
   String get office {
     return Intl.message('Office', name: 'office', desc: '', args: []);
   }
+
+  /// `Statistics`
+  String get statistics {
+    return Intl.message('Statistics', name: 'statistics', desc: '', args: []);
+  }
+
+  /// `Reset Password`
+  String get resetPassword {
+    return Intl.message(
+      'Reset Password',
+      name: 'resetPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email to reset password`
+  String get enterYourEmail {
+    return Intl.message(
+      'Enter your email to reset password',
+      name: 'enterYourEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send reset code`
+  String get sendResetCode {
+    return Intl.message(
+      'Send reset code',
+      name: 'sendResetCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This email is not registered.`
+  String get emailNotRegistered {
+    return Intl.message(
+      'This email is not registered.',
+      name: 'emailNotRegistered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to send reset code. Please try again.`
+  String get sendCodeError {
+    return Intl.message(
+      'Failed to send reset code. Please try again.',
+      name: 'sendCodeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check your email for the reset code.`
+  String get checkYourEmailForCode {
+    return Intl.message(
+      'Check your email for the reset code.',
+      name: 'checkYourEmailForCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter code`
+  String get enterCode {
+    return Intl.message('Enter code', name: 'enterCode', desc: '', args: []);
+  }
+
+  /// `Verify code`
+  String get verifyCode {
+    return Intl.message('Verify code', name: 'verifyCode', desc: '', args: []);
+  }
+
+  /// `Enter your new password`
+  String get enterNewPassword {
+    return Intl.message(
+      'Enter your new password',
+      name: 'enterNewPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords do not match.`
+  String get passwordNotMatch {
+    return Intl.message(
+      'Passwords do not match.',
+      name: 'passwordNotMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to reset password.`
+  String get resetPasswordError {
+    return Intl.message(
+      'Failed to reset password.',
+      name: 'resetPasswordError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Success`
+  String get success {
+    return Intl.message('Success', name: 'success', desc: '', args: []);
+  }
+
+  /// `Please check your email and follow the instructions to reset your password.`
+  String get checkEmailToReset {
+    return Intl.message(
+      'Please check your email and follow the instructions to reset your password.',
+      name: 'checkEmailToReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get ok {
+    return Intl.message('OK', name: 'ok', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -45,6 +45,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkConnection": MessageLookupByLibrary.simpleMessage(
       "Vui lòng kiểm tra kết nối mạng của bạn",
     ),
+    "checkEmailToReset": MessageLookupByLibrary.simpleMessage(
+      "Kiểm tra email và làm theo hướng dẫn",
+    ),
+    "checkYourEmailForCode": MessageLookupByLibrary.simpleMessage(
+      "Kiểm tra email của bạn để nhận mã",
+    ),
     "cod": MessageLookupByLibrary.simpleMessage("COD"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "Xác nhận mật khẩu",
@@ -67,6 +73,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "emailAlreadyUsed": MessageLookupByLibrary.simpleMessage(
       "Email đã được sử dụng!",
     ),
+    "emailNotRegistered": MessageLookupByLibrary.simpleMessage(
+      "Tài khoản email không tồn tại",
+    ),
     "emailOrPhone": MessageLookupByLibrary.simpleMessage(
       "Email hoặc số điện thoại",
     ),
@@ -74,8 +83,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterAllFields": MessageLookupByLibrary.simpleMessage(
       "Vui lòng nhập đầy đủ thông tin",
     ),
+    "enterCode": MessageLookupByLibrary.simpleMessage("Nhập mã"),
+    "enterNewPassword": MessageLookupByLibrary.simpleMessage(
+      "Nhập mật khẩu mới",
+    ),
     "enterOtp": MessageLookupByLibrary.simpleMessage("Nhập mã OTP"),
     "enterPhone": MessageLookupByLibrary.simpleMessage("Nhập số điện thoại"),
+    "enterYourEmail": MessageLookupByLibrary.simpleMessage(
+      "Nhập email của bạn",
+    ),
     "estimatedPrice": MessageLookupByLibrary.simpleMessage("Giá ước tính"),
     "estimatedWeight": MessageLookupByLibrary.simpleMessage(
       "Khối lượng ước tính",
@@ -132,6 +148,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Thông báo"),
     "office": MessageLookupByLibrary.simpleMessage("Văn phòng"),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
     "orderCreated": MessageLookupByLibrary.simpleMessage(
       "Tạo đơn hàng thành công!",
     ),
@@ -149,6 +166,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "passwordMismatch": MessageLookupByLibrary.simpleMessage(
       "Mật khẩu không trùng khớp!",
+    ),
+    "passwordNotMatch": MessageLookupByLibrary.simpleMessage(
+      "Mật khẩu không trùng khớp",
     ),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "Mật khẩu phải có ít nhất 6 ký tự",
@@ -180,8 +200,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "rememberMe": MessageLookupByLibrary.simpleMessage("Nhớ mật khẩu"),
     "required": MessageLookupByLibrary.simpleMessage("Trường này là bắt buộc"),
     "requiredField": MessageLookupByLibrary.simpleMessage("Yêu cầu bắt buộc"),
+    "resetPassword": MessageLookupByLibrary.simpleMessage("Khôi phục mật khẩu"),
+    "resetPasswordError": MessageLookupByLibrary.simpleMessage(
+      "Khôi phục mật khẩu thất bại",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Thử lại"),
     "sendCode": MessageLookupByLibrary.simpleMessage("Gửi mã"),
+    "sendCodeError": MessageLookupByLibrary.simpleMessage("Gửi mã thất bại"),
+    "sendResetCode": MessageLookupByLibrary.simpleMessage("Gửi mã"),
     "senderCCCD": MessageLookupByLibrary.simpleMessage("CCCD người gửi"),
     "senderName": MessageLookupByLibrary.simpleMessage("Tên người gửi"),
     "senderPays": MessageLookupByLibrary.simpleMessage("Người gửi trả"),
@@ -189,6 +215,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Số điện thoại người gửi",
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Cài đặt"),
+    "statistics": MessageLookupByLibrary.simpleMessage("Thống kê"),
+    "success": MessageLookupByLibrary.simpleMessage("Khôi phục thành công"),
     "successMessage": MessageLookupByLibrary.simpleMessage(
       "Đơn hàng của bạn đã được tạo thành công.",
     ),
@@ -201,6 +229,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Xác thực thất bại",
     ),
     "verify": MessageLookupByLibrary.simpleMessage("Xác thực"),
+    "verifyCode": MessageLookupByLibrary.simpleMessage("Xác nhận mã"),
     "vietnamese": MessageLookupByLibrary.simpleMessage("Tiếng Việt"),
     "weakPassword": MessageLookupByLibrary.simpleMessage("Mật khẩu quá yếu!"),
     "wrongPassword": MessageLookupByLibrary.simpleMessage(

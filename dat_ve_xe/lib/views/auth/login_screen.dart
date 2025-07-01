@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dat_ve_xe/views/auth/reset_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -155,7 +156,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Spacer(),
                     TextButton(
                       onPressed: () {
-                        // TODO: Forgot password logic
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ResetPasswordScreen(),
+                          ),
+                        );
                       },
                       child: Text(loc.forgotPassword),
                     ),
@@ -193,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-          // ✅ Di chuyển overlay ra ngoài Column để phủ toàn màn hình
+          // Di chuyển overlay ra ngoài Column để phủ toàn màn hình
           if (_isLoading)
             Positioned.fill(
               child: Container(
