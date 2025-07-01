@@ -147,17 +147,18 @@ btnSaveEdit.addEventListener('click', async () => {
   const orderId = document.getElementById('orderModal').getAttribute('data-order-id');
   const newMass = document.getElementById('edit-mass').value;
   const newStatus = document.getElementById('edit-status').value;
-  const res = await fetch(`/api/delivery-orders/${orderId}`, {
+  const res = await fetch(`/delivery/api/delivery-orders/${orderId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mass: newMass, status: newStatus })
   });
   if (res.ok) {
     // Cập nhật lại dữ liệu
-    await fetchInitialData();
+    // await fetchInitialData();
     // Đóng modal
-    bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+    // bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
     alert('Cập nhật thành công!');
+    window.location.reload(); // Reload lại trang
   } else {
     alert('Cập nhật thất bại!');
   }
