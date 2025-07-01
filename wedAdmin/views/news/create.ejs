@@ -1,4 +1,3 @@
-<!-- create.ejs -->
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-success fw-bold">Thêm bài viết</h2>
@@ -21,10 +20,17 @@
         <textarea id="editor" name="contents" class="form-control shadow-sm" rows="6"></textarea>
       </div>
 
-      <!-- Ảnh -->
+      <!-- Upload ảnh -->
       <div class="mb-4">
-        <label for="image" class="form-label fw-semibold">Ảnh minh họa</label>
-        <input type="file" id="image" name="image" accept="image/*" class="form-control shadow-sm" />
+        <label for="image" class="form-label fw-semibold">Ảnh đại diện</label>
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          class="form-control shadow-sm"
+        />
+        <small class="text-muted">Chọn ảnh đại diện cho bài viết (tùy chọn)</small>
       </div>
 
       <!-- Nút -->
@@ -40,17 +46,12 @@
   </div>
 </div>
 
-<!-- CKEditor 5 CDN -->
+<!-- CKEditor 5 -->
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
-  ClassicEditor
-    .create(document.querySelector('#editor'))
-    .catch(error => {
-      console.error(error);
-    });
+  ClassicEditor.create(document.querySelector('#editor'), {
+    ckfinder: {
+      uploadUrl: '/upload-image' // Route để upload ảnh lên Cloudinary
+    }
+  }).catch(error => console.error(error));
 </script>
-
-<!-- Bootstrap Icons (nếu chưa có) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<!-- Bootstrap JS (nếu chưa có) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

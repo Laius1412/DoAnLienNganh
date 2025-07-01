@@ -53,3 +53,6 @@ app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${P
 
 app.use('/news', newsRouter);
 app.use('/bookings', bookingRoute);
+
+const uploadRoute = require('./routes/upload');
+app.use('/', uploadRoute);

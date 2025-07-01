@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dat_ve_xe/server/user_service.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:dat_ve_xe/service/cloudinary_service.dart';
 
@@ -79,6 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
+    final t = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate() || _birth == null) return;
     setState(() { _loading = true; });
     final user = FirebaseAuth.instance.currentUser;
@@ -101,22 +103,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (success) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cập nhật thành công!')),
+            SnackBar(content: Text(t.updateSuccessful)),
           );
           Navigator.pop(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cập nhật thất bại!')),);
+          SnackBar(content: Text(t.updateFailed)),
+        );
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chỉnh sửa thông tin cá nhân'),
+        title: Text(t.editProfile),
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
       ),
       body: _loading
@@ -159,10 +163,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Họ và tên',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person),
+                      decoration: InputDecoration(
+                        labelText: t.name,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.person),
                       ),
                       validator: (value) => value == null || value.trim().isEmpty ? 'Vui lòng nhập họ tên' : null,
                     ),
@@ -182,10 +186,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: AbsorbPointer(
                         child: TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Ngày sinh',
+                            labelText: t.birthday,
                             border: const OutlineInputBorder(),
                             prefixIcon: const Icon(Icons.cake),
-                            hintText: 'Chọn ngày sinh',
+                            hintText: t.selectBirthday,
                           ),
                           controller: TextEditingController(
                             text: _birth != null ? DateFormat('dd/MM/yyyy').format(_birth!) : '',
@@ -197,15 +201,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 20),
                     DropdownButtonFormField<String>(
                       value: _gender,
-                      decoration: const InputDecoration(
-                        labelText: 'Giới tính',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.wc),
+                      decoration: InputDecoration(
+                        labelText: t.gender,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.wc),
                       ),
-                      items: const [
-                        DropdownMenuItem(value: 'Nam', child: Text('Nam')),
-                        DropdownMenuItem(value: 'Nữ', child: Text('Nữ')),
-                        DropdownMenuItem(value: 'Khác', child: Text('Khác')),
+                      items: [
+                        DropdownMenuItem(value: 'Nam', child: Text(t.male)),
+                        DropdownMenuItem(value: 'Nữ', child: Text(t.female)),
+                        DropdownMenuItem(value: 'Khác', child: Text(t.other)),
                       ],
                       onChanged: (value) {
                         if (value != null) {
@@ -225,7 +229,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text('Lưu thay đổi', style: TextStyle(fontSize: 16)),
+                        child: Text(t.saveChanges, style: const TextStyle(fontSize: 16)),
                       ),
                     ),
                   ],

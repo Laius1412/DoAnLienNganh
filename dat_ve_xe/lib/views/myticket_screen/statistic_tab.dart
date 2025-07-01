@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../models/booking_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StatisticTab extends StatefulWidget {
   final List<Booking> bookings;
@@ -33,8 +34,10 @@ class _StatisticTabState extends State<StatisticTab> {
     final pending = getCountByStatus('pending');
     final cancelled = getCountByStatus('cancelled');
 
+    final t = AppLocalizations.of(context)!;
+
     // Thống kê tuyến xe đi nhiều nhất
-    String mostRoute = 'Không có dữ liệu';
+    String mostRoute = t.statNoData;
     int mostRouteCount = 0;
     final Map<String, int> routeCount = {};
     for (var b in bookings) {
@@ -70,12 +73,12 @@ class _StatisticTabState extends State<StatisticTab> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Tuyến đi nhiều nhất:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(t.statMostRoute, style: const TextStyle(fontWeight: FontWeight.bold)),
                           Text(mostRoute, style: const TextStyle(fontSize: 16)),
                         ],
                       ),
                     ),
-                    Text('$mostRouteCount lần', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+                    Text('$mostRouteCount ${t.statMostRouteCount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange)),
                   ],
                 ),
               ),
@@ -83,10 +86,10 @@ class _StatisticTabState extends State<StatisticTab> {
               spacing: 16,
               runSpacing: 16,
               children: [
-                StatisticCard(title: 'Tổng vé', value: '${bookings.length}', icon: Icons.confirmation_number),
-                StatisticCard(title: 'Tổng tiền', value: '${NumberFormat("#,###", "vi_VN").format(total)} đ', icon: Icons.monetization_on),
-                StatisticCard(title: 'Xác nhận', value: '$confirmed', icon: Icons.check_circle_outline),
-                StatisticCard(title: 'Chờ xử lý', value: '$pending', icon: Icons.hourglass_empty),
+                StatisticCard(title: t.statTotalTicket, value: '${bookings.length}', icon: Icons.confirmation_number),
+                StatisticCard(title: t.statTotalMoney, value: '${NumberFormat("#,###", "vi_VN").format(total)} đ', icon: Icons.monetization_on),
+                StatisticCard(title: t.statConfirmed, value: '$confirmed', icon: Icons.check_circle_outline),
+                StatisticCard(title: t.statPending, value: '$pending', icon: Icons.hourglass_empty),
               ],
             ),
             const SizedBox(height: 32),
@@ -94,7 +97,7 @@ class _StatisticTabState extends State<StatisticTab> {
               onTap: () => setState(() => showPie = !showPie),
               child: Row(
                 children: [
-                  Text('Biểu đồ trạng thái vé', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showPie ? Colors.deepOrange : Colors.black)),
+                  Text(t.statPieTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showPie ? Colors.deepOrange : Colors.black)),
                   const SizedBox(width: 8),
                   Icon(showPie ? Icons.expand_less : Icons.expand_more, color: Colors.deepOrange),
                 ],
@@ -114,7 +117,7 @@ class _StatisticTabState extends State<StatisticTab> {
                         sections: [
                           PieChartSectionData(
                             value: confirmed.toDouble(),
-                            title: confirmed > 0 ? 'Xác nhận' : '',
+                            title: confirmed > 0 ? t.statConfirmed : '',
                             color: Colors.green,
                             titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             radius: confirmed >= pending && confirmed >= cancelled ? 60 : 50,
@@ -124,7 +127,7 @@ class _StatisticTabState extends State<StatisticTab> {
                           ),
                           PieChartSectionData(
                             value: pending.toDouble(),
-                            title: pending > 0 ? 'Chờ' : '',
+                            title: pending > 0 ? t.statPending : '',
                             color: Colors.orange,
                             titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             radius: pending > confirmed && pending >= cancelled ? 60 : 50,
@@ -134,7 +137,7 @@ class _StatisticTabState extends State<StatisticTab> {
                           ),
                           PieChartSectionData(
                             value: cancelled.toDouble(),
-                            title: cancelled > 0 ? 'Hủy' : '',
+                            title: cancelled > 0 ? t.statCancelled : '',
                             color: Colors.red,
                             titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             radius: cancelled > confirmed && cancelled > pending ? 60 : 50,
@@ -165,7 +168,7 @@ class _StatisticTabState extends State<StatisticTab> {
               onTap: () => setState(() => showBar = !showBar),
               child: Row(
                 children: [
-                  Text('Biểu đồ chi phí hàng tháng', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showBar ? Colors.deepOrange : Colors.black)),
+                  Text(t.statBarTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showBar ? Colors.deepOrange : Colors.black)),
                   const SizedBox(width: 8),
                   Icon(showBar ? Icons.expand_less : Icons.expand_more, color: Colors.deepOrange),
                 ],
@@ -183,7 +186,7 @@ class _StatisticTabState extends State<StatisticTab> {
               onTap: () => setState(() => showLine = !showLine),
               child: Row(
                 children: [
-                  Text('Biểu đồ số lượng vé đặt theo tháng', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showLine ? Colors.deepOrange : Colors.black)),
+                  Text(t.statLineTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showLine ? Colors.deepOrange : Colors.black)),
                   const SizedBox(width: 8),
                   Icon(showLine ? Icons.expand_less : Icons.expand_more, color: Colors.deepOrange),
                 ],

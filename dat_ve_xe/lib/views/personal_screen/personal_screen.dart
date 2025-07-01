@@ -8,6 +8,8 @@ import 'package:dat_ve_xe/views/auth/register_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:dat_ve_xe/views/personal_screen/edit_profile_screen.dart';
+import 'package:dat_ve_xe/views/personal_screen/policy_screen.dart';
+import 'package:dat_ve_xe/views/personal_screen/about_screen.dart';
 
 class PersonalScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -155,14 +157,24 @@ class _PersonalScreenState extends State<PersonalScreen> {
               icon: Icons.policy,
               title: t.policy,
               onTap: () {
-                Navigator.pushNamed(context, '/policy');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PolicyScreen(),
+                  ),
+                );
               },
             ),
             _buildMenuItem(
               icon: Icons.info,
               title: t.aboutUs,
               onTap: () {
-                Navigator.pushNamed(context, '/about');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutScreen(),
+                  ),
+                );
               },
             ),
           ],
