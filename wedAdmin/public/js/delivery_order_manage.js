@@ -153,12 +153,8 @@ btnSaveEdit.addEventListener('click', async () => {
     body: JSON.stringify({ mass: newMass, status: newStatus })
   });
   if (res.ok) {
-    // Cập nhật lại dữ liệu
-    // await fetchInitialData();
-    // Đóng modal
-    // bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
     alert('Cập nhật thành công!');
-    window.location.reload(); // Reload lại trang
+    window.location.reload();
   } else {
     alert('Cập nhật thất bại!');
   }

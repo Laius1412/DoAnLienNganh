@@ -19,10 +19,7 @@ class PolicyScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            content,
-            style: const TextStyle(fontSize: 15.5, height: 1.6),
-          ),
+          Text(content, style: const TextStyle(fontSize: 15.5, height: 1.6)),
         ],
       ),
     );
@@ -30,7 +27,6 @@ class PolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.policyTitle),
@@ -82,4 +78,4 @@ class PolicyScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}
