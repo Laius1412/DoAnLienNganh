@@ -44,10 +44,10 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
     final startTime = booking.seats.first.vehicle?.startTime ?? 'Không rõ';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FB),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: Text(t.ticketDetail),
-        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
+        backgroundColor: const Color(0xFFF36C21),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -55,11 +55,19 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey[900]?.withOpacity(0.95)
+                  : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFF36C21).withOpacity(0.3)
+                    : Colors.transparent,
+                width: 1.5,
+              ),
+              boxShadow: [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: Theme.of(context).shadowColor.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.13 : 0.12),
                   blurRadius: 10,
                   offset: Offset(0, 5),
                 )
@@ -75,7 +83,7 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                   children: [
                     Text(
                       tripName,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                     ),
                     Chip(
                       label: Text(
@@ -90,8 +98,7 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                const Divider(),
+                Divider(color: Theme.of(context).dividerColor),
 
                 _buildDetailRow(t.ticketId, booking.id),
                 _buildDetailRow(t.ticketUser, _loadingUser ? "Đang tải..." : (userName ?? "Không rõ")),
@@ -108,13 +115,27 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                   child: Column(
                     children: [
                       Text(t.ticketQrGuide,
-                          style: TextStyle(fontWeight: FontWeight.w600)),
+                          style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
                       const SizedBox(height: 12),
-                      QrImageView(
-                        data: booking.id,
-                        version: QrVersions.auto,
-                        size: 150.0,
-                        backgroundColor: Colors.white,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.12),
+                              blurRadius: 8,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: QrImageView(
+                          data: booking.id,
+                          version: QrVersions.auto,
+                          size: 170.0,
+                          backgroundColor: Colors.white,
+                        ),
                       ),
                     ],
                   ),
@@ -133,10 +154,10 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
       child: Row(
         children: [
           Expanded(
-            child: Text(title, style: const TextStyle(color: Colors.black54)),
+            child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
           ),
           const SizedBox(width: 12),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),
     );

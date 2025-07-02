@@ -36,6 +36,8 @@ class _StatisticTabState extends State<StatisticTab> {
 
     final t = AppLocalizations.of(context)!;
 
+    final appOrange = Color(0xFFF36C21);
+
     // Thống kê tuyến xe đi nhiều nhất
     String mostRoute = t.statNoData;
     int mostRouteCount = 0;
@@ -62,23 +64,23 @@ class _StatisticTabState extends State<StatisticTab> {
                 margin: const EdgeInsets.only(bottom: 20),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange.withOpacity(0.1),
+                  color: appOrange.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.directions_bus, color: Colors.deepOrange, size: 32),
+                    Icon(Icons.directions_bus, color: appOrange, size: 32),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(t.statMostRoute, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          Text(mostRoute, style: const TextStyle(fontSize: 16)),
+                          Text(t.statMostRoute, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground)),
+                          Text(mostRoute, style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onBackground)),
                         ],
                       ),
                     ),
-                    Text('$mostRouteCount ${t.statMostRouteCount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+                    Text('$mostRouteCount ${t.statMostRouteCount}', style: TextStyle(fontWeight: FontWeight.bold, color: appOrange)),
                   ],
                 ),
               ),
@@ -97,9 +99,9 @@ class _StatisticTabState extends State<StatisticTab> {
               onTap: () => setState(() => showPie = !showPie),
               child: Row(
                 children: [
-                  Text(t.statPieTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showPie ? Colors.deepOrange : Colors.black)),
+                  Text(t.statPieTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showPie ? appOrange : Theme.of(context).colorScheme.onBackground)),
                   const SizedBox(width: 8),
-                  Icon(showPie ? Icons.expand_less : Icons.expand_more, color: Colors.deepOrange),
+                  Icon(showPie ? Icons.expand_less : Icons.expand_more, color: appOrange),
                 ],
               ),
             ),
@@ -119,7 +121,7 @@ class _StatisticTabState extends State<StatisticTab> {
                             value: confirmed.toDouble(),
                             title: confirmed > 0 ? t.statConfirmed : '',
                             color: Colors.green,
-                            titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            titleStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
                             radius: confirmed >= pending && confirmed >= cancelled ? 60 : 50,
                             showTitle: confirmed > 0,
                             badgeWidget: null,
@@ -129,7 +131,7 @@ class _StatisticTabState extends State<StatisticTab> {
                             value: pending.toDouble(),
                             title: pending > 0 ? t.statPending : '',
                             color: Colors.orange,
-                            titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            titleStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
                             radius: pending > confirmed && pending >= cancelled ? 60 : 50,
                             showTitle: pending > 0,
                             badgeWidget: null,
@@ -139,7 +141,7 @@ class _StatisticTabState extends State<StatisticTab> {
                             value: cancelled.toDouble(),
                             title: cancelled > 0 ? t.statCancelled : '',
                             color: Colors.red,
-                            titleStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            titleStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
                             radius: cancelled > confirmed && cancelled > pending ? 60 : 50,
                             showTitle: cancelled > 0,
                             badgeWidget: null,
@@ -153,8 +155,8 @@ class _StatisticTabState extends State<StatisticTab> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('Tổng vé', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54)),
-                            Text('${bookings.length}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+                            Text('Tổng vé', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7))),
+                            Text('${bookings.length}', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: appOrange)),
                           ],
                         ),
                       ),
@@ -168,9 +170,9 @@ class _StatisticTabState extends State<StatisticTab> {
               onTap: () => setState(() => showBar = !showBar),
               child: Row(
                 children: [
-                  Text(t.statBarTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showBar ? Colors.deepOrange : Colors.black)),
+                  Text(t.statBarTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showBar ? appOrange : Theme.of(context).colorScheme.onBackground)),
                   const SizedBox(width: 8),
-                  Icon(showBar ? Icons.expand_less : Icons.expand_more, color: Colors.deepOrange),
+                  Icon(showBar ? Icons.expand_less : Icons.expand_more, color: appOrange),
                 ],
               ),
             ),
@@ -186,9 +188,9 @@ class _StatisticTabState extends State<StatisticTab> {
               onTap: () => setState(() => showLine = !showLine),
               child: Row(
                 children: [
-                  Text(t.statLineTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showLine ? Colors.deepOrange : Colors.black)),
+                  Text(t.statLineTitle, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: showLine ? appOrange : Theme.of(context).colorScheme.onBackground)),
                   const SizedBox(width: 8),
-                  Icon(showLine ? Icons.expand_less : Icons.expand_more, color: Colors.deepOrange),
+                  Icon(showLine ? Icons.expand_less : Icons.expand_more, color: appOrange),
                 ],
               ),
             ),
@@ -215,15 +217,18 @@ class StatisticCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final appOrange = Color(0xFFF36C21);
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       width: MediaQuery.of(context).size.width / 2 - 24,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? appOrange.withOpacity(0.13) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: theme.shadowColor.withOpacity(isDark ? 0.08 : 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -232,11 +237,11 @@ class StatisticCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 32, color: Colors.deepOrange),
+          Icon(icon, size: 32, color: appOrange),
           const SizedBox(height: 8),
-          Text(title, style: const TextStyle(color: Colors.black54)),
+          Text(title, style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7))),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface)),
         ],
       ),
     );
@@ -263,6 +268,7 @@ class MonthlyCostBarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final monthlyTotals = getMonthlyTotals();
     final maxY = (monthlyTotals.reduce((a, b) => a > b ? a : b) / 1000).ceil() * 1000.0 + 1000;
+    final appOrange = Color(0xFFF36C21);
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
@@ -307,7 +313,7 @@ class MonthlyCostBarChart extends StatelessWidget {
             barRods: [
               BarChartRodData(
                 toY: monthlyTotals[i],
-                color: Colors.deepOrange,
+                color: appOrange,
                 width: 18,
                 borderRadius: BorderRadius.circular(6),
               ),

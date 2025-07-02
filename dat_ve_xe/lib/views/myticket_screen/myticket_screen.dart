@@ -110,7 +110,15 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
     final t = AppLocalizations.of(context)!;
 
     if (filteredTickets.isEmpty) {
-      return Center(child: Text(t.noTicket, style: const TextStyle(fontSize: 16)));
+      return Center(
+        child: Text(
+          t.noTicket,
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
+      );
     }
 
     return RefreshIndicator(
@@ -144,7 +152,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('${t.ticketCode}: ${booking.id.substring(0, 8)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
@@ -176,7 +184,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                             const SizedBox(height: 4),
                             Text(
                               '${t.ticketTotal}: ${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)}đ',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Color.fromARGB(255, 253, 109, 37),
                                 fontWeight: FontWeight.bold,
                               ),
@@ -201,10 +209,10 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tổng số vé: $totalTickets', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text('Tổng số vé: $totalTickets', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text('Tổng tiền đã thanh toán: ${NumberFormat("#,###", "vi_VN").format(totalMoney)}đ',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
         ],
       ),
     );
@@ -267,11 +275,11 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           title: Text(t.myTickets),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
+          backgroundColor: Theme.of(context).colorScheme.background,
+          foregroundColor: Theme.of(context).colorScheme.onBackground,
           elevation: 0,
           actions: [
             if (_selectedDate != null)
@@ -280,8 +288,8 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
                 child: Center(
                   child: Text(
                     DateFormat('dd/MM/yyyy').format(_selectedDate!),
-                    style: const TextStyle(
-                      color: Colors.black87,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -306,13 +314,13 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
           ],
           bottom: TabBar(
             controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black87,
-            indicator: BoxDecoration(
-              color: const Color.fromARGB(255, 253, 109, 37),
-              borderRadius: BorderRadius.circular(10),
+            labelColor: Color(0xFFF36C21),
+            unselectedLabelColor: Theme.of(context).colorScheme.onBackground,
+            indicator: UnderlineTabIndicator(
+              borderSide: BorderSide(width: 3, color: Color(0xFFF36C21)),
+              insets: EdgeInsets.symmetric(horizontal: 24),
             ),
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
             tabs: [
               Tab(text: t.ticketCurrent),
               Tab(text: t.ticketUsed),
