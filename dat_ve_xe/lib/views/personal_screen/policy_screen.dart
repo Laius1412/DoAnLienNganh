@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PolicyScreen extends StatelessWidget {
   const PolicyScreen({Key? key}) : super(key: key);
@@ -29,9 +30,10 @@ class PolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chính sách & Điều khoản dịch vụ'),
+        title: Text(AppLocalizations.of(context)!.policyTitle),
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
       ),
       body: SingleChildScrollView(
@@ -40,45 +42,39 @@ class PolicyScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _section(
-              '1. Chính sách đặt vé',
-              '• Khách hàng có thể đặt vé trực tuyến qua ứng dụng FLASH TRAVEL hoặc website.\n'
-              '• Vé chỉ có giá trị khi đã thanh toán thành công.\n'
-              '• Thông tin hành khách phải chính xác để đảm bảo quyền lợi khi lên xe.',
+              AppLocalizations.of(context)!.policy1Title,
+              AppLocalizations.of(context)!.policy1Content,
             ),
             _section(
-              '2. Chính sách thanh toán',
-              '• Hỗ trợ nhiều hình thức thanh toán: Momo, thẻ ATM, Visa/MasterCard, chuyển khoản.\n'
-              '• FLASH TRAVEL cam kết bảo mật thông tin thanh toán của khách hàng.',
+              AppLocalizations.of(context)!.policy2Title,
+              AppLocalizations.of(context)!.policy2Content,
             ),
             _section(
-              '3. Chính sách đổi/trả vé',
-              '• Khách hàng được phép đổi/trả vé trước giờ khởi hành theo quy định của từng nhà xe.\n'
-              '• Phí đổi/trả vé (nếu có) sẽ được thông báo trước khi xác nhận thao tác.\n'
-              '• Tiền hoàn vé sẽ được chuyển về tài khoản trong vòng 3-7 ngày làm việc.',
+              AppLocalizations.of(context)!.policy3Title,
+              AppLocalizations.of(context)!.policy3Content,
             ),
             _section(
-              '4. Quy định sử dụng dịch vụ',
-              '• Không sử dụng dịch vụ vào mục đích vi phạm pháp luật.\n'
-              '• Không được mua bán, chuyển nhượng vé trái quy định.\n'
-              '• FLASH TRAVEL có quyền từ chối phục vụ nếu phát hiện hành vi gian lận.',
+              AppLocalizations.of(context)!.policy4Title,
+              AppLocalizations.of(context)!.policy4Content,
             ),
             _section(
-              '5. Chính sách bảo mật',
-              '• FLASH TRAVEL cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng.\n'
-              '• Không chia sẻ thông tin cho bên thứ ba nếu không có sự đồng ý của khách hàng, trừ trường hợp theo yêu cầu pháp luật.',
+              AppLocalizations.of(context)!.policy5Title,
+              AppLocalizations.of(context)!.policy5Content,
             ),
             _section(
-              '6. Hỗ trợ khách hàng',
-              '• Hotline: 1900 1234 (1.000đ/phút)\n'
-              '• Email: support@flashtravel.vn\n'
-              '• Hỗ trợ 24/7 qua ứng dụng, website và các kênh mạng xã hội.',
+              AppLocalizations.of(context)!.policy6Title,
+              AppLocalizations.of(context)!.policy6Content,
             ),
             const SizedBox(height: 10),
             const Divider(),
             const SizedBox(height: 10),
             Text(
-              'Việc sử dụng dịch vụ FLASH TRAVEL đồng nghĩa với việc bạn đã đọc, hiểu và đồng ý với các chính sách, điều khoản trên.',
-              style: const TextStyle(fontSize: 14.5, color: Colors.black54, fontStyle: FontStyle.italic),
+              AppLocalizations.of(context)!.policyFooter,
+              style: TextStyle(
+                fontSize: 14.5,
+                color: Theme.of(context).colorScheme.onBackground,
+                fontStyle: FontStyle.italic,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

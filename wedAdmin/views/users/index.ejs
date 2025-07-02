@@ -101,6 +101,7 @@
                           data-birth="<%= user.birth %>"
                           data-role="<%= user.role %>"
                           data-booking-count="<%= user.bookingCount %>"
+                          data-delivery-order-count="<%= user.deliveryOrderCount %>"
                           data-avatar="<%= user.avatar || '/assets/img/160x160/img1.jpg' %>">
                     Xem thông tin
                   </button>
@@ -424,6 +425,7 @@
       <div class="mb-2"><span class="fw-bold">Tuổi:</span> <span id="viewAge"></span></div>
       <div class="mb-2"><span class="fw-bold">Vai trò:</span> <span id="viewRole"></span></div>
       <div class="mb-2"><span class="fw-bold">Số lần đặt vé:</span> <span id="viewBookingCount"></span></div>
+      <div class="mb-2"><span class="fw-bold">Số đơn chuyển phát:</span> <span id="viewDeliveryOrderCount"></span></div>
     </div>
     <div class="d-flex justify-content-end">
       <button type="button" class="btn btn-secondary" id="closeViewUserForm">Đóng</button>
@@ -445,6 +447,7 @@ document.querySelectorAll('.btn-view-user').forEach(button => {
     document.getElementById('viewBirth').textContent = data.birth ? new Date(data.birth).toLocaleDateString('vi-VN') : '';
     document.getElementById('viewRole').textContent = data.role === 'admin' ? 'Quản trị' : 'Người dùng';
     document.getElementById('viewBookingCount').textContent = data.bookingCount || 0;
+    document.getElementById('viewDeliveryOrderCount').textContent = data.deliveryOrderCount || 0;
     document.getElementById('viewAvatar').src = data.avatar || '/assets/img/160x160/img1.jpg';
     // Tính tuổi
     const ageEl = document.getElementById('viewAge');

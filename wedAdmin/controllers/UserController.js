@@ -4,6 +4,14 @@ const ExcelJS = require('exceljs');
 const admin = require('firebase-admin');
 const auth = admin.auth();
 
+function normalizePhone(phone) {
+  if (!phone) return '';
+  if (phone.startsWith('+84')) {
+    return '0' + phone.slice(3);
+  }
+  return phone;
+}
+
 // Danh sách người dùng + tìm kiếm
 const index = async (req, res) => {
   try {
@@ -21,7 +29,17 @@ const index = async (req, res) => {
         // Đếm số lần đặt vé của user này
         const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
         const bookingCount = bookingSnap.size;
-        users.push({ id: doc.id, ...data, bookingCount, avatar: data.avt });
+
+        // CHUẨN HÓA SỐ ĐIỆN THOẠI
+        const normalizedPhone0 = normalizePhone(phone);
+        const normalizedPhone84 = phone.startsWith('0') ? '+84' + phone.slice(1) : phone;
+
+        // Đếm số lần tạo đơn hàng chuyển phát của user này (theo phoneFrom)
+        const deliveryOrderSnap0 = await db.collection('deliveryOrders').where('phoneFrom', '==', normalizedPhone0).get();
+        const deliveryOrderSnap84 = await db.collection('deliveryOrders').where('phoneFrom', '==', normalizedPhone84).get();
+        const deliveryOrderCount = deliveryOrderSnap0.size + deliveryOrderSnap84.size;
+
+        users.push({ id: doc.id, ...data, bookingCount, deliveryOrderCount, avatar: data.avt });
       }
     }
 
@@ -227,7 +245,17 @@ const exportExcel = async (req, res) => {
       // Đếm số lần đặt vé của user này
       const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
       const bookingCount = bookingSnap.size;
-      users.push({ id: doc.id, ...data, bookingCount, avatar: data.avt });
+
+      // CHUẨN HÓA SỐ ĐIỆN THOẠI
+      const normalizedPhone0 = normalizePhone(data.phone);
+      const normalizedPhone84 = data.phone.startsWith('0') ? '+84' + data.phone.slice(1) : data.phone;
+
+      // Đếm số lần tạo đơn hàng chuyển phát của user này (theo phoneFrom)
+      const deliveryOrderSnap0 = await db.collection('deliveryOrders').where('phoneFrom', '==', normalizedPhone0).get();
+      const deliveryOrderSnap84 = await db.collection('deliveryOrders').where('phoneFrom', '==', normalizedPhone84).get();
+      const deliveryOrderCount = deliveryOrderSnap0.size + deliveryOrderSnap84.size;
+
+      users.push({ id: doc.id, ...data, bookingCount, deliveryOrderCount, avatar: data.avt });
     }
 
     // Sắp xếp theo yêu cầu
@@ -255,6 +283,7 @@ const exportExcel = async (req, res) => {
       { header: 'Ngày sinh', key: 'birth', width: 15 },
       { header: 'Số điện thoại', key: 'phone', width: 20 },
       { header: 'Số vé', key: 'bookingCount', width: 10 },
+      { header: 'Số đơn chuyển phát', key: 'deliveryOrderCount', width: 15 },
       { header: 'Vai trò', key: 'role', width: 15 },
     ];
 
@@ -266,6 +295,7 @@ const exportExcel = async (req, res) => {
         birth: user.birth ? new Date(user.birth).toLocaleDateString('vi-VN') : '',
         phone: user.phone,
         bookingCount: user.bookingCount || 0,
+        deliveryOrderCount: user.deliveryOrderCount || 0,
         role: user.role,
       });
     });
