@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
       firstDate: now,
       lastDate: DateTime(now.year + 1),
     );
-
     if (picked != null) {
       setState(() => _selectedDate = picked);
     }
@@ -78,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   final isSelected = isStart 
                       ? location == _selectedStart 
                       : location == _selectedDestination;
-                  
                   return ListTile(
                     title: Text(
                       location,
@@ -114,174 +112,169 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('EEEE, dd/MM/yyyy', 'vi');
-
     return Scaffold(
-      backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Xin chào',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 25, // to hơn
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 1),
-              Text(
-                'Bạn đã sẵn sàng về quê chưa',
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 39, 38, 38),
-                  fontSize: 16, // nhỏ hơn
-                ),
-              ),
-            ],
-          ),
-          iconTheme: IconThemeData(color: Color.fromARGB(255, 253, 109, 37)),
-        ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      backgroundColor: Color(0xFFF6F8FB),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            // Hộp chọn điểm đi & đến
+            // Header (thanh màu cam)
             Container(
+              height: 130,
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: Color.fromARGB(255, 253, 109, 37),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 24,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  InkWell(
-                    onTap: () => _showLocationPicker(true),
-                    child: Row(
-                      children: [
-                        Icon(Icons.radio_button_checked, color: Colors.white),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _selectedStart ?? 'Chọn điểm đi',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        Icon(Icons.arrow_drop_down, color: Colors.white),
-                      ],
-                    ),
-                  ),
-                  Divider(color: Colors.white),
-                  InkWell(
-                    onTap: () => _showLocationPicker(false),
-                    child: Row(
-                      children: [
-                        Icon(Icons.location_on, color: Colors.white),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _selectedDestination ?? 'Chọn điểm đến',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        Icon(Icons.arrow_drop_down, color: Colors.white),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            // Hộp chọn ngày
-            Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 253, 109, 37),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 24,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  Icon(Icons.calendar_today, color: Colors.white),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      _selectedDate != null
-                          ? 'Ngày đi: ${dateFormat.format(_selectedDate!)}'
-                          : 'Chưa chọn ngày đi',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _pickDate,
-                    style: TextButton.styleFrom(foregroundColor: Colors.white),
-                    child: Text('Chọn ngày', style: TextStyle(color: Colors.white)),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 24),
-            // Nút tìm chuyến đi
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 253, 109, 37),
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(32),
+                  bottomRight: Radius.circular(32),
                 ),
               ),
-              onPressed: () {
-                if (_selectedStart == _selectedDestination) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Điểm đi và đến không được trùng nhau')),
-                  );
-                  return;
-                }
-                if (_selectedStart == null ||
-                    _selectedDestination == null ||
-                    _selectedDate == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Vui lòng chọn đủ thông tin')),
-                  );
-                  return;
-                }
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SearchResultScreen(
-                      startLocation: _selectedStart!,
-                      destination: _selectedDestination!,
-                      selectedDate: _selectedDate!,
-                      searchByStopsStart: true,
-                      searchByStopsEnd: true,
+              // Nếu có logo, chuông, thêm vào đây
+            ),
+            // Card tìm kiếm chuyến đi, dùng Transform.translate để nổi lên header
+            Transform.translate(
+              offset: Offset(0, -120), // Đẩy lên trên 40px
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Hộp chọn điểm đi & đến
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 253, 109, 37),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              InkWell(
+                                onTap: () => _showLocationPicker(true),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.radio_button_checked, color: Colors.white),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        _selectedStart ?? 'Chọn điểm đi',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(Icons.arrow_drop_down, color: Colors.white),
+                                  ],
+                                ),
+                              ),
+                              Divider(color: Colors.white),
+                              InkWell(
+                                onTap: () => _showLocationPicker(false),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.location_on, color: Colors.white),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        _selectedDestination ?? 'Chọn điểm đến',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(Icons.arrow_drop_down, color: Colors.white),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        // Hộp chọn ngày
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 253, 109, 37),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          child: Row(
+                            children: [
+                              Icon(Icons.calendar_today, color: Colors.white),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  _selectedDate != null
+                                      ? 'Ngày đi: ${dateFormat.format(_selectedDate!)}'
+                                      : 'Chưa chọn ngày đi',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: _pickDate,
+                                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                                child: Text('Chọn ngày', style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 24),
+                        // Nút tìm chuyến đi
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 253, 109, 37),
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (_selectedStart == _selectedDestination) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Điểm đi và đến không được trùng nhau')),
+                                );
+                                return;
+                              }
+                              if (_selectedStart == null ||
+                                  _selectedDestination == null ||
+                                  _selectedDate == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Vui lòng chọn đủ thông tin')),
+                                );
+                                return;
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => SearchResultScreen(
+                                    startLocation: _selectedStart!,
+                                    destination: _selectedDestination!,
+                                    selectedDate: _selectedDate!,
+                                    searchByStopsStart: true,
+                                    searchByStopsEnd: true,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text('Tìm chuyến đi', style: TextStyle(fontSize: 18)),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-              child: Text('Tìm chuyến đi', style: TextStyle(fontSize: 18)),
+                ),
+              ),
             ),
+            // Các phần khác bên dưới nếu có
+            SizedBox(height: 32),
           ],
         ),
       ),
