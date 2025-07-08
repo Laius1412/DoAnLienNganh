@@ -229,8 +229,8 @@ class StatisticCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor.withOpacity(isDark ? 0.08 : 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            blurRadius: 8, // độ mờ của bóng
+            offset: const Offset(0, 4), // vị trí của bóng, đổ xuống dưới
           ),
         ],
       ),
@@ -248,6 +248,7 @@ class StatisticCard extends StatelessWidget {
   }
 }
 
+// biểu đồ cột thống kê tổng tiền mỗi tháng
 class MonthlyCostBarChart extends StatelessWidget {
   final List<Booking> bookings;
   const MonthlyCostBarChart({Key? key, required this.bookings}) : super(key: key);
@@ -259,7 +260,7 @@ class MonthlyCostBarChart extends StatelessWidget {
       final date = b.getTravelDate();
       if (date != null && date.year == now.year && b.totalPrice != null) {
         totals[date.month - 1] += b.totalPrice!.toDouble();
-      }
+      } // tính tổng tiền mỗi tháng
     }
     return totals;
   }
@@ -269,11 +270,11 @@ class MonthlyCostBarChart extends StatelessWidget {
     final monthlyTotals = getMonthlyTotals();
     final maxY = (monthlyTotals.reduce((a, b) => a > b ? a : b) / 1000).ceil() * 1000.0 + 1000;
     final appOrange = Color(0xFFF36C21);
-    return BarChart(
+    return BarChart(// tạo biểu đồ cột
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
         maxY: maxY > 0 ? maxY : 1000,
-        barTouchData: BarTouchData(enabled: true),
+        barTouchData: BarTouchData(enabled: true), // cho phép tương tác với biểu đồ
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -312,7 +313,7 @@ class MonthlyCostBarChart extends StatelessWidget {
             x: i,
             barRods: [
               BarChartRodData(
-                toY: monthlyTotals[i],
+                toY: monthlyTotals[i], // giá trị của cột
                 color: appOrange,
                 width: 18,
                 borderRadius: BorderRadius.circular(6),

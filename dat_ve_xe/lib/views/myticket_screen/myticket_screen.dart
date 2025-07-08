@@ -217,7 +217,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
       ),
     );
   }
-
+  // chọn ngày
   void _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -238,7 +238,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
     if (_currentUser == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(t.myTickets),
+          title: Text(t.ticketManagement),
           backgroundColor: const Color.fromARGB(255, 253, 109, 37),
         ),
         body: Center(
@@ -249,10 +249,10 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
         ),
       );
     }
-
+    // ngày giờ hiện tại
     final now = DateTime.now();
-
-    final currentTickets = _bookings.where((b) {
+    // vé hiện tại
+    final currentTickets = _bookings.where((b) { // where là lọc vé chưa di chuyển
       final travelDate = b.getTravelDate();
       final startTime = b.seats.isNotEmpty ? b.seats[0].vehicle?.startTime : null;
       if (travelDate != null && startTime != null) {
@@ -277,7 +277,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          title: Text(t.myTickets),
+          title: Text(t.ticketManagement),
           backgroundColor: Theme.of(context).colorScheme.background,
           foregroundColor: Theme.of(context).colorScheme.onBackground,
           elevation: 0,
@@ -311,6 +311,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with TickerProviderStat
               tooltip: 'Chọn ngày',
               onPressed: _pickDate,
             ),
+
           ],
           bottom: TabBar(
             controller: _tabController,
