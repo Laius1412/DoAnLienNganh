@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/views/trip/search_result_screen.dart';
+import '../../models/news_model.dart';
+import 'news_detail_screen.dart';
+import '../../service/news_service.dart';
+import '../../widgets/news_carousel.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -274,7 +278,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             // Các phần khác bên dưới nếu có
-            SizedBox(height: 32),
+            // PHẦN TIN TỨC
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Tin tức',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+              ),
+            ),
+            NewsCarousel(),
           ],
         ),
       ),

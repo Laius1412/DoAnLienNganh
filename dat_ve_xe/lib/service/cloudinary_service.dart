@@ -19,4 +19,13 @@ class CloudinaryService {
       return null;
     }
   }
+
+  static Future<bool> checkImageUrl(String url) async {
+    try {
+      final response = await http.head(Uri.parse(url));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 } 

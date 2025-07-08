@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/booking_model.dart';
 import '../models/seat_position_model.dart';
-import '../models/vehicle_type_model.dart';
 import '../models/vehicle_model.dart';
 import 'dart:async';
 
@@ -155,21 +154,6 @@ class BookingService {
     } catch (e) {
       print('Error creating booking: $e');
       return null;
-    }
-  }
-
-  // Timer to check payment status
-  Future<void> _startPaymentTimer(String bookingId, DateTime deadline) async {
-    await Future.delayed(Duration(seconds: 300)); // 5 minutes
-
-    final bookingDoc = await _firestore.collection('bookings').doc(bookingId).get();
-    if (!bookingDoc.exists) return;
-
-    final booking = Booking.fromMap(bookingId, bookingDoc.data() as Map<String, dynamic>);
-    
-    // If still in pending_payment status after 5 minutes, cancel the booking
-    if (booking.statusBooking == 'pending_payment') {
-      await cancelBooking(bookingId);
     }
   }
 
