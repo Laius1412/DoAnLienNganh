@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/views/trip/search_result_screen.dart';
-import '../../models/news_model.dart';
-import 'news_detail_screen.dart';
-import '../../service/news_service.dart';
+// import '../../models/news_model.dart';
+// import 'news_detail_screen.dart';
+// import '../../service/news_service.dart';
 import '../../widgets/news_carousel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             // Card tìm kiếm chuyến đi, dùng Transform.translate để nổi lên header
             Transform.translate(
-              offset: Offset(0, -120), // Đẩy lên trên 40px
+              offset: Offset(0, -120), 
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 child: Card(
