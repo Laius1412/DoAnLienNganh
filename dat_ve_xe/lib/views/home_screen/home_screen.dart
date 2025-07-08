@@ -5,6 +5,7 @@ import 'package:dat_ve_xe/views/trip/search_result_screen.dart';
 // import 'news_detail_screen.dart';
 // import '../../service/news_service.dart';
 import '../../widgets/news_carousel.dart';
+import '../../widgets/price_carousel.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -117,12 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('EEEE, dd/MM/yyyy', 'vi');
     return Scaffold(
-      backgroundColor: Color(0xFFF6F8FB),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
-              height: 340,
+              height: 345,
               child: Stack(
                 children: [
                   // Header (thanh màu cam)
@@ -296,6 +297,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             NewsCarousel(),
+            // PHẦN GIÁ VÉ
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Giá vé',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+              ),
+            ),
+            PriceCarousel(),
           ],
         ),
       ),

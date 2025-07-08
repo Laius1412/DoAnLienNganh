@@ -95,6 +95,8 @@ flutter:
     - assets/app_icon/bannerApp.png
     - assets/app_icon/icon_App.png
     - assets/app_icon/hinh_anh_gioi_thieu_1.png
+    - assets/picture_price/nghean.png
+    - assets/picture_price/hanoi1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
