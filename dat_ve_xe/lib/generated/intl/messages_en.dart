@@ -27,6 +27,55 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "aboutCompany": MessageLookupByLibrary.simpleMessage(
+      "FLASH TRAVEL TRANSPORT AND TOURISM SERVICE CO., LTD",
+    ),
+    "aboutCompanyInfoContent": MessageLookupByLibrary.simpleMessage(
+      "• FLASH TRAVEL Technology Co., Ltd\n• Tax code: 0101010101\n• Head office: 2nd Floor, C50 Building, Ha Dong District, Hanoi City\n• Email: support@flashtravel.vn\n• Ticket booking hotline: 1900 1234 (1,000đ/min)",
+    ),
+    "aboutCompanyInfoTitle": MessageLookupByLibrary.simpleMessage(
+      "Company information",
+    ),
+    "aboutContent": MessageLookupByLibrary.simpleMessage(
+      "🚀 FLASH TRAVEL – Ứng dụng đặt vé xe khách thông minh\n\nFLASH TRAVEL là nền tảng đặt vé xe khách hàng đầu, mang đến trải nghiệm di chuyển nhanh chóng, an toàn và tiện lợi cho hành khách khắp cả nước.\n\nVới sứ mệnh \\\"Mỗi chuyến đi là một trải nghiệm đẳng cấp\\\", FLASH TRAVEL kết nối hàng trăm nhà xe uy tín chỉ với vài thao tác chạm.\n\n🚌 Dòng xe hiện đại – Phù hợp mọi nhu cầu:...",
+    ),
+    "aboutCoreValueContent": MessageLookupByLibrary.simpleMessage(
+      "• Customer-centric: Always listen and serve wholeheartedly.\n• Innovation: Apply technology to improve service quality.\n• Transparency & Prestige: Commit to clear information, transparent ticket prices.\n• Cooperative development: Connect with many reputable bus operators nationwide.",
+    ),
+    "aboutCoreValueTitle": MessageLookupByLibrary.simpleMessage("Core values"),
+    "aboutFeatureContent": MessageLookupByLibrary.simpleMessage(
+      "• Book tickets quickly in 3 steps.\n• Track journeys, save ticket history.\n• Daily promotions and notifications.",
+    ),
+    "aboutFeatureTitle": MessageLookupByLibrary.simpleMessage("Smart features"),
+    "aboutFollowContent": MessageLookupByLibrary.simpleMessage(
+      "• Website: www.flashtravel.vn\n• Facebook: fb.com/flashtravel.vn\n• Zalo OA: FLASH TRAVEL\n• TikTok: @flashtravel.vn",
+    ),
+    "aboutFollowTitle": MessageLookupByLibrary.simpleMessage("Follow us"),
+    "aboutHeadline": MessageLookupByLibrary.simpleMessage(
+      "FLASH TRAVEL – Smart coach ticket booking solution",
+    ),
+    "aboutIntro": MessageLookupByLibrary.simpleMessage(
+      "FLASH TRAVEL is a modern coach ticket booking app, connecting hundreds of quality bus operators nationwide. With the motto \\\"Fast – Safe – Convenient\\\", we are committed to providing the best ticket booking experience for users.",
+    ),
+    "aboutMissionContent": MessageLookupByLibrary.simpleMessage(
+      "FLASH TRAVEL was born with the mission of modernizing the passenger transport industry in Vietnam, bringing customers a convenient, transparent and safest coach ticket booking experience. We constantly innovate to meet the increasing needs of users.\n\nVision\nTo become the leading coach ticket booking platform in Vietnam, connecting every journey, every region, contributing to the development of smart transportation.",
+    ),
+    "aboutMissionTitle": MessageLookupByLibrary.simpleMessage(
+      "Mission & Vision",
+    ),
+    "aboutReasonContent": MessageLookupByLibrary.simpleMessage(
+      "✓ Simple, friendly interface.\n✓ Multiple payment methods integrated.\n✓ 24/7 support hotline.\n✓ Transparent, clear ticket prices.",
+    ),
+    "aboutReasonTitle": MessageLookupByLibrary.simpleMessage(
+      "Why choose FLASH TRAVEL",
+    ),
+    "aboutServiceContent": MessageLookupByLibrary.simpleMessage(
+      "• Modern sleeper and limousine buses, fully equipped.\n• Door-to-door transfer service in many provinces.\n• Flexible ticket exchange and refund support.",
+    ),
+    "aboutServiceTitle": MessageLookupByLibrary.simpleMessage(
+      "Outstanding services",
+    ),
+    "aboutTitle": MessageLookupByLibrary.simpleMessage("About"),
     "aboutUs": MessageLookupByLibrary.simpleMessage("About us"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "accountDisabled": MessageLookupByLibrary.simpleMessage("accountDisabled"),
@@ -34,7 +83,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Account not found",
     ),
     "birthDate": MessageLookupByLibrary.simpleMessage("Birth date"),
+    "birthday": MessageLookupByLibrary.simpleMessage("Birthday"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePasswordFailed": MessageLookupByLibrary.simpleMessage(
       "Failed to change password",
@@ -50,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "cod": MessageLookupByLibrary.simpleMessage("COD"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+    "confirmed": MessageLookupByLibrary.simpleMessage("Confirmed"),
     "continueLabel": MessageLookupByLibrary.simpleMessage("Continue"),
     "createDelivery": MessageLookupByLibrary.simpleMessage("Create Delivery"),
     "createOrder": MessageLookupByLibrary.simpleMessage("Create Order"),
@@ -121,6 +173,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noPriceDataAvailable": MessageLookupByLibrary.simpleMessage(
       "No price data available.",
     ),
+    "noTicket": MessageLookupByLibrary.simpleMessage("No Ticket"),
     "normalGoods": MessageLookupByLibrary.simpleMessage("Normal"),
     "notificationSettings": MessageLookupByLibrary.simpleMessage(
       "Notification Settings",
@@ -134,6 +187,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "orderDetails": MessageLookupByLibrary.simpleMessage("Order Details"),
     "orderId": MessageLookupByLibrary.simpleMessage("Order ID"),
     "orderValue": MessageLookupByLibrary.simpleMessage("Order Value (VND)"),
+    "other": MessageLookupByLibrary.simpleMessage("Other"),
     "packageDescription": MessageLookupByLibrary.simpleMessage(
       "Package Description",
     ),
@@ -151,6 +205,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Password must be at least 6 characters",
     ),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("Payment Method"),
+    "pending": MessageLookupByLibrary.simpleMessage("Pending"),
+    "pendingPayment": MessageLookupByLibrary.simpleMessage("Pending payment"),
     "phone": MessageLookupByLibrary.simpleMessage("Phone number"),
     "phoneAlreadyUsed": MessageLookupByLibrary.simpleMessage(
       "Phone have already been used!",
@@ -160,6 +216,45 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "pleaseLogin": MessageLookupByLibrary.simpleMessage("Please login"),
     "policy": MessageLookupByLibrary.simpleMessage("Policy"),
+    "policy1Content": MessageLookupByLibrary.simpleMessage(
+      "• Customers can book tickets online via the FLASH TRAVEL app or official website.\n• Each ticket is valid for one passenger and one trip only.\n• After successful booking, the system will send the ticket code via email and/or SMS to the customer.\n• Please check your trip information, name, and phone number carefully before confirming the booking.\n• FLASH TRAVEL is not responsible if incorrect information provided by the customer leads to loss of benefits when boarding.",
+    ),
+    "policy1Title": MessageLookupByLibrary.simpleMessage(
+      "1. Ticket Booking Policy",
+    ),
+    "policy2Content": MessageLookupByLibrary.simpleMessage(
+      "• Multiple payment methods supported: e-wallets (Momo, ZaloPay), domestic ATM cards, international cards (Visa/MasterCard), bank transfer.\n• All payment transactions are encrypted and secured according to international standards.\n• FLASH TRAVEL commits not to store your card information on the system.\n• If payment fails, please check your balance, limit, or contact customer support.",
+    ),
+    "policy2Title": MessageLookupByLibrary.simpleMessage("2. Payment Policy"),
+    "policy3Content": MessageLookupByLibrary.simpleMessage(
+      "• Customers are allowed to exchange or refund tickets before departure time according to the regulations of each partner bus company.\n• To exchange/refund, customers need to provide the ticket code and personal verification information.\n• Some bus companies may apply exchange/refund fees or limit the time for exchange/refund (e.g., only accept exchanges 24h before departure).\n• FLASH TRAVEL will clearly notify the fees and conditions before you confirm the operation.\n• The refund amount (if any) will be transferred to your account within 3-7 working days, depending on the original payment method.",
+    ),
+    "policy3Title": MessageLookupByLibrary.simpleMessage(
+      "3. Ticket Exchange/Refund Policy",
+    ),
+    "policy4Content": MessageLookupByLibrary.simpleMessage(
+      "• Customers commit to using the service for the right purpose, not violating the law or the regulations of the bus company.\n• It is strictly forbidden to buy, sell, or transfer tickets illegally or use fake information to book tickets.\n• FLASH TRAVEL reserves the right to refuse service, cancel tickets, or lock accounts if fraudulent, scam, or public disorderly behavior is detected.\n• Customers must comply with luggage regulations, boarding time, and safety instructions from the bus company.",
+    ),
+    "policy4Title": MessageLookupByLibrary.simpleMessage(
+      "4. Service Usage Regulations",
+    ),
+    "policy5Content": MessageLookupByLibrary.simpleMessage(
+      "• FLASH TRAVEL is committed to absolutely protecting customers\' personal and transaction information.\n• Customer information is only used for ticket booking, customer care, and service quality improvement purposes.\n• Information will not be shared or disclosed to third parties without customer consent, except as required by authorities or law.\n• Customers have the right to request correction, update, or deletion of personal information at any time.",
+    ),
+    "policy5Title": MessageLookupByLibrary.simpleMessage("5. Privacy Policy"),
+    "policy6Content": MessageLookupByLibrary.simpleMessage(
+      "• FLASH TRAVEL\'s customer care team is always ready to support 24/7 via hotline, email, and online chat on the app and website.\n• Hotline: 1900 1234 (1,000đ/min)\n• Email: support@flashtravel.vn\n• All inquiries and complaints will be received and processed within 24 working hours.",
+    ),
+    "policy6Title": MessageLookupByLibrary.simpleMessage("6. Customer Support"),
+    "policyContent": MessageLookupByLibrary.simpleMessage(
+      "This is a sample policy content. You can update this in the localization file.",
+    ),
+    "policyFooter": MessageLookupByLibrary.simpleMessage(
+      "By using FLASH TRAVEL services, you acknowledge that you have read, understood, and agreed to the above policies and terms.",
+    ),
+    "policyTitle": MessageLookupByLibrary.simpleMessage(
+      "Policies & Terms of Service",
+    ),
     "price": MessageLookupByLibrary.simpleMessage("Price (VND)"),
     "receiverName": MessageLookupByLibrary.simpleMessage("Receiver Name"),
     "receiverPays": MessageLookupByLibrary.simpleMessage("Receiver Pays"),
@@ -178,6 +273,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Failed to reset password.",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "route": MessageLookupByLibrary.simpleMessage("Route"),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Save Changes"),
+    "selectBirthday": MessageLookupByLibrary.simpleMessage("Select birthday"),
     "sendCode": MessageLookupByLibrary.simpleMessage("Send code"),
     "sendCodeError": MessageLookupByLibrary.simpleMessage(
       "Failed to send reset code. Please try again.",
@@ -188,6 +286,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "senderPays": MessageLookupByLibrary.simpleMessage("Sender Pays"),
     "senderPhone": MessageLookupByLibrary.simpleMessage("Sender Phone"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "statBarTitle": MessageLookupByLibrary.simpleMessage("Monthly cost chart"),
+    "statCancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
+    "statConfirmed": MessageLookupByLibrary.simpleMessage("Confirmed"),
+    "statLineTitle": MessageLookupByLibrary.simpleMessage(
+      "Monthly ticket count chart",
+    ),
+    "statMostRoute": MessageLookupByLibrary.simpleMessage(
+      "Most frequent route:",
+    ),
+    "statMostRouteCount": MessageLookupByLibrary.simpleMessage("times"),
+    "statNoData": MessageLookupByLibrary.simpleMessage("No data"),
+    "statPending": MessageLookupByLibrary.simpleMessage("Pending"),
+    "statPieTitle": MessageLookupByLibrary.simpleMessage("Ticket status chart"),
+    "statTotalMoney": MessageLookupByLibrary.simpleMessage("Total money"),
+    "statTotalTicket": MessageLookupByLibrary.simpleMessage("Total tickets"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
     "success": MessageLookupByLibrary.simpleMessage("Success"),
     "successMessage": MessageLookupByLibrary.simpleMessage(
@@ -196,8 +309,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "successTitle": MessageLookupByLibrary.simpleMessage("Success"),
     "tapToSelect": MessageLookupByLibrary.simpleMessage("Tap to select"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),
+    "ticketCode": MessageLookupByLibrary.simpleMessage("Ticket code"),
+    "ticketCurrent": MessageLookupByLibrary.simpleMessage(" Current Ticket"),
+    "ticketDate": MessageLookupByLibrary.simpleMessage("Travel Date"),
+    "ticketDetail": MessageLookupByLibrary.simpleMessage("Ticket Details"),
+    "ticketEnd": MessageLookupByLibrary.simpleMessage("End Point"),
+    "ticketId": MessageLookupByLibrary.simpleMessage("Ticket ID"),
+    "ticketManagement": MessageLookupByLibrary.simpleMessage(
+      "Ticket Management",
+    ),
+    "ticketPlate": MessageLookupByLibrary.simpleMessage("License Plate"),
+    "ticketQrGuide": MessageLookupByLibrary.simpleMessage(
+      "Scan this QR code at the ticket gate",
+    ),
+    "ticketSeats": MessageLookupByLibrary.simpleMessage("Seats"),
+    "ticketStart": MessageLookupByLibrary.simpleMessage("Start Point"),
+    "ticketStartTime": MessageLookupByLibrary.simpleMessage("Departure Time"),
+    "ticketTotal": MessageLookupByLibrary.simpleMessage("Total Price"),
+    "ticketUsed": MessageLookupByLibrary.simpleMessage("Used ticket"),
+    "ticketUser": MessageLookupByLibrary.simpleMessage("Booker"),
     "toRegion": MessageLookupByLibrary.simpleMessage("To Region"),
     "trackDelivery": MessageLookupByLibrary.simpleMessage("Track Delivery"),
+    "updateFailed": MessageLookupByLibrary.simpleMessage("Update failed!"),
+    "updateSuccessful": MessageLookupByLibrary.simpleMessage(
+      " Update successful! ",
+    ),
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Verification Failed",
     ),

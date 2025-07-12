@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'package:dat_ve_xe/server/user_service.dart';
-import 'package:dat_ve_xe/models/user_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DetailMyTicket extends StatefulWidget {
@@ -38,7 +37,9 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
     final t = AppLocalizations.of(context)!;
     final booking = widget.booking;
     final travelDate = booking.getTravelDate();
-    final seatNumbers = booking.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(', ');
+    final seatNumbers = booking.seats
+        .map((s) => s.seatPosition?.numberSeat ?? '')
+        .join(', ');
     final tripName = booking.seats.first.vehicle?.trip?.nameTrip ?? 'N/A';
     final plate = booking.seats.first.vehicle?.plate ?? 'N/A';
     final startTime = booking.seats.first.vehicle?.startTime ?? 'Không rõ';
@@ -55,22 +56,28 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.grey[900]?.withOpacity(0.95)
-                  : Theme.of(context).colorScheme.surface,
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[900]?.withOpacity(0.95)
+                      : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFFF36C21).withOpacity(0.3)
-                    : Colors.transparent,
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFFF36C21).withOpacity(0.3)
+                        : Colors.transparent,
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.13 : 0.12),
+                  color: Theme.of(context).shadowColor.withOpacity(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 0.13
+                        : 0.12,
+                  ),
                   blurRadius: 10,
                   offset: Offset(0, 5),
-                )
+                ),
               ],
             ),
             width: double.infinity,
@@ -83,7 +90,11 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                   children: [
                     Text(
                       tripName,
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                     Chip(
                       label: Text(
@@ -93,7 +104,9 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      backgroundColor: _getStatusColor(booking.statusBooking).withOpacity(0.1),
+                      backgroundColor: _getStatusColor(
+                        booking.statusBooking,
+                      ).withOpacity(0.1),
                     ),
                   ],
                 ),
@@ -101,12 +114,23 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                 Divider(color: Theme.of(context).dividerColor),
 
                 _buildDetailRow(t.ticketId, booking.id),
-                _buildDetailRow(t.ticketUser, _loadingUser ? "Đang tải..." : (userName ?? "Không rõ")),
-                _buildDetailRow(t.ticketDate, travelDate != null ? DateFormat('dd/MM/yyyy').format(travelDate) : 'Không rõ'),
+                _buildDetailRow(
+                  t.ticketUser,
+                  _loadingUser ? "Đang tải..." : (userName ?? "Không rõ"),
+                ),
+                _buildDetailRow(
+                  t.ticketDate,
+                  travelDate != null
+                      ? DateFormat('dd/MM/yyyy').format(travelDate)
+                      : 'Không rõ',
+                ),
                 _buildDetailRow(t.ticketStartTime, startTime),
                 _buildDetailRow(t.ticketPlate, plate),
                 _buildDetailRow(t.ticketSeats, seatNumbers),
-                _buildDetailRow(t.ticketTotal, "${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)} đ"),
+                _buildDetailRow(
+                  t.ticketTotal,
+                  "${NumberFormat("#,###", "vi_VN").format(booking.totalPrice)} đ",
+                ),
                 _buildDetailRow(t.ticketStart, booking.startLocationBooking),
                 _buildDetailRow(t.ticketEnd, booking.endLocationBooking),
 
@@ -114,8 +138,13 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
                 Center(
                   child: Column(
                     children: [
-                      Text(t.ticketQrGuide,
-                          style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface)),
+                      Text(
+                        t.ticketQrGuide,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       Container(
                         decoration: BoxDecoration(
@@ -154,10 +183,21 @@ class _DetailMyTicketState extends State<DetailMyTicket> {
       child: Row(
         children: [
           Expanded(
-            child: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
-          Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );

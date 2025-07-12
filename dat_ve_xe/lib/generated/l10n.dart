@@ -999,6 +999,621 @@ class S {
   String get ok {
     return Intl.message('OK', name: 'ok', desc: '', args: []);
   }
+
+  /// ` Update successful! `
+  String get updateSuccessful {
+    return Intl.message(
+      ' Update successful! ',
+      name: 'updateSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update failed!`
+  String get updateFailed {
+    return Intl.message(
+      'Update failed!',
+      name: 'updateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save Changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Birthday`
+  String get birthday {
+    return Intl.message('Birthday', name: 'birthday', desc: '', args: []);
+  }
+
+  /// `Select birthday`
+  String get selectBirthday {
+    return Intl.message(
+      'Select birthday',
+      name: 'selectBirthday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get other {
+    return Intl.message('Other', name: 'other', desc: '', args: []);
+  }
+
+  /// ` Current Ticket`
+  String get ticketCurrent {
+    return Intl.message(
+      ' Current Ticket',
+      name: 'ticketCurrent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Used ticket`
+  String get ticketUsed {
+    return Intl.message('Used ticket', name: 'ticketUsed', desc: '', args: []);
+  }
+
+  /// `Ticket Details`
+  String get ticketDetail {
+    return Intl.message(
+      'Ticket Details',
+      name: 'ticketDetail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ticket ID`
+  String get ticketId {
+    return Intl.message('Ticket ID', name: 'ticketId', desc: '', args: []);
+  }
+
+  /// `Booker`
+  String get ticketUser {
+    return Intl.message('Booker', name: 'ticketUser', desc: '', args: []);
+  }
+
+  /// `Travel Date`
+  String get ticketDate {
+    return Intl.message('Travel Date', name: 'ticketDate', desc: '', args: []);
+  }
+
+  /// `Departure Time`
+  String get ticketStartTime {
+    return Intl.message(
+      'Departure Time',
+      name: 'ticketStartTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `License Plate`
+  String get ticketPlate {
+    return Intl.message(
+      'License Plate',
+      name: 'ticketPlate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Seats`
+  String get ticketSeats {
+    return Intl.message('Seats', name: 'ticketSeats', desc: '', args: []);
+  }
+
+  /// `Total Price`
+  String get ticketTotal {
+    return Intl.message('Total Price', name: 'ticketTotal', desc: '', args: []);
+  }
+
+  /// `Start Point`
+  String get ticketStart {
+    return Intl.message('Start Point', name: 'ticketStart', desc: '', args: []);
+  }
+
+  /// `End Point`
+  String get ticketEnd {
+    return Intl.message('End Point', name: 'ticketEnd', desc: '', args: []);
+  }
+
+  /// `Scan this QR code at the ticket gate`
+  String get ticketQrGuide {
+    return Intl.message(
+      'Scan this QR code at the ticket gate',
+      name: 'ticketQrGuide',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Route`
+  String get route {
+    return Intl.message('Route', name: 'route', desc: '', args: []);
+  }
+
+  /// `No Ticket`
+  String get noTicket {
+    return Intl.message('No Ticket', name: 'noTicket', desc: '', args: []);
+  }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+  }
+
+  /// `Pending payment`
+  String get pendingPayment {
+    return Intl.message(
+      'Pending payment',
+      name: 'pendingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmed`
+  String get confirmed {
+    return Intl.message('Confirmed', name: 'confirmed', desc: '', args: []);
+  }
+
+  /// `Cancelled`
+  String get cancelled {
+    return Intl.message('Cancelled', name: 'cancelled', desc: '', args: []);
+  }
+
+  /// `Ticket code`
+  String get ticketCode {
+    return Intl.message('Ticket code', name: 'ticketCode', desc: '', args: []);
+  }
+
+  /// `Most frequent route:`
+  String get statMostRoute {
+    return Intl.message(
+      'Most frequent route:',
+      name: 'statMostRoute',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `times`
+  String get statMostRouteCount {
+    return Intl.message(
+      'times',
+      name: 'statMostRouteCount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total tickets`
+  String get statTotalTicket {
+    return Intl.message(
+      'Total tickets',
+      name: 'statTotalTicket',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total money`
+  String get statTotalMoney {
+    return Intl.message(
+      'Total money',
+      name: 'statTotalMoney',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmed`
+  String get statConfirmed {
+    return Intl.message('Confirmed', name: 'statConfirmed', desc: '', args: []);
+  }
+
+  /// `Pending`
+  String get statPending {
+    return Intl.message('Pending', name: 'statPending', desc: '', args: []);
+  }
+
+  /// `Cancelled`
+  String get statCancelled {
+    return Intl.message('Cancelled', name: 'statCancelled', desc: '', args: []);
+  }
+
+  /// `Ticket status chart`
+  String get statPieTitle {
+    return Intl.message(
+      'Ticket status chart',
+      name: 'statPieTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly cost chart`
+  String get statBarTitle {
+    return Intl.message(
+      'Monthly cost chart',
+      name: 'statBarTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly ticket count chart`
+  String get statLineTitle {
+    return Intl.message(
+      'Monthly ticket count chart',
+      name: 'statLineTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data`
+  String get statNoData {
+    return Intl.message('No data', name: 'statNoData', desc: '', args: []);
+  }
+
+  /// `This is a sample policy content. You can update this in the localization file.`
+  String get policyContent {
+    return Intl.message(
+      'This is a sample policy content. You can update this in the localization file.',
+      name: 'policyContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🚀 FLASH TRAVEL – Ứng dụng đặt vé xe khách thông minh\n\nFLASH TRAVEL là nền tảng đặt vé xe khách hàng đầu, mang đến trải nghiệm di chuyển nhanh chóng, an toàn và tiện lợi cho hành khách khắp cả nước.\n\nVới sứ mệnh \"Mỗi chuyến đi là một trải nghiệm đẳng cấp\", FLASH TRAVEL kết nối hàng trăm nhà xe uy tín chỉ với vài thao tác chạm.\n\n🚌 Dòng xe hiện đại – Phù hợp mọi nhu cầu:...`
+  String get aboutContent {
+    return Intl.message(
+      '🚀 FLASH TRAVEL – Ứng dụng đặt vé xe khách thông minh\n\nFLASH TRAVEL là nền tảng đặt vé xe khách hàng đầu, mang đến trải nghiệm di chuyển nhanh chóng, an toàn và tiện lợi cho hành khách khắp cả nước.\n\nVới sứ mệnh \\"Mỗi chuyến đi là một trải nghiệm đẳng cấp\\", FLASH TRAVEL kết nối hàng trăm nhà xe uy tín chỉ với vài thao tác chạm.\n\n🚌 Dòng xe hiện đại – Phù hợp mọi nhu cầu:...',
+      name: 'aboutContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Policies & Terms of Service`
+  String get policyTitle {
+    return Intl.message(
+      'Policies & Terms of Service',
+      name: 'policyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1. Ticket Booking Policy`
+  String get policy1Title {
+    return Intl.message(
+      '1. Ticket Booking Policy',
+      name: 'policy1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Customers can book tickets online via the FLASH TRAVEL app or official website.\n• Each ticket is valid for one passenger and one trip only.\n• After successful booking, the system will send the ticket code via email and/or SMS to the customer.\n• Please check your trip information, name, and phone number carefully before confirming the booking.\n• FLASH TRAVEL is not responsible if incorrect information provided by the customer leads to loss of benefits when boarding.`
+  String get policy1Content {
+    return Intl.message(
+      '• Customers can book tickets online via the FLASH TRAVEL app or official website.\n• Each ticket is valid for one passenger and one trip only.\n• After successful booking, the system will send the ticket code via email and/or SMS to the customer.\n• Please check your trip information, name, and phone number carefully before confirming the booking.\n• FLASH TRAVEL is not responsible if incorrect information provided by the customer leads to loss of benefits when boarding.',
+      name: 'policy1Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2. Payment Policy`
+  String get policy2Title {
+    return Intl.message(
+      '2. Payment Policy',
+      name: 'policy2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Multiple payment methods supported: e-wallets (Momo, ZaloPay), domestic ATM cards, international cards (Visa/MasterCard), bank transfer.\n• All payment transactions are encrypted and secured according to international standards.\n• FLASH TRAVEL commits not to store your card information on the system.\n• If payment fails, please check your balance, limit, or contact customer support.`
+  String get policy2Content {
+    return Intl.message(
+      '• Multiple payment methods supported: e-wallets (Momo, ZaloPay), domestic ATM cards, international cards (Visa/MasterCard), bank transfer.\n• All payment transactions are encrypted and secured according to international standards.\n• FLASH TRAVEL commits not to store your card information on the system.\n• If payment fails, please check your balance, limit, or contact customer support.',
+      name: 'policy2Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3. Ticket Exchange/Refund Policy`
+  String get policy3Title {
+    return Intl.message(
+      '3. Ticket Exchange/Refund Policy',
+      name: 'policy3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Customers are allowed to exchange or refund tickets before departure time according to the regulations of each partner bus company.\n• To exchange/refund, customers need to provide the ticket code and personal verification information.\n• Some bus companies may apply exchange/refund fees or limit the time for exchange/refund (e.g., only accept exchanges 24h before departure).\n• FLASH TRAVEL will clearly notify the fees and conditions before you confirm the operation.\n• The refund amount (if any) will be transferred to your account within 3-7 working days, depending on the original payment method.`
+  String get policy3Content {
+    return Intl.message(
+      '• Customers are allowed to exchange or refund tickets before departure time according to the regulations of each partner bus company.\n• To exchange/refund, customers need to provide the ticket code and personal verification information.\n• Some bus companies may apply exchange/refund fees or limit the time for exchange/refund (e.g., only accept exchanges 24h before departure).\n• FLASH TRAVEL will clearly notify the fees and conditions before you confirm the operation.\n• The refund amount (if any) will be transferred to your account within 3-7 working days, depending on the original payment method.',
+      name: 'policy3Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `4. Service Usage Regulations`
+  String get policy4Title {
+    return Intl.message(
+      '4. Service Usage Regulations',
+      name: 'policy4Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Customers commit to using the service for the right purpose, not violating the law or the regulations of the bus company.\n• It is strictly forbidden to buy, sell, or transfer tickets illegally or use fake information to book tickets.\n• FLASH TRAVEL reserves the right to refuse service, cancel tickets, or lock accounts if fraudulent, scam, or public disorderly behavior is detected.\n• Customers must comply with luggage regulations, boarding time, and safety instructions from the bus company.`
+  String get policy4Content {
+    return Intl.message(
+      '• Customers commit to using the service for the right purpose, not violating the law or the regulations of the bus company.\n• It is strictly forbidden to buy, sell, or transfer tickets illegally or use fake information to book tickets.\n• FLASH TRAVEL reserves the right to refuse service, cancel tickets, or lock accounts if fraudulent, scam, or public disorderly behavior is detected.\n• Customers must comply with luggage regulations, boarding time, and safety instructions from the bus company.',
+      name: 'policy4Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `5. Privacy Policy`
+  String get policy5Title {
+    return Intl.message(
+      '5. Privacy Policy',
+      name: 'policy5Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• FLASH TRAVEL is committed to absolutely protecting customers' personal and transaction information.\n• Customer information is only used for ticket booking, customer care, and service quality improvement purposes.\n• Information will not be shared or disclosed to third parties without customer consent, except as required by authorities or law.\n• Customers have the right to request correction, update, or deletion of personal information at any time.`
+  String get policy5Content {
+    return Intl.message(
+      '• FLASH TRAVEL is committed to absolutely protecting customers\' personal and transaction information.\n• Customer information is only used for ticket booking, customer care, and service quality improvement purposes.\n• Information will not be shared or disclosed to third parties without customer consent, except as required by authorities or law.\n• Customers have the right to request correction, update, or deletion of personal information at any time.',
+      name: 'policy5Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `6. Customer Support`
+  String get policy6Title {
+    return Intl.message(
+      '6. Customer Support',
+      name: 'policy6Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• FLASH TRAVEL's customer care team is always ready to support 24/7 via hotline, email, and online chat on the app and website.\n• Hotline: 1900 1234 (1,000đ/min)\n• Email: support@flashtravel.vn\n• All inquiries and complaints will be received and processed within 24 working hours.`
+  String get policy6Content {
+    return Intl.message(
+      '• FLASH TRAVEL\'s customer care team is always ready to support 24/7 via hotline, email, and online chat on the app and website.\n• Hotline: 1900 1234 (1,000đ/min)\n• Email: support@flashtravel.vn\n• All inquiries and complaints will be received and processed within 24 working hours.',
+      name: 'policy6Content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By using FLASH TRAVEL services, you acknowledge that you have read, understood, and agreed to the above policies and terms.`
+  String get policyFooter {
+    return Intl.message(
+      'By using FLASH TRAVEL services, you acknowledge that you have read, understood, and agreed to the above policies and terms.',
+      name: 'policyFooter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `About`
+  String get aboutTitle {
+    return Intl.message('About', name: 'aboutTitle', desc: '', args: []);
+  }
+
+  /// `FLASH TRAVEL – Smart coach ticket booking solution`
+  String get aboutHeadline {
+    return Intl.message(
+      'FLASH TRAVEL – Smart coach ticket booking solution',
+      name: 'aboutHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FLASH TRAVEL is a modern coach ticket booking app, connecting hundreds of quality bus operators nationwide. With the motto \"Fast – Safe – Convenient\", we are committed to providing the best ticket booking experience for users.`
+  String get aboutIntro {
+    return Intl.message(
+      'FLASH TRAVEL is a modern coach ticket booking app, connecting hundreds of quality bus operators nationwide. With the motto \\"Fast – Safe – Convenient\\", we are committed to providing the best ticket booking experience for users.',
+      name: 'aboutIntro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outstanding services`
+  String get aboutServiceTitle {
+    return Intl.message(
+      'Outstanding services',
+      name: 'aboutServiceTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Modern sleeper and limousine buses, fully equipped.\n• Door-to-door transfer service in many provinces.\n• Flexible ticket exchange and refund support.`
+  String get aboutServiceContent {
+    return Intl.message(
+      '• Modern sleeper and limousine buses, fully equipped.\n• Door-to-door transfer service in many provinces.\n• Flexible ticket exchange and refund support.',
+      name: 'aboutServiceContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Smart features`
+  String get aboutFeatureTitle {
+    return Intl.message(
+      'Smart features',
+      name: 'aboutFeatureTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Book tickets quickly in 3 steps.\n• Track journeys, save ticket history.\n• Daily promotions and notifications.`
+  String get aboutFeatureContent {
+    return Intl.message(
+      '• Book tickets quickly in 3 steps.\n• Track journeys, save ticket history.\n• Daily promotions and notifications.',
+      name: 'aboutFeatureContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Why choose FLASH TRAVEL`
+  String get aboutReasonTitle {
+    return Intl.message(
+      'Why choose FLASH TRAVEL',
+      name: 'aboutReasonTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `✓ Simple, friendly interface.\n✓ Multiple payment methods integrated.\n✓ 24/7 support hotline.\n✓ Transparent, clear ticket prices.`
+  String get aboutReasonContent {
+    return Intl.message(
+      '✓ Simple, friendly interface.\n✓ Multiple payment methods integrated.\n✓ 24/7 support hotline.\n✓ Transparent, clear ticket prices.',
+      name: 'aboutReasonContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FLASH TRAVEL TRANSPORT AND TOURISM SERVICE CO., LTD`
+  String get aboutCompany {
+    return Intl.message(
+      'FLASH TRAVEL TRANSPORT AND TOURISM SERVICE CO., LTD',
+      name: 'aboutCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Company information`
+  String get aboutCompanyInfoTitle {
+    return Intl.message(
+      'Company information',
+      name: 'aboutCompanyInfoTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• FLASH TRAVEL Technology Co., Ltd\n• Tax code: 0101010101\n• Head office: 2nd Floor, C50 Building, Ha Dong District, Hanoi City\n• Email: support@flashtravel.vn\n• Ticket booking hotline: 1900 1234 (1,000đ/min)`
+  String get aboutCompanyInfoContent {
+    return Intl.message(
+      '• FLASH TRAVEL Technology Co., Ltd\n• Tax code: 0101010101\n• Head office: 2nd Floor, C50 Building, Ha Dong District, Hanoi City\n• Email: support@flashtravel.vn\n• Ticket booking hotline: 1900 1234 (1,000đ/min)',
+      name: 'aboutCompanyInfoContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mission & Vision`
+  String get aboutMissionTitle {
+    return Intl.message(
+      'Mission & Vision',
+      name: 'aboutMissionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FLASH TRAVEL was born with the mission of modernizing the passenger transport industry in Vietnam, bringing customers a convenient, transparent and safest coach ticket booking experience. We constantly innovate to meet the increasing needs of users.\n\nVision\nTo become the leading coach ticket booking platform in Vietnam, connecting every journey, every region, contributing to the development of smart transportation.`
+  String get aboutMissionContent {
+    return Intl.message(
+      'FLASH TRAVEL was born with the mission of modernizing the passenger transport industry in Vietnam, bringing customers a convenient, transparent and safest coach ticket booking experience. We constantly innovate to meet the increasing needs of users.\n\nVision\nTo become the leading coach ticket booking platform in Vietnam, connecting every journey, every region, contributing to the development of smart transportation.',
+      name: 'aboutMissionContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Core values`
+  String get aboutCoreValueTitle {
+    return Intl.message(
+      'Core values',
+      name: 'aboutCoreValueTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Customer-centric: Always listen and serve wholeheartedly.\n• Innovation: Apply technology to improve service quality.\n• Transparency & Prestige: Commit to clear information, transparent ticket prices.\n• Cooperative development: Connect with many reputable bus operators nationwide.`
+  String get aboutCoreValueContent {
+    return Intl.message(
+      '• Customer-centric: Always listen and serve wholeheartedly.\n• Innovation: Apply technology to improve service quality.\n• Transparency & Prestige: Commit to clear information, transparent ticket prices.\n• Cooperative development: Connect with many reputable bus operators nationwide.',
+      name: 'aboutCoreValueContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Follow us`
+  String get aboutFollowTitle {
+    return Intl.message(
+      'Follow us',
+      name: 'aboutFollowTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `• Website: www.flashtravel.vn\n• Facebook: fb.com/flashtravel.vn\n• Zalo OA: FLASH TRAVEL\n• TikTok: @flashtravel.vn`
+  String get aboutFollowContent {
+    return Intl.message(
+      '• Website: www.flashtravel.vn\n• Facebook: fb.com/flashtravel.vn\n• Zalo OA: FLASH TRAVEL\n• TikTok: @flashtravel.vn',
+      name: 'aboutFollowContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ticket Management`
+  String get ticketManagement {
+    return Intl.message(
+      'Ticket Management',
+      name: 'ticketManagement',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
