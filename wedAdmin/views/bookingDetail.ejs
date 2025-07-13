@@ -44,11 +44,40 @@
     .actions button[type="submit"]:hover, .actions a:hover { background: #0056b3; }
     .actions button[type="submit"]:last-child { background: #dc3545; }
     .actions button[type="submit"]:last-child:hover { background: #a71d2a; }
+    .booking-image-large {
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 3px solid #e3e3e3;
+      margin: 20px 0;
+    }
+    .no-image-large {
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      background: #f8f9fa;
+      border: 3px dashed #ccc;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 18px;
+      margin: 20px 0;
+    }
+    .image-container {
+      text-align: center;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Chi tiết vé đã đặt</h1>
+    
+    <!-- Hiển thị ảnh booking -->
     <div class="tabs">
       <button class="tab-btn active" onclick="showTab(0)">Thông tin chung</button>
       <button class="tab-btn" onclick="showTab(1)">Thông tin chi tiết</button>
@@ -75,6 +104,13 @@
     </div>
     <div class="tab-content">
       <table>
+        <tr><th>Ảnh booking</th><td>
+          <% if (booking.image) { %>
+            <a href="<%= booking.image %>" target="_blank">Xem ảnh gốc</a>
+          <% } else { %>
+            Không có ảnh
+          <% } %>
+        </td></tr>
         <tr><th>Tổng tiền</th><td><%= booking.totalPrice %></td></tr>
         <tr><th>Trạng thái</th><td><%= booking.statusBooking %></td></tr>
         <tr><th>Thông tin xe</th><td>
@@ -104,6 +140,10 @@
           <form method="post" action="/bookings/<%= booking.id %>/confirm">
             <button type="submit">Xác nhận đặt vé</button>
           </form>
+          <form method="post" action="/bookings/<%= booking.id %>/cancel">
+            <button type="submit">Hủy vé</button>
+          </form>
+        <% } else if (booking.statusBooking === 'confirmed') { %>
           <form method="post" action="/bookings/<%= booking.id %>/cancel">
             <button type="submit">Hủy vé</button>
           </form>
