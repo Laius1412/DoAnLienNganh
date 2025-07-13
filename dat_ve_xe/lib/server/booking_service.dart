@@ -221,6 +221,32 @@ class BookingService {
     }
   }
 
+  // Confirm payment with image and update booking status
+  Future<bool> confirmPaymentWithImage(String bookingId, String imageUrl) async {
+    try {
+      final bookingDoc = await _firestore.collection('bookings').doc(bookingId).get();
+      if (!bookingDoc.exists) return false;
+
+      final booking = Booking.fromMap(bookingId, bookingDoc.data() as Map<String, dynamic>);
+      
+      // Only allow confirmation if in pending_payment status
+      if (booking.statusBooking != 'pending_payment') {
+        return false;
+      }
+
+      await _firestore.collection('bookings').doc(bookingId).update({
+        'statusBooking': 'pending',
+        'paymentDeadline': null,
+        'image': imageUrl, // Lưu URL ảnh bill
+      });
+
+      return true;
+    } catch (e) {
+      print('Error confirming payment with image: $e');
+      return false;
+    }
+  }
+
   // Lấy danh sách booking của user
   Future<List<Booking>> getUserBookings(String userId) async {
     try {
