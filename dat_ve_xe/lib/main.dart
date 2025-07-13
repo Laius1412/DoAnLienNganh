@@ -9,10 +9,28 @@ import 'firebase_options.dart';
 import 'views/myticket_screen/myticket_screen.dart';
 import 'package:provider/provider.dart';
 import 'service/connectivity_service.dart';
+import 'service/notification_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'views/notification/notification_screen.dart';
+import 'service/notification_listener_service.dart';
+
+// Import background handler
+import 'service/notification_service.dart'
+    show firebaseMessagingBackgroundHandler;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Đăng ký background message handler
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // Khởi tạo notification service
+  await NotificationService.initialize();
+
+  // Khởi tạo notification listener service
+  NotificationListenerService.initialize();
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => ConnectivityService(),
@@ -30,11 +48,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Locale _currentLocale = const Locale('vi'); // Ngôn ngữ mặc định
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
     _loadSavedLanguage();
+    // Gán navigatorKey cho NotificationService
+    NotificationService.navigatorKey = _navigatorKey;
   }
 
   Future<void> _loadSavedLanguage() async {
@@ -105,10 +126,16 @@ class _MyAppState extends State<MyApp> {
             Locale('vi'), // Vietnamese
           ],
           locale: _currentLocale, // Sử dụng _currentLocale
+          navigatorKey: _navigatorKey,
           home: MainLayout(onLanguageChanged: _changeLanguage),
           routes: {
             '/myticket':
                 (context) => MyTicketScreen(onLanguageChanged: _changeLanguage),
+            '/myDeliveries':
+                (context) =>
+                    MainLayout(onLanguageChanged: _changeLanguage, selected: 2),
+            '/notifications':
+                (context) => NotificationScreen(onNotificationsUpdated: () {}),
           },
         );
       },

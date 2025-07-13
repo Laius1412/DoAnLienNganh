@@ -42,4 +42,7 @@ router.get('/api/regions', deliveryController.getRegions);
 // API lấy danh sách users
 router.get('/api/users', deliveryController.getUsers);
 
+// Test FCM notification endpoint
+router.post('/api/test-fcm', deliveryController.testFCMNotification);
+
 module.exports = router;

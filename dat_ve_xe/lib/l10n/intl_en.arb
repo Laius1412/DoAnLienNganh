@@ -209,5 +209,6 @@
     "orderStatusRefused": "Refused",
     "dateSend": "Date",
     "noDeliveries": "No deliveries found",
-    "noDeliveriesMessage": "You haven't created any delivery orders yet."
+    "noDeliveriesMessage": "You haven't created any delivery orders yet.",
+    "noNotifications": "No notifications."
 }
