@@ -3,6 +3,7 @@ import 'package:dat_ve_xe/server/booking_service.dart';
 import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'dart:async';
+import 'bank_transfer_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String bookingId;
@@ -337,17 +338,28 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   const SizedBox(height: 16),
                   _buildPaymentMethod(
                     icon: Icons.credit_card,
-                    title: 'Thẻ tín dụng/ghi nợ',
+                    title: 'Thẻ tín dụng/ghi nợ (Đang bảo trì)',
                     subtitle: 'Thanh toán qua thẻ Visa, Mastercard',
                   ),
                   _buildPaymentMethod(
                     icon: Icons.account_balance,
                     title: 'Chuyển khoản ngân hàng',
                     subtitle: 'Chuyển khoản qua ngân hàng',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BankTransferScreen(
+                            bookingId: widget.bookingId,
+                            totalAmount: widget.totalAmount,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   _buildPaymentMethod(
                     icon: Icons.qr_code,
-                    title: 'Ví điện tử',
+                    title: 'Ví điện tử (Đang bảo trì)',
                     subtitle: 'Thanh toán qua Momo, ZaloPay',
                   ),
                   const SizedBox(height: 32),
@@ -390,6 +402,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     required IconData icon,
     required String title,
     required String subtitle,
+    VoidCallback? onTap,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -402,7 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         title: Text(title),
         subtitle: Text(subtitle),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: _handlePayment,
+        onTap: onTap ?? _handlePayment,
       ),
     );
   }

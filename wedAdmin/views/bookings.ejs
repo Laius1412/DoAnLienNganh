@@ -1,6 +1,6 @@
 <style>
   .bookings-container {
-    max-width: 4000px;
+    max-width: 1400px;
     margin: 32px auto;
     background: #fff;
     border-radius: 12px;
@@ -13,6 +13,92 @@
     margin-bottom: 28px;
     color: #007bff;
     letter-spacing: 1px;
+  }
+  .main-layout {
+    display: flex;
+    gap: 24px;
+    min-height: 600px;
+  }
+  .sidebar {
+    width: 300px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+  }
+  .content-area {
+    flex: 1;
+    min-width: 0;
+  }
+  .search-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+  }
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  }
+  .search-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .btn-search {
+    padding: 12px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .btn-search:hover {
+    background: #0056b3;
+  }
+  .btn-clear {
+    padding: 12px 20px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .btn-clear:hover {
+    background: #545b62;
   }
   .bookings-table {
     width: 100%;
@@ -54,35 +140,210 @@
   .action-link:hover {
     background: #0056b3;
   }
+  .booking-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e3e3e3;
+  }
+  .no-image {
+    width: 60px;
+    height: 60px;
+    background: #f8f9fa;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  .tab-btn:hover {
+    background-color: #d0d0d0;
+  }
+  .tab-btn.active {
+    background-color: #007bff;
+    color: #fff;
+  }
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
+  }
+  .pagination {
+    text-align: center;
+    margin-top: 24px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+  .pagination a {
+    margin: 0 8px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #007bff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .pagination a:hover {
+    background: #e3f0ff;
+  }
+  .pagination span {
+    margin: 0 8px;
+    font-weight: bold;
+    color: #333;
+  }
+  @media (max-width: 768px) {
+    .main-layout {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 100%;
+      position: static;
+    }
+  }
 </style>
+
+<% function vietHoaTrangThai(status) {
+  if (status === 'pending') return 'Đang chờ';
+  if (status === 'confirmed') return 'Đã duyệt';
+  if (status === 'cancelled') return 'Đã hủy';
+  return status;
+} %>
+
 <div class="bookings-container">
   <div class="bookings-title">Quản lý vé đã đặt</div>
-  <table class="bookings-table">
-    <thead>
-      <tr>
-        <th>Mã Booking</th>
-        <th>SĐT Khách hàng</th>
-        <th>Ngày đi</th>
-        <th>Giờ khởi hành</th>
-        <th>Tổng tiền</th>
-        <th>Trạng thái</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% bookings.forEach(function(booking) { %>
-        <tr>
-          <td><%= booking.id %></td>
-          <td><%= booking.phone %></td>
-          <td><%= booking.date %></td>
-          <td><%= booking.startTime %></td>
-          <td><%= booking.totalPrice %></td>
-          <td><%= booking.statusBooking %></td>
-          <td>
-            <a class="action-link" href="/bookings/<%= booking.id %>">Xem chi tiết</a>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div> 
+  
+  <div class="main-layout">
+    <!-- Sidebar tìm kiếm -->
+    <div class="sidebar">
+      <div class="search-title">🔍 Tìm kiếm</div>
+      <form method="GET" action="/bookings" class="search-form">
+        <div class="form-group">
+          <label>Số điện thoại:</label>
+          <input type="text" name="phone" value="<%= phone || '' %>" placeholder="Nhập SĐT...">
+        </div>
+        <div class="form-group">
+          <label>Ngày đi:</label>
+          <input type="date" name="date" value="<%= date || '' %>">
+        </div>
+        <div class="form-group">
+          <label>Giờ khởi hành:</label>
+          <input type="time" name="time" value="<%= time || '' %>">
+        </div>
+        <div class="form-group">
+          <label>Trạng thái:</label>
+          <select name="tab">
+            <option value="pending" <%= tab === 'pending' ? 'selected' : '' %>>Đang chờ phê duyệt</option>
+            <option value="confirmed" <%= tab === 'confirmed' ? 'selected' : '' %>>Đã được phê duyệt</option>
+          </select>
+        </div>
+        <div class="search-buttons">
+          <button type="submit" class="btn-search">🔍 Tìm kiếm</button>
+          <a href="/bookings" class="btn-clear">🗑️ Xóa bộ lọc</a>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Content area -->
+    <div class="content-area">
+      <div style="display:flex; gap:16px; margin-bottom:20px;">
+        <button id="tab-pending" class="tab-btn <%= tab === 'pending' ? 'active' : '' %>" onclick="showTab('pending')">📋 Đang chờ phê duyệt</button>
+        <button id="tab-confirmed" class="tab-btn <%= tab === 'confirmed' ? 'active' : '' %>" onclick="showTab('confirmed')">✅ Đã được phê duyệt</button>
+      </div>
+      
+      <div id="tab-content-pending" class="tab-content <%= tab === 'pending' ? 'active' : '' %>">
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th>Mã Booking</th>
+              <th>SĐT Khách hàng</th>
+              <th>Ngày đi</th>
+              <th>Giờ khởi hành</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(function(booking) { %>
+              <tr>
+                <td><%= booking.id %></td>
+                <td><%= booking.phone %></td>
+                <td><%= booking.date %></td>
+                <td><%= booking.startTime %></td>
+                <td><%= booking.totalPrice %></td>
+                <td><%= vietHoaTrangThai(booking.statusBooking) %></td>
+                <td>
+                  <a class="action-link" href="/bookings/<%= booking.id %>">👁️ Xem chi tiết</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="tab-content-confirmed" class="tab-content <%= tab === 'confirmed' ? 'active' : '' %>">
+        <table class="bookings-table">
+          <thead>
+            <tr>
+              <th>Mã Booking</th>
+              <th>SĐT Khách hàng</th>
+              <th>Ngày đi</th>
+              <th>Giờ khởi hành</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(function(booking) { %>
+              <tr>
+                <td><%= booking.id %></td>
+                <td><%= booking.phone %></td>
+                <td><%= booking.date %></td>
+                <td><%= booking.startTime %></td>
+                <td><%= booking.totalPrice %></td>
+                <td><%= vietHoaTrangThai(booking.statusBooking) %></td>
+                <td>
+                  <a class="action-link" href="/bookings/<%= booking.id %>">👁️ Xem chi tiết</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="pagination">
+        <% if (page > 1) { %>
+          <a href="/bookings?tab=<%= tab %>&page=<%= page - 1 %><%= phone ? '&phone=' + phone : '' %><%= date ? '&date=' + date : '' %><%= time ? '&time=' + time : '' %>">⬅️ Trang trước</a>
+        <% } %>
+        <span>Trang <%= page %></span>
+        <% if (hasNextPage) { %>
+          <a href="/bookings?tab=<%= tab %>&page=<%= page + 1 %><%= phone ? '&phone=' + phone : '' %><%= date ? '&date=' + date : '' %><%= time ? '&time=' + time : '' %>">Trang sau ➡️</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(tabName) {
+    // Chuyển hướng đến URL với tab parameter
+    window.location.href = '/bookings?tab=' + tabName + '&page=1';
+  }
+</script> 

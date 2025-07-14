@@ -151,13 +151,24 @@ module.exports = {
       const oldData = orderDoc.data();
       const updatedAt = new Date();
       await orderRef.update({ mass, status, updatedAt });
-      // Tạo deliveryNotice
+      
+      // Tạo deliveryNotice và gửi FCM notification
       const userId = oldData.userId || oldData.userID || oldData.user_id || '';
+      console.log('Delivery order userId:', userId);
+      
       let fcmToken = '';
       if (userId) {
         const userDoc = await db.collection('users').doc(userId).get();
-        if (userDoc.exists) fcmToken = userDoc.data().fcmToken || '';
+        if (userDoc.exists) {
+          fcmToken = userDoc.data().fcmToken || '';
+          console.log('User FCM token:', fcmToken);
+        } else {
+          console.log('User document not found for userId:', userId);
+        }
+      } else {
+        console.log('No userId found in delivery order');
       }
+      
       const statusMap = {
         pending: 'chờ xác nhận',
         confirmed: 'đã được xác nhận',
@@ -169,15 +180,67 @@ module.exports = {
         received: 'người nhận đã nhận hàng',
         refused: 'từ chối nhận hàng',
       };
+      
+      const title = `Thông tin đơn hàng ${id}`;
       const body = `Đơn hàng ${id} ${statusMap[status] || status}`;
+      
+      // Lưu vào Firestore collection deliveryNotice
       await db.collection('deliveryNotice').add({
         userId,
         fcmToken,
-        title: `Thông tin đơn hàng ${id}`,
+        title,
         body,
         timestamp: updatedAt,
-        read: false
+        isRead: false,
+        type: 'delivery',
+        orderId: id
       });
+      
+      // Gửi FCM notification nếu có fcmToken
+      if (fcmToken) {
+        console.log('Sending FCM notification to token:', fcmToken);
+        try {
+          const message = {
+            token: fcmToken,
+            notification: {
+              title: title,
+              body: body,
+            },
+            data: {
+              type: 'delivery',
+              orderId: id,
+              click_action: 'FLUTTER_NOTIFICATION_CLICK'
+            },
+            android: {
+              notification: {
+                clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+                channelId: 'delivery_notifications',
+                priority: 'high',
+                defaultSound: true,
+                defaultVibrateTimings: true,
+              },
+            },
+            apns: {
+              payload: {
+                aps: {
+                  sound: 'default',
+                  badge: 1,
+                },
+              },
+            },
+          };
+          
+          console.log('FCM message payload:', JSON.stringify(message, null, 2));
+          const response = await admin.messaging().send(message);
+          console.log('FCM notification sent successfully:', response);
+        } catch (fcmError) {
+          console.error('Error sending FCM notification:', fcmError);
+          console.error('FCM error details:', fcmError.message);
+        }
+      } else {
+        console.log('No FCM token available, skipping notification');
+      }
+      
       res.status(200).json({ message: 'Cập nhật thành công' });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -196,5 +259,53 @@ module.exports = {
 
   orderManagePage: (req, res) => {
     res.render('delivery/order_manage');
+  },
+
+  // Test endpoint để gửi FCM notification
+  testFCMNotification: async (req, res) => {
+    const { userId, fcmToken } = req.body;
+    
+    try {
+      console.log('Testing FCM notification for userId:', userId);
+      console.log('FCM token:', fcmToken);
+      
+      if (!fcmToken) {
+        return res.status(400).json({ error: 'FCM token is required' });
+      }
+      
+      const message = {
+        token: fcmToken,
+        notification: {
+          title: 'Test Notification',
+          body: 'Đây là thông báo test từ web admin',
+        },
+        data: {
+          type: 'delivery',
+          orderId: 'test-123',
+          click_action: 'FLUTTER_NOTIFICATION_CLICK'
+        },
+        android: {
+          notification: {
+            clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+            channelId: 'delivery_notifications',
+            priority: 'high',
+            defaultSound: true,
+            defaultVibrateTimings: true,
+          },
+        },
+      };
+      
+      console.log('Sending test FCM message:', JSON.stringify(message, null, 2));
+      const response = await admin.messaging().send(message);
+      console.log('Test FCM notification sent successfully:', response);
+      
+      res.status(200).json({ 
+        message: 'Test notification sent successfully',
+        response: response 
+      });
+    } catch (error) {
+      console.error('Error sending test FCM notification:', error);
+      res.status(500).json({ error: error.message });
+    }
   }
 };

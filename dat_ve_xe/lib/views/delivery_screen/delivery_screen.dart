@@ -126,7 +126,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MyDeliveriesScreen(),
+                    builder:
+                        (context) => MyDeliveriesScreen(
+                          onLanguageChanged: widget.onLanguageChanged,
+                        ),
                   ),
                 ),
               ),

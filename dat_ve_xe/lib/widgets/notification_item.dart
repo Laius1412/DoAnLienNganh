@@ -13,9 +13,10 @@ class NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color borderColor = Color.fromARGB(255, 253, 109, 37);
-    final Color unreadColor = const Color(0xFFF8F5FB).withOpacity(0.5); 
-    final Color readColor = const Color(0xFFF8F5FB);
+    final theme = Theme.of(context);
+    final Color borderColor = theme.colorScheme.primary;
+    final Color unreadColor = theme.colorScheme.surfaceVariant;
+    final Color readColor = theme.colorScheme.surface;
     return Stack(
       children: [
         Card(
@@ -28,9 +29,7 @@ class NotificationItem extends StatelessWidget {
           child: ListTile(
             title: Text(
               notification.title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(notification.content),
             onTap: onTap,
@@ -52,4 +51,4 @@ class NotificationItem extends StatelessWidget {
       ],
     );
   }
-} 
+}

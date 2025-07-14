@@ -81,6 +81,7 @@ class Booking {
   final int totalPrice;
   final List<BookingSeat> seats;
   final DateTime? paymentDeadline;
+  final String? image; // Thêm trường image để lưu ảnh bill
 
   Booking({
     required this.id,
@@ -92,6 +93,7 @@ class Booking {
     required this.totalPrice,
     required this.seats,
     this.paymentDeadline,
+    this.image, // Thêm parameter image
   });
 
   /// Lấy ngày đi (Date) không bao gồm giờ
@@ -136,6 +138,7 @@ class Booking {
       'totalPrice': totalPrice,
       'seats': seats.map((e) => e.toMap()).toList(),
       'paymentDeadline': paymentDeadline?.toIso8601String(),
+      'image': image, // Thêm image vào map
     };
   }
 
@@ -153,6 +156,7 @@ class Booking {
           .toList(),
       paymentDeadline:
           map['paymentDeadline'] != null ? DateTime.parse(map['paymentDeadline']) : null,
+      image: map['image'], // Thêm image từ map
     );
   }
 }

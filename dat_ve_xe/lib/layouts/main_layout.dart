@@ -7,6 +7,9 @@ import 'package:dat_ve_xe/views/myticket_screen/myticket_screen.dart';
 import 'package:dat_ve_xe/views/delivery_screen/delivery_screen.dart';
 import 'package:dat_ve_xe/widgets/floating_bubble.dart';
 import 'package:dat_ve_xe/widgets/netwwork_status_banner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../service/notification_listener_service.dart';
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -24,8 +27,11 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   late int _selectedIndex;
-
   late final List<Widget> _pages;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  int _unreadCount = 0;
+  User? _currentUser;
 
   @override
   void initState() {
@@ -40,6 +46,24 @@ class _MainLayoutState extends State<MainLayout> {
       DeliveryScreen(onLanguageChanged: widget.onLanguageChanged),
       PersonalScreen(onLanguageChanged: widget.onLanguageChanged),
     ];
+
+    // Khởi tạo notification listener service
+    NotificationListenerService.onUnreadCountChanged = (count) {
+      setState(() {
+        _unreadCount = count;
+      });
+    };
+
+    _auth.authStateChanges().listen((user) {
+      if (user != null && user.uid != _currentUser?.uid) {
+        _currentUser = user;
+      } else if (user == null) {
+        setState(() {
+          _currentUser = null;
+          _unreadCount = 0;
+        });
+      }
+    });
   }
 
   void _onItemTapped(int index) {
@@ -122,23 +146,56 @@ class _MainLayoutState extends State<MainLayout> {
                       // Icon thông báo bên phải
                       Align(
                         alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.notifications,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const NotificationScreen(),
+                        child: Stack(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.notifications,
+                                color:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.black
+                                        : Colors.white,
                               ),
-                            ); // Mở trang thông báo
-                          },
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => NotificationScreen(
+                                          onNotificationsUpdated: () {
+                                            // Real-time listener sẽ tự động cập nhật
+                                          },
+                                        ),
+                                  ),
+                                );
+                              },
+                            ),
+                            if (_unreadCount > 0)
+                              Positioned(
+                                right: 8,
+                                top: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    '$_unreadCount',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ],
