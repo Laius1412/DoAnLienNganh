@@ -50,14 +50,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
       _isLoading = true;
     });
     try {
+      print('Current user: ${_currentUser?.uid}');
+      print('Loading notifications...');
       final snapshot =
           await _firestore
               .collection('deliveryNotice')
               .where('userId', isEqualTo: _currentUser!.uid)
               .orderBy('timestamp', descending: true)
               .get();
+      print('Found ${snapshot.docs.length} notifications');
       final List<AppNotification> loadedNotifications = [];
       for (var doc in snapshot.docs) {
+        print('Notification: ${doc.data()}');
         final data = doc.data();
         loadedNotifications.add(
           AppNotification(
