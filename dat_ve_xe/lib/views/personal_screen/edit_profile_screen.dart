@@ -19,7 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   DateTime? _birth;
-  String _gender = 'Nam';
+  String _gender = 'male'; // Sửa mặc định thành 'male'
   bool _loading = false;
   File? _avatarFile;
   String? _avatarUrl;
@@ -39,7 +39,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _nameController.text = userModel.name;
           _emailController.text = userModel.email;
           _birth = userModel.birth;
-          _gender = userModel.gender.isNotEmpty ? userModel.gender : 'Nam';
+          // Chuyển đổi gender từ server sang value tiếng Anh
+          if (userModel.gender.toLowerCase() == 'nam') {
+            _gender = 'male';
+          } else if (userModel.gender.toLowerCase() == 'nữ') {
+            _gender = 'female';
+          } else if (userModel.gender.toLowerCase() == 'khác') {
+            _gender = 'other';
+          } else {
+            _gender = userModel.gender.toLowerCase();
+          }
           _avatarUrl = userModel.avt;
         });
       }
@@ -96,11 +105,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     }
     if (user != null) {
+      // Chuyển _gender về tiếng Việt nếu cần lưu cho server, hoặc giữ nguyên nếu server dùng tiếng Anh
+      String genderToSave = _gender;
+      if (_gender == 'male') genderToSave = 'Nam';
+      else if (_gender == 'female') genderToSave = 'Nữ';
+      else if (_gender == 'other') genderToSave = 'Khác';
       final success = await UserService().updateUser(
         user.uid,
         name: _nameController.text.trim(),
         birth: _birth!,
-        gender: _gender,
+        gender: genderToSave,
         avt: newAvatarUrl,
       );
       setState(() {
@@ -234,9 +248,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           prefixIcon: const Icon(Icons.wc),
                         ),
                         items: [
-                          DropdownMenuItem(value: 'Nam', child: Text(t.male)),
-                          DropdownMenuItem(value: 'Nữ', child: Text(t.female)),
-                          DropdownMenuItem(value: 'Khác', child: Text(t.other)),
+                          DropdownMenuItem(value: 'male', child: Text(t.male)),
+                          DropdownMenuItem(value: 'female', child: Text(t.female)),
+                          DropdownMenuItem(value: 'other', child: Text(t.other)),
                         ],
                         onChanged: (value) {
                           if (value != null) {

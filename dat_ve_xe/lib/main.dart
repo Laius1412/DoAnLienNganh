@@ -1,3 +1,4 @@
+import 'package:dat_ve_xe/views/delivery_screen/myDeliveries_screen.dart';
 import 'package:flutter/material.dart';
 import 'layouts/main_layout.dart';
 import 'themes/theme_manager.dart';
@@ -133,7 +134,7 @@ class _MyAppState extends State<MyApp> {
                 (context) => MyTicketScreen(onLanguageChanged: _changeLanguage),
             '/myDeliveries':
                 (context) =>
-                    MainLayout(onLanguageChanged: _changeLanguage, selected: 2),
+                    MyDeliveriesScreen(onLanguageChanged: _changeLanguage),
             '/notifications':
                 (context) => NotificationScreen(onNotificationsUpdated: () {}),
           },

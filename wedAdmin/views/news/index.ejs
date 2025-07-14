@@ -8,7 +8,8 @@
     </a>
   </div>
 
-  <div class="table-responsive shadow rounded-4 overflow-hidden">
+  <!-- ĐÃ BỎ table-responsive và overflow-x -->
+  <div class="shadow rounded-4">
     <table class="table table-hover align-middle table-bordered mb-0">
       <thead class="table-success text-center">
         <tr>
@@ -26,7 +27,7 @@
             const textContent = item.contents
               .replace(/<img[^>]*>/g, '') // bỏ ảnh
               .replace(/<\/?[^>]+(>|$)/g, '') // bỏ HTML
-              .replace(/\s+/g, ' ') // gom các khoảng trắng
+              .replace(/\s+/g, ' ') // gom khoảng trắng
               .trim()
               .slice(0, 150); // cắt ngắn
         %>
@@ -36,9 +37,13 @@
               <%= item.titles %>
             </td>
 
-            <!-- Ảnh từ nội dung -->
+            <!-- Ảnh minh họa -->
             <td class="text-center">
-              <% if (imageUrl) { %>
+              <% if (item.Img) { %>
+                <img src="<%= item.Img %>" alt="Ảnh đại diện"
+                     style="width: 90px; height: 60px; object-fit: cover;"
+                     class="rounded-3 shadow-sm border border-1" />
+              <% } else if (imageUrl) { %>
                 <img src="<%= imageUrl %>" alt="Ảnh bài viết"
                      style="width: 90px; height: 60px; object-fit: cover;"
                      class="rounded-3 shadow-sm border border-1" />
@@ -47,7 +52,7 @@
               <% } %>
             </td>
 
-            <!-- Nội dung ngắn gọn -->
+            <!-- Nội dung -->
             <td style="max-width: 300px;" class="small align-top">
               <div class="text-muted" style="max-height: 4.5em; overflow: hidden; line-height: 1.5em;">
                 <%= textContent %>...
@@ -62,12 +67,13 @@
             </td>
 
             <!-- Tác vụ -->
-            <td class="text-center">
+            <td class="text-center position-relative overflow-visible">
               <div class="dropdown">
-                <button class="btn btn-outline-secondary shadow-sm" type="button" data-bs-toggle="dropdown">
+                <button class="btn btn-light rounded-pill px-2 py-1 shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm"
+                    style="min-width: 180px;">
                   <li>
                     <a class="dropdown-item" href="/news/view/<%= item.id %>">
                       <i class="bi bi-eye text-primary me-2"></i>Xem chi tiết
@@ -95,6 +101,16 @@
     </table>
   </div>
 </div>
+
+<!-- CSS giúp dropdown hiển thị nổi đầy đủ -->
+<style>
+  .dropdown-menu {
+    z-index: 1050 !important;
+  }
+  .overflow-visible {
+    overflow: visible !important;
+  }
+</style>
 
 <!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
