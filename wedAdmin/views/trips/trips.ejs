@@ -1,103 +1,315 @@
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Quản lý chuyến đi</h2>
-    <div class="d-flex gap-2">
-      <input id="searchInput" class="form-control" placeholder="🔍 Tìm kiếm chuyến đi..." onkeyup="filterTable()" />
-      <button class="btn btn-danger d-none" id="deleteSelectedBtn" onclick="submitDeleteSelected()">🗑️ Xóa đã chọn</button>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTripModal">+ Thêm chuyến đi</button>
+<style>
+  .trips-container {
+    max-width: 1400px;
+    margin: 32px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #0002;
+    padding: 32px 20px;
+  }
+  .trips-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 28px;
+    color: #007bff;
+    letter-spacing: 1px;
+  }
+  .main-layout {
+    display: flex;
+    gap: 24px;
+    min-height: 600px;
+  }
+  .sidebar {
+    width: 300px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+  }
+  .content-area {
+    flex: 1;
+    min-width: 0;
+  }
+  .search-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+  }
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  .form-group input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  }
+  .search-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .btn-search {
+    padding: 12px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .btn-search:hover {
+    background: #0056b3;
+  }
+  .btn-clear {
+    padding: 12px 20px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .btn-clear:hover {
+    background: #545b62;
+  }
+  .trips-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px #0002;
+    font-size: 1.05rem;
+  }
+  .trips-table th, .trips-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #e3e3e3;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .trips-table th {
+    background: linear-gradient(90deg, #007bff 0%, #339dff 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.08rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+  .trips-table td {
+    background: #f8fafd;
+  }
+  .trips-table tr:last-child td {
+    border-bottom: none;
+  }
+  .trips-table tbody tr:hover {
+    background: #e3f0ff;
+    transition: background 0.2s;
+  }
+  .trips-table .text-center {
+    text-align: center !important;
+  }
+  .trips-table input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #007bff;
+    border-radius: 4px;
+    border: 1.5px solid #007bff;
+  }
+  .action-link, .btn-outline-primary, .btn-outline-danger {
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px !important;
+  }
+  .badge.bg-info {
+    font-size: 0.98rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+  .action-link {
+    background: #007bff;
+    color: #fff !important;
+    padding: 6px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin: 0 2px;
+    display: inline-block;
+  }
+  .action-link:hover {
+    background: #0056b3;
+  }
+  .btn-add {
+    padding: 12px 24px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 18px;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px #0001;
+  }
+  .btn-add:hover {
+    background: #0056b3;
+  }
+  @media (max-width: 900px) {
+    .main-layout { flex-direction: column; }
+    .sidebar { width: 100%; position: static; }
+  }
+</style>
+<div class="trips-container">
+  <div class="row align-items-center mb-3 g-2">
+    <div class="col-12 col-md-6 mb-2 mb-md-0">
+      <h2 class="mb-0">Quản lý chuyến đi</h2>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="d-flex flex-row justify-content-md-end align-items-center gap-2">
+        <input id="searchInput" class="form-control border border-primary flex-grow-1" style="min-width:160px;max-width:260px;" placeholder="🔍 Tìm kiếm mã chuyến hoặc tên chuyến..." onkeyup="filterTable()" />
+        <button class="btn btn-danger d-none flex-shrink-0" style="margin-left:12px;" id="deleteSelectedBtn" onclick="submitDeleteSelected()"><i class="bi bi-trash"></i> Xóa đã chọn</button>
+        <button class="btn btn-primary flex-shrink-0" style="margin-left:12px;" data-bs-toggle="modal" data-bs-target="#addTripModal"><i class="bi bi-plus-lg"></i> Thêm chuyến đi</button>
+      </div>
     </div>
   </div>
-
-  <% if (addTripError) { %>
-    <div class="alert alert-danger">
-      <strong>Lỗi thêm chuyến đi:</strong> <%= addTripError %>
-    </div>
-  <% } %>
-
-  <% if (editTripError) { %>
-    <div class="alert alert-danger">
-      <strong>Lỗi sửa chuyến đi:</strong> <%= editTripError %>
-    </div>
-  <% } %>
-
   <form method="POST" id="deleteSelectedForm" action="/trips/delete-multiple">
-    <table class="table table-hover align-middle" id="tripTable">
-      <thead class="table-light">
-        <tr>
-          <th><input type="checkbox" id="selectAll" /></th>
-          <th>Mã chuyến</th>
-          <th>Tên chuyến</th>
-          <th>Đường đi</th>
-          <th>Điểm xuất phát</th>
-          <th>Điểm đến</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (trips.length === 0) { %>
-          <tr><td colspan="7" class="text-center">Chưa có chuyến đi nào</td></tr>
-        <% } else { %>
-          <% trips.forEach(trip => { %>
-            <tr>
-              <td><input type="checkbox" name="selectedIds" value="<%= trip.id %>" class="rowCheckbox" /></td>
-              <td><%= trip.tripCode %></td>
-              <td><strong><%= trip.nameTrip %></strong></td>
-              <td><%= trip.vRouter %></td>
-              <td><%= trip.startLocation %></td>
-              <td><%= trip.destination %></td>
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#editTripModal"
-                  onclick='openEditModal(<%- JSON.stringify(trip) %>)'
-                >Sửa</button>
-              </td>
-            </tr>
-          <% }) %>
-        <% } %>
-      </tbody>
-      <tbody id="noResultsRow" style="display:none;">
-        <tr><td colspan="7" class="text-center">Không tìm thấy kết quả</td></tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle table-bordered border-primary rounded" id="tripTable" style="overflow:hidden;">
+        <thead class="table-light">
+          <tr>
+            <th class="text-center"><input type="checkbox" id="selectAll" /></th>
+            <th>Mã chuyến</th>
+            <th>Tên chuyến</th>
+            <th>Cung đường</th>
+            <th>Điểm xuất phát</th>
+            <th>Điểm đến</th>
+            <th>Điểm dừng</th>
+            <th class="text-center">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (trips.length === 0) { %>
+            <tr><td colspan="8" class="text-center">Chưa có chuyến đi nào</td></tr>
+          <% } else { %>
+            <% trips.forEach((trip, idx) => { %>
+              <tr>
+                <td class="text-center"><input type="checkbox" name="selectedIds" value="<%= trip.id %>" class="rowCheckbox border border-primary" /></td>
+                <td><%= trip.tripCode %></td>
+                <td><strong><%= trip.nameTrip %></strong></td>
+                <td><%= trip.vRouter %></td>
+                <td><%= trip.startLocation %></td>
+                <td><%= trip.destination %></td>
+                <td>
+                  <% if (trip.stops && trip.stops.length > 0) { %>
+                    <span class="badge bg-info text-dark mb-1 border border-primary" role="button" data-bs-toggle="collapse" data-bs-target="#stopsCollapse<%= idx %>" aria-expanded="false" aria-controls="stopsCollapse<%= idx %>">
+                      <%= trip.stops.length %> thành phố <i class="bi bi-caret-down-fill"></i>
+                    </span>
+                    <div class="collapse mt-2" id="stopsCollapse<%= idx %>">
+                      <ul class="mb-0 ps-3 small">
+                        <% trip.stops.forEach(stop => { %>
+                          <li><strong><%= stop.city %></strong>: <%= stop.locations.join(', ') %></li>
+                        <% }) %>
+                      </ul>
+                    </div>
+                  <% } else { %>
+                    <span class="text-muted">Không có</span>
+                  <% } %>
+                </td>
+                <td class="text-center">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editTripModal"
+                    data-trip='<%= encodeURIComponent(JSON.stringify(trip)) %>'
+                    onclick='openEditModal(this.dataset.trip)'
+                    title="Sửa chuyến đi"
+                  ><i class="bi bi-pencil-square"></i></button>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+        <tbody id="noResultsRow" style="display:none;">
+          <tr><td colspan="8" class="text-center">Không tìm thấy kết quả</td></tr>
+        </tbody>
+      </table>
+    </div>
   </form>
 </div>
 
 <!-- Modal thêm chuyến đi -->
 <div class="modal fade" id="addTripModal" tabindex="-1" aria-labelledby="addTripModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form class="modal-content" method="POST" action="/trips/add">
+  <div class="modal-dialog modal-lg">
+    <form class="modal-content border border-primary rounded-3" method="POST" action="/trips/add">
       <div class="modal-header">
         <h5 class="modal-title" id="addTripModalLabel">Thêm chuyến đi</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label">Mã chuyến</label>
-          <input type="text" name="tripCode" class="form-control" required value="<%= addTripData ? addTripData.tripCode : '' %>">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Mã chuyến</label>
+            <input type="text" name="tripCode" class="form-control" required value="<%= addTripData ? addTripData.tripCode : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tên chuyến đi</label>
+            <input type="text" name="nameTrip" class="form-control" required value="<%= addTripData ? addTripData.nameTrip : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Cung đường</label>
+            <input type="text" name="vRouter" class="form-control" required value="<%= addTripData ? addTripData.vRouter : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Điểm xuất phát</label>
+            <input type="text" name="startLocation" class="form-control" required value="<%= addTripData ? addTripData.startLocation : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Điểm đến</label>
+            <input type="text" name="destination" class="form-control" required value="<%= addTripData ? addTripData.destination : '' %>">
+          </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Tên chuyến đi</label>
-          <input type="text" name="nameTrip" class="form-control" required value="<%= addTripData ? addTripData.nameTrip : '' %>">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Cung đường</label>
-          <input type="text" name="vRouter" class="form-control" required value="<%= addTripData ? addTripData.vRouter : '' %>">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Điểm xuất phát</label>
-          <input type="text" name="startLocation" class="form-control" required value="<%= addTripData ? addTripData.startLocation : '' %>">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Điểm đến</label>
-          <input type="text" name="destination" class="form-control" required value="<%= addTripData ? addTripData.destination : '' %>">
+        <div class="mb-3 mt-3">
+          <label class="form-label">Điểm dừng (stops)</label>
+          <div id="addStopsContainer" class="row g-2"></div>
+          <button type="button" class="btn btn-outline-success mt-2" onclick="addStopRow('add')"><i class="bi bi-plus-circle"></i> Thêm thành phố dừng</button>
+          <input type="hidden" name="stops" id="addStopsInput" value='<%= addTripData && addTripData.stops ? addTripData.stops : "" %>'>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
-        <button type="submit" class="btn btn-primary">Thêm</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Thêm</button>
       </div>
     </form>
   </div>
@@ -105,42 +317,53 @@
 
 <!-- Modal sửa chuyến đi -->
 <div class="modal fade" id="editTripModal" tabindex="-1" aria-labelledby="editTripModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form id="editTripForm" class="modal-content" method="POST" action="">
+  <div class="modal-dialog modal-lg">
+    <form id="editTripForm" class="modal-content border border-primary rounded-3" method="POST" action="">
       <div class="modal-header">
         <h5 class="modal-title" id="editTripModalLabel">Sửa chuyến đi</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body">
         <input type="hidden" name="id" id="editTripId" value="<%= editTripData ? editTripData.id : '' %>">
-        <div class="mb-3">
-          <label class="form-label">Mã chuyến</label>
-          <input type="text" name="tripCode" id="editCodeTrip" class="form-control" required value="<%= editTripData ? editTripData.tripCode : '' %>">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Mã chuyến</label>
+            <input type="text" name="tripCode" id="editCodeTrip" class="form-control" required value="<%= editTripData ? editTripData.tripCode : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tên chuyến đi</label>
+            <input type="text" name="nameTrip" id="editNameTrip" class="form-control" required value="<%= editTripData ? editTripData.nameTrip : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Cung đường</label>
+            <input type="text" name="vRouter" id="editVRouter" class="form-control" required value="<%= editTripData ? editTripData.vRouter : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Điểm xuất phát</label>
+            <input type="text" name="startLocation" id="editStartLocation" class="form-control" required value="<%= editTripData ? editTripData.startLocation : '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Điểm đến</label>
+            <input type="text" name="destination" id="editDestination" class="form-control" required value="<%= editTripData ? editTripData.destination : '' %>">
+          </div>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Tên chuyến đi</label>
-          <input type="text" name="nameTrip" id="editNameTrip" class="form-control" required value="<%= editTripData ? editTripData.nameTrip : '' %>">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Cung đường</label>
-          <input type="text" name="vRouter" id="editVRouter" class="form-control" required value="<%= editTripData ? editTripData.vRouter : '' %>">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Điểm xuất phát</label>
-          <input type="text" name="startLocation" id="editStartLocation" class="form-control" required value="<%= editTripData ? editTripData.startLocation : '' %>">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Điểm đến</label>
-          <input type="text" name="destination" id="editDestination" class="form-control" required value="<%= editTripData ? editTripData.destination : '' %>">
+        <div class="mb-3 mt-3">
+          <label class="form-label">Điểm dừng (stops)</label>
+          <div id="editStopsContainer" class="row g-2"></div>
+          <button type="button" class="btn btn-outline-success mt-2" onclick="addStopRow('edit')"><i class="bi bi-plus-circle"></i> Thêm thành phố dừng</button>
+          <input type="hidden" name="stops" id="editStopsInput" value='<%= editTripData && editTripData.stops ? editTripData.stops : "" %>'>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
-        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Lưu thay đổi</button>
       </div>
     </form>
   </div>
 </div>
+
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <script>
   function filterTable() {
@@ -148,9 +371,10 @@
     const rows = document.querySelectorAll("#tripTable tbody tr:not(#noResultsRow tr)");
     let visibleCount = 0;
     rows.forEach(row => {
-      // Tìm trong cột Tên chuyến (cột thứ 3)
-      const name = row.querySelector('td:nth-child(3)').innerText.toLowerCase();
-      if(name.includes(input)) {
+      // Tìm trong cột Mã chuyến (2) và Tên chuyến (3)
+      const code = row.querySelector('td:nth-child(2)')?.innerText.toLowerCase() || '';
+      const name = row.querySelector('td:nth-child(3)')?.innerText.toLowerCase() || '';
+      if(code.includes(input) || name.includes(input)) {
         row.style.display = '';
         visibleCount++;
       } else {
@@ -178,18 +402,144 @@
       updateDeleteBtn();
     });
 
-    // Nếu có lỗi thêm chuyến, mở modal thêm chuyến
-    <% if (addTripError) { %>
+    // ========== XỬ LÝ STOPS (THÊM/SỬA) =============
+function renderStops(containerId, inputId, stopsData) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  if (!Array.isArray(stopsData)) stopsData = [];
+  stopsData.forEach((stop, stopIdx) => {
+    const stopCol = document.createElement('div');
+    stopCol.className = 'col-12 col-md-6';
+    stopCol.innerHTML = `
+      <div class="card shadow-sm mb-2 border border-primary">
+        <div class="card-header d-flex align-items-center justify-content-between py-2">
+          <input type="text" class="form-control form-control-sm me-2" placeholder="Thành phố" value="${stop.city || ''}" onchange="updateStops('${containerId}', '${inputId}')">
+          <button type="button" class="btn btn-danger btn-sm" title="Xóa thành phố" onclick="removeStopRow('${containerId}', '${inputId}', ${stopIdx})"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="card-body py-2">
+          ${(stop.locations || []).map((loc, locIdx) => `
+            <div class='d-flex align-items-center mb-1'>
+              <input type='text' class='form-control form-control-sm me-2' placeholder='Điểm dừng' value='${loc}' onchange="updateStops('${containerId}', '${inputId}')">
+              <button type='button' class='btn btn-outline-danger btn-sm' title='Xóa điểm dừng' onclick="removeLocationRow('${containerId}', '${inputId}', ${stopIdx}, ${locIdx})"><i class='bi bi-dash-circle'></i></button>
+            </div>
+          `).join('')}
+          <button type="button" class="btn btn-outline-primary btn-sm mt-1" onclick="addLocationRow('${containerId}', '${inputId}', ${stopIdx})"><i class="bi bi-plus-circle"></i> Thêm điểm dừng</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(stopCol);
+  });
+  updateStops(containerId, inputId);
+}
+
+function getStopsFromDOM(containerId) {
+  const container = document.getElementById(containerId);
+  const stops = [];
+  Array.from(container.children).forEach(stopCol => {
+    const cityInput = stopCol.querySelector('.card-header input[type="text"]');
+    const city = cityInput ? cityInput.value : '';
+    const locations = [];
+    const cardBody = stopCol.querySelector('.card-body');
+    if (cardBody) {
+      // Lấy tất cả input điểm dừng, bỏ input đầu tiên nếu trùng value với city
+      const inputs = Array.from(cardBody.querySelectorAll('input.form-control-sm'));
+      inputs.forEach((locInput, idx) => {
+        if (!(idx === 0 && locInput.value === city)) {
+          locations.push(locInput.value);
+        }
+      });
+    }
+    if (city) stops.push({ city, locations: locations.filter(l => l) });
+  });
+  return stops;
+}
+
+function updateStops(containerId, inputId) {
+  const stops = getStopsFromDOM(containerId);
+  document.getElementById(inputId).value = JSON.stringify(stops);
+}
+
+function addStopRow(formType) {
+  const containerId = formType === 'add' ? 'addStopsContainer' : 'editStopsContainer';
+  const inputId = formType === 'add' ? 'addStopsInput' : 'editStopsInput';
+  let stops = getStopsFromDOM(containerId);
+  stops.push({ city: '', locations: [] });
+  renderStops(containerId, inputId, stops);
+}
+
+function removeStopRow(containerId, inputId, idx) {
+  let stops = getStopsFromDOM(containerId);
+  stops.splice(idx, 1);
+  renderStops(containerId, inputId, stops);
+}
+
+function addLocationRow(containerId, inputId, stopIdx) {
+  let stops = getStopsFromDOM(containerId);
+  if (!stops[stopIdx].locations) stops[stopIdx].locations = [];
+  stops[stopIdx].locations.push('');
+  renderStops(containerId, inputId, stops);
+}
+
+function removeLocationRow(containerId, inputId, stopIdx, locIdx) {
+  let stops = getStopsFromDOM(containerId);
+  stops[stopIdx].locations.splice(locIdx, 1);
+  renderStops(containerId, inputId, stops);
+}
+
+// Khởi tạo stops khi mở modal
+function initStopsForm(formType, stopsData) {
+  const containerId = formType === 'add' ? 'addStopsContainer' : 'editStopsContainer';
+  const inputId = formType === 'add' ? 'addStopsInput' : 'editStopsInput';
+  renderStops(containerId, inputId, stopsData);
+}
+
+// Khi mở modal thêm
+if (document.getElementById('addTripModal')) {
+  document.getElementById('addTripModal').addEventListener('show.bs.modal', function () {
+    let stops = [];
+    try {
+      stops = JSON.parse(document.getElementById('addStopsInput').value || '[]');
+    } catch (e) { stops = []; }
+    initStopsForm('add', stops);
+  });
+}
+// Khi mở modal sửa
+if (document.getElementById('editTripModal')) {
+  document.getElementById('editTripModal').addEventListener('show.bs.modal', function () {
+    let stops = [];
+    try {
+      stops = JSON.parse(document.getElementById('editStopsInput').value || '[]');
+    } catch (e) { stops = []; }
+    initStopsForm('edit', stops);
+  });
+}
+
+function openEditModal(tripStr) {
+  var trip = JSON.parse(decodeURIComponent(tripStr));
+  document.getElementById("editTripId").value = trip.id;
+  document.getElementById("editCodeTrip").value = trip.tripCode;
+  document.getElementById("editNameTrip").value = trip.nameTrip;
+  document.getElementById("editVRouter").value = trip.vRouter;
+  document.getElementById("editStartLocation").value = trip.startLocation;
+  document.getElementById("editDestination").value = trip.destination;
+  document.getElementById("editTripForm").action = "/trips/edit/" + trip.id;
+  document.getElementById("editStopsInput").value = JSON.stringify(trip.stops || []);
+  initStopsForm('edit', trip.stops || []);
+}
+</script>
+<% if (addTripError) { %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
       var addTripModal = new bootstrap.Modal(document.getElementById('addTripModal'));
       addTripModal.show();
-    <% } %>
-
-    // Nếu có lỗi sửa chuyến, mở modal sửa chuyến và điền dữ liệu vào form
-    <% if (editTripError) { %>
+    });
+  </script>
+<% } %>
+<% if (editTripError) { %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
       var editTripModal = new bootstrap.Modal(document.getElementById('editTripModal'));
       editTripModal.show();
-
-      // Đổ dữ liệu lỗi sửa vào form
       document.getElementById("editTripId").value = "<%= editTripData.id %>";
       document.getElementById("editCodeTrip").value = "<%= editTripData.tripCode %>";
       document.getElementById("editNameTrip").value = "<%= editTripData.nameTrip %>";
@@ -197,23 +547,7 @@
       document.getElementById("editStartLocation").value = "<%= editTripData.startLocation %>";
       document.getElementById("editDestination").value = "<%= editTripData.destination %>";
       document.getElementById("editTripForm").action = "/trips/edit/<%= editTripData.id %>";
-    <% } %>
-  });
-
-  function submitDeleteSelected() {
-    if (confirm("Bạn chắc chắn muốn xóa các chuyến đi đã chọn?")) {
-      document.getElementById('deleteSelectedForm').submit();
-    }
-  }
-
-  function openEditModal(trip) {
-    document.getElementById("editTripId").value = trip.id;
-    document.getElementById("editCodeTrip").value = trip.tripCode;
-    document.getElementById("editNameTrip").value = trip.nameTrip;
-    document.getElementById("editVRouter").value = trip.vRouter;
-    document.getElementById("editStartLocation").value = trip.startLocation;
-    document.getElementById("editDestination").value = trip.destination;
-    document.getElementById("editTripForm").action = "/trips/edit/" + trip.id;
-  }
-</script>
+    });
+  </script>
+<% } %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

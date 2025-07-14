@@ -11,9 +11,8 @@
 
       <div class="navbar-nav-wrap-content-left">
         <!-- Navbar Vertical Toggle -->
-        <button type="button" class="js-navbar-vertical-aside-toggle-invoker close mr-3">
-          <i class="tio-first-page navbar-vertical-aside-toggle-short-align" data-toggle="tooltip" data-placement="right" title="Collapse"></i>
-          <i class="tio-last-page navbar-vertical-aside-toggle-full-align" data-template='<div class="tooltip d-none d-sm-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-toggle="tooltip" data-placement="right" title="Expand"></i>
+        <button id="sidebar-toggle-btn" type="button" class="js-navbar-vertical-aside-toggle-invoker close mr-3">
+          <i id="sidebar-toggle-icon" class="tio-first-page navbar-vertical-aside-toggle-short-align" data-toggle="tooltip" data-placement="right" title="Collapse"></i>
         </button>
         <!-- End Navbar Vertical Toggle -->
       </div>
@@ -484,3 +483,24 @@
     </div>
   </aside>
   <!-- End Navbar Vertical -->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('sidebar-toggle-btn');
+    var icon = document.getElementById('sidebar-toggle-icon');
+    var sidebar = document.querySelector('.js-navbar-vertical-aside');
+
+    btn.addEventListener('click', function() {
+      sidebar.classList.toggle('collapsed');
+      if (sidebar.classList.contains('collapsed')) {
+        icon.classList.remove('tio-first-page');
+        icon.classList.add('tio-last-page');
+        icon.setAttribute('title', 'Expand');
+      } else {
+        icon.classList.remove('tio-last-page');
+        icon.classList.add('tio-first-page');
+        icon.setAttribute('title', 'Collapse');
+      }
+    });
+  });
+</script>

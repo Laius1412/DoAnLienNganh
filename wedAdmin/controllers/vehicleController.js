@@ -7,18 +7,17 @@ const tripCollection = db.collection('trip');
 // GET /vehicles
 exports.listVehicles = async (req, res) => {
   try {
+    const { vehicleTypeId, tripId } = req.query;
     const snapshot = await vehicleCollection.get();
-    const vehicles = [];
+    let vehicles = [];
 
     for (const doc of snapshot.docs) {
       const data = doc.data();
-
       // Kiểm tra ID trước khi gọi doc()
       const [typeDoc, tripDoc] = await Promise.all([
         data.vehicleTypeId ? vehicleTypeCollection.doc(data.vehicleTypeId).get() : null,
         data.tripId ? tripCollection.doc(data.tripId).get() : null
       ]);
-
       vehicles.push({
         id: doc.id,
         ...data,
@@ -27,30 +26,41 @@ exports.listVehicles = async (req, res) => {
       });
     }
 
-    res.render('vehicles/list', { vehicles });
+    // Lọc theo loại xe nếu có
+    if (vehicleTypeId) {
+      vehicles = vehicles.filter(v => v.vehicleTypeId === vehicleTypeId);
+    }
+    // Lọc theo chuyến đi nếu có
+    if (tripId) {
+      vehicles = vehicles.filter(v => v.tripId === tripId);
+    }
+    // Sắp xếp theo tên xe (tăng dần, ví dụ xe 01, xe 02)
+    vehicles.sort((a, b) => {
+      // Tách số cuối tên xe nếu có
+      const getNum = (name) => {
+        const match = name && name.match(/(\d+)/);
+        return match ? parseInt(match[1], 10) : 0;
+      };
+      // So sánh theo số nếu có, nếu không thì so sánh chuỗi
+      const numA = getNum(a.nameVehicle);
+      const numB = getNum(b.nameVehicle);
+      if (numA !== numB) return numA - numB;
+      return (a.nameVehicle || '').localeCompare(b.nameVehicle || '', 'vi', { sensitivity: 'base' });
+    });
 
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách phương tiện:', error);
-    res.status(500).send('Lỗi server khi lấy danh sách phương tiện.');
-  }
-};
-
-// GET /vehicles/add
-exports.renderAddForm = async (req, res) => {
-  try {
+    // Lấy vehicleTypes và trips để truyền vào view
     const [typesSnap, tripsSnap] = await Promise.all([
       vehicleTypeCollection.get(),
       tripCollection.get()
     ]);
-
     const vehicleTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const trips = tripsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    res.render('vehicles/add', { vehicleTypes, trips });
+    res.render('vehicles/vehicles', { vehicles, vehicleTypes, trips, selectedVehicleTypeId: vehicleTypeId || '', selectedTripId: tripId || '' });
 
   } catch (error) {
-    console.error('Lỗi khi hiển thị form thêm:', error);
-    res.status(500).send('Lỗi khi hiển thị form thêm.');
+    console.error('Lỗi khi lấy danh sách phương tiện:', error);
+    res.status(500).send('Lỗi server khi lấy danh sách phương tiện.');
   }
 };
 
@@ -68,37 +78,11 @@ exports.addVehicle = async (req, res) => {
       startTime,
       endTime
     });
-
+    // Sau khi thêm, redirect về /vehicles (listVehicles sẽ truyền đủ biến)
     res.redirect('/vehicles');
   } catch (error) {
     console.error('Lỗi khi thêm phương tiện:', error);
     res.status(500).send('Lỗi khi thêm phương tiện.');
-  }
-};
-
-// GET /vehicles/edit/:id
-exports.renderEditForm = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const doc = await vehicleCollection.doc(id).get();
-    if (!doc.exists) return res.status(404).send('Phương tiện không tồn tại.');
-
-    const vehicle = { id: doc.id, ...doc.data() };
-
-    const [typesSnap, tripsSnap] = await Promise.all([
-      vehicleTypeCollection.get(),
-      tripCollection.get()
-    ]);
-
-    const vehicleTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const trips = tripsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    res.render('vehicles/edit', { vehicle, vehicleTypes, trips });
-
-  } catch (error) {
-    console.error('Lỗi khi hiển thị form sửa:', error);
-    res.status(500).send('Lỗi khi hiển thị form sửa.');
   }
 };
 
@@ -121,7 +105,7 @@ exports.updateVehicle = async (req, res) => {
       startTime,
       endTime
     });
-
+    // Sau khi sửa, redirect về /vehicles (listVehicles sẽ truyền đủ biến)
     res.redirect('/vehicles');
   } catch (error) {
     console.error('Lỗi khi cập nhật phương tiện:', error);

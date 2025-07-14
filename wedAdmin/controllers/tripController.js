@@ -15,6 +15,7 @@ exports.getTrips = async (req, res) => {
         vRouter: data.vRouter,
         startLocation: data.startLocation,
         destination: data.destination,
+        stops: data.stops || []
       });
     });
 
@@ -37,23 +38,28 @@ exports.getTrips = async (req, res) => {
   }
 };
 
-
 // Thêm chuyến đi
 exports.addTrip = async (req, res) => {
   try {
-    const {tripCode, nameTrip, vRouter, startLocation, destination} = req.body;
-
-    const snapshot = await db.collection("trip").where("tripCode", "==", tripCode).get();
-    if (!snapshot.empty) {
-      // Lưu lỗi và dữ liệu vào session để hiển thị lại
-      req.session.addTripError = "Mã chuyến đã tồn tại, vui lòng nhập mã khác";
-      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination };
+    const {tripCode, nameTrip, vRouter, startLocation, destination, stops} = req.body;
+    let stopsArr = [];
+    try {
+      stopsArr = stops ? JSON.parse(stops) : [];
+    } catch (e) {
+      req.session.addTripError = "Dữ liệu điểm dừng không hợp lệ";
+      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination, stops };
       return res.redirect("/trips");
     }
 
-    await db.collection("trip").add({ tripCode, nameTrip, vRouter, startLocation, destination });
+    const snapshot = await db.collection("trip").where("tripCode", "==", tripCode).get();
+    if (!snapshot.empty) {
+      req.session.addTripError = "Mã chuyến đã tồn tại, vui lòng nhập mã khác";
+      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination, stops };
+      return res.redirect("/trips");
+    }
 
-    // Xóa session sau khi thành công
+    await db.collection("trip").add({ tripCode, nameTrip, vRouter, startLocation, destination, stops: stopsArr });
+
     req.session.addTripError = null;
     req.session.addTripData = null;
 
@@ -70,7 +76,15 @@ exports.updateTrip = async (req, res) => {
     const id = req.params.id;
     if (!id) return res.status(400).send("Thiếu ID chuyến đi để cập nhật");
 
-    const { tripCode, nameTrip, vRouter, startLocation, destination } = req.body;
+    const { tripCode, nameTrip, vRouter, startLocation, destination, stops } = req.body;
+    let stopsArr = [];
+    try {
+      stopsArr = stops ? JSON.parse(stops) : [];
+    } catch (e) {
+      req.session.editTripError = "Dữ liệu điểm dừng không hợp lệ";
+      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination, stops };
+      return res.redirect("/trips");
+    }
 
     const snapshot = await db.collection("trip")
       .where("tripCode", "==", tripCode)
@@ -78,9 +92,8 @@ exports.updateTrip = async (req, res) => {
 
     const existsDuplicate = snapshot.docs.some(doc => doc.id !== id);
     if (existsDuplicate) {
-      // Lưu lỗi và dữ liệu để hiển thị lại modal sửa
       req.session.editTripError = "Mã chuyến đã tồn tại, vui lòng nhập mã khác";
-      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination };
+      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination, stops };
       return res.redirect("/trips");
     }
 
@@ -88,51 +101,10 @@ exports.updateTrip = async (req, res) => {
     const tripDoc = await tripRef.get();
     if (!tripDoc.exists) return res.status(404).send("Không tìm thấy chuyến đi để cập nhật");
 
-    await tripRef.update({ tripCode, nameTrip, vRouter, startLocation, destination });
+    await tripRef.update({ tripCode, nameTrip, vRouter, startLocation, destination, stops: stopsArr });
 
     req.session.editTripError = null;
     req.session.editTripData = null;
-
-    res.redirect("/trips");
-  } catch (err) {
-    console.error("Lỗi khi cập nhật chuyến đi:", err);
-    res.status(500).send("Lỗi server");
-  }
-};
-
-
-// Sửa chuyến đi, kiểm tra tripCode không trùng với chuyến đi khác
-exports.updateTrip = async (req, res) => {
-  try {
-    const id = req.params.id;
-    if (!id) return res.status(400).send("Thiếu ID chuyến đi để cập nhật");
-
-    const { tripCode, nameTrip, vRouter, startLocation, destination } = req.body;
-
-    // Kiểm tra tripCode trùng (ngoại trừ chính chuyến đi đang sửa)
-    const snapshot = await db.collection("trip")
-      .where("tripCode", "==", tripCode)
-      .get();
-
-    const existsDuplicate = snapshot.docs.some(doc => doc.id !== id);
-    if (existsDuplicate) {
-      return res.redirect("/trips?error=Mã chuyến đã tồn tại, vui lòng nhập mã khác");
-    }
-
-    const tripRef = db.collection("trip").doc(id);
-    const tripDoc = await tripRef.get();
-
-    if (!tripDoc.exists) {
-      return res.status(404).send("Không tìm thấy chuyến đi để cập nhật");
-    }
-
-    await tripRef.update({
-      tripCode,
-      nameTrip,
-      vRouter,
-      startLocation,
-      destination,
-    });
 
     res.redirect("/trips");
   } catch (err) {
