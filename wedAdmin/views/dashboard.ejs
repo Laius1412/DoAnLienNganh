@@ -1,51 +1,540 @@
+<!-- Thêm Chart.js CDN nếu chưa có -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Content -->
-    <div class="bg-dark">
-      <div class="content container-fluid" style="height: 25rem;">
-        <!-- Page Header -->
-        <div class="page-header page-header-light">
-          <div class="row align-items-center">
-            <div class="col">
-              <h1 class="page-header-title">Dashboard</h1>
-            </div>
+<style>
+/* Tổng quan */
+.dashboard-header {
+  max-width: 100%;
+  margin: 0px auto 24px auto;
+  background: linear-gradient(90deg, #f8fafc 0%, #e3f0ff 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+  padding: 40px 20px 28px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.dashboard-header h1 {
+  font-size: 2.7rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: #1a237e;
+  letter-spacing: 1px;
+}
+.dashboard-header p {
+  color: #4f4f4f;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
 
-            <div class="col-auto">
-              <a class="btn btn-primary" href="#">My dashboard</a>
-            </div>
-          </div>
-          <!-- End Row -->
-        </div>
-        <!-- End Page Header -->
+.overview-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  justify-content: center;
+  margin: 0 auto 36px auto;
+  max-width: 1200px;
+}
+.overview-card {
+  flex: 1 1 180px;
+  min-width: 180px;
+  max-width: 240px;
+  background: linear-gradient(135deg, #fff 70%, #e3f0ff 100%);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  text-align: center;
+  padding: 26px 10px 18px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+  border: 1.5px solid #e3f0ff;
+  position: relative;
+}
+.overview-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(0,123,255,0.10);
+  border-color: #b6d4fe;
+}
+.overview-card .big {
+  font-size: 2.3rem;
+  font-weight: 900;
+  margin-bottom: 0.2rem;
+  color: #1a237e;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0,123,255,0.07);
+}
+.overview-card .desc {
+  color: #5c6bc0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Tabs */
+.custom-tabs { margin-bottom: 1rem; text-align: center; }
+.tab-btn {
+  padding: 9px 28px;
+  border: none;
+  background: #f0f4fa;
+  cursor: pointer;
+  margin-right: 4px;
+  border-radius: 6px 6px 0 0;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  font-size: 1.05rem;
+  color: #1a237e;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.tab-btn.active {
+  background: #1976d2;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(25,118,210,0.10);
+}
+.tab-btn:hover:not(.active) {
+  background: #e3f0ff;
+  color: #1976d2;
+}
+.custom-tab-pane { display: none; }
+.custom-tab-pane.show { display: block; }
+
+/* Card, bảng, biểu đồ */
+.section-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  margin-bottom: 32px;
+  padding: 24px 18px 16px 18px;
+  border: 1.5px solid #e3f0ff;
+  transition: box-shadow 0.18s, border-color 0.18s;
+}
+.section-card:hover {
+  box-shadow: 0 8px 32px rgba(25,118,210,0.10);
+  border-color: #b6d4fe;
+}
+.section-card .section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+}
+.table-responsive {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: 1.01rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+thead {
+  background: #e3f0ff;
+}
+th, td {
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  transition: background 0.15s;
+}
+tr:nth-child(even) { background: #f4f8fd; }
+tr:hover td {
+  background: #e3f0ff;
+}
+th {
+  color: #1a237e;
+  font-weight: 700;
+  font-size: 1.07rem;
+}
+td {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Biểu đồ */
+canvas { max-width: 100%; height: 320px; margin-top: 8px; }
+
+/* Button filter */
+form button[type="submit"] {
+  padding: 6px 18px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.01rem;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+  transition: background 0.18s, box-shadow 0.18s;
+}
+form button[type="submit"]:hover {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  box-shadow: 0 4px 16px rgba(25,118,210,0.13);
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .overview-cards { flex-direction: column; align-items: center; }
+  .overview-card { max-width: 100%; }
+}
+@media (max-width: 900px) {
+  .overview-cards { flex-direction: column; align-items: center; }
+  .overview-card { max-width: 100%; }
+  .section-card > div[style*='display:flex'] {
+    flex-direction: column !important;
+    gap: 16px !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+  }
+}
+@media (max-width: 800px) {
+  .dashboard-header { padding: 22px 6px 12px 6px; }
+  .overview-card { padding: 16px 6px 12px 6px; }
+  .section-card { padding: 12px 6px 8px 6px; }
+  th, td { font-size: 0.98rem; }
+  .section-card .section-title { font-size: 1.08rem; }
+}
+@media (max-width: 600px) {
+  .dashboard-header { padding: 12px 2px 6px 2px; }
+  .overview-card { padding: 10px 2px 6px 2px; }
+  .section-card { padding: 6px 2px 4px 2px; }
+  th, td { font-size: 0.93rem; }
+  .section-card .section-title { font-size: 1rem; }
+  .overview-cards { gap: 12px; }
+}
+</style>
+
+<div class="dashboard-header">
+  <h1>Thống kê</h1>
+  <p>Quản trị vé, doanh thu, chuyến đi và khách hàng</p>
+</div>
+
+<div class="overview-cards">
+  <div class="overview-card">
+    <div class="big" style="color:#007bff"><%= vehicleCount %></div>
+    <div class="desc">Số lượng xe</div>
+  </div>
+  <div class="overview-card">
+    <div class="big" style="color:#28a745"><%= userCount %></div>
+    <div class="desc">Tài khoản</div>
+  </div>
+  <div class="overview-card">
+    <div class="big" style="color:#17a2b8"><%= bookingConfirmed %></div>
+    <div class="desc">Tổng vé xác nhận</div>
+  </div>
+  <div class="overview-card">
+    <div class="big" style="color:#ffc107"><%= bookingToday %></div>
+    <div class="desc">Vé xác nhận hôm nay</div>
+  </div>
+  <div class="overview-card">
+    <div class="big" style="color:#dc3545"><%= revenueToday.toLocaleString('vi-VN') %> đ</div>
+    <div class="desc">Doanh thu hôm nay</div>
+  </div>
+</div>
+
+<div class="section-card">
+  <div class="section-title">Thống kê vé & doanh thu</div>
+  <div class="custom-tabs mb-2">
+    <button class="tab-btn active" data-tab="day">Ngày</button>
+    <button class="tab-btn" data-tab="month">Tháng</button>
+    <button class="tab-btn" data-tab="year">Năm</button>
+  </div>
+  <div class="tab-content">
+    <div class="tab-pane custom-tab-pane show" id="tab-day">
+      <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;">
+        <span class="fw-bold">Biểu đồ vé & doanh thu theo ngày (7 ngày gần nhất hoặc theo khoảng chọn)</span>
+        <form style="display:flex;gap:6px;flex-wrap:wrap;" method="get" action="/dashboard">
+          <input type="date" name="from" value="<%= (typeof from !== 'undefined') ? from : '' %>" max="<%= (typeof to !== 'undefined') ? to : '' %>">
+          <input type="date" name="to" value="<%= (typeof to !== 'undefined') ? to : '' %>" min="<%= (typeof from !== 'undefined') ? from : '' %>">
+          <button style="padding:4px 12px;border-radius:4px;background:#007bff;color:#fff;border:none;cursor:pointer;" type="submit">Lọc</button>
+        </form>
+      </div>
+      <canvas id="chartDay"></canvas>
+      <div class="table-responsive">
+        <table>
+          <thead><tr><th>STT</th><th>Ngày</th><th>Số vé đã xác nhận</th><th>Doanh thu</th></tr></thead>
+          <tbody>
+            <% let idxDay = 1; for (let d in bookingByDay) { %>
+              <tr>
+                <td><%= idxDay++ %></td>
+                <td><%= d %></td>
+                <td><%= bookingByDay[d] %></td>
+                <td><%= bookingRevenueByDay[d].toLocaleString('vi-VN') %> đ</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
       </div>
     </div>
-    <!-- End Content -->
-
-    <!-- Content -->
-    <div class="content container-fluid" style="margin-top: -18rem;">
-      <!-- Card -->
-      <div class="card mb-3 mb-lg-5">
-        <div class="card-body card-body-centered py-10 my-lg-10">
-          <!-- Title -->
-          <div class="text-center">
-            <img class="img-fluid shadow-soft mb-5" src="..\assets\svg\layouts\content-combinations-overlay.svg" alt="Image Description" style="max-width: 15rem;">
-
-            <h1>Overlay - Content Combinations</h1>
-            <p>Customize your overview page layout. Choose the one that best fits your needs.</p>
-            <a class="btn btn-primary" href="layouts.html">Go back to Layouts</a>
-          </div>
-          <!-- End Title -->
-        </div>
+    <div class="tab-pane custom-tab-pane" id="tab-month">
+      <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;">
+        <span class="fw-bold">Biểu đồ vé & doanh thu theo tháng (12 tháng gần nhất hoặc theo khoảng chọn)</span>
+        <form style="display:flex;gap:6px;flex-wrap:wrap;" method="get" action="/dashboard">
+          <select name="monthFrom">
+            <% allMonths.forEach(function(m) { %>
+              <option value="<%= m %>" <%= (typeof monthFrom !== 'undefined' && monthFrom === m) ? 'selected' : '' %>><%= m %></option>
+            <% }) %>
+          </select>
+          <select name="monthTo">
+            <% allMonths.forEach(function(m) { %>
+              <option value="<%= m %>" <%= (typeof monthTo !== 'undefined' && monthTo === m) ? 'selected' : '' %>><%= m %></option>
+            <% }) %>
+          </select>
+          <button style="padding:4px 12px;border-radius:4px;background:#007bff;color:#fff;border:none;cursor:pointer;" type="submit">Lọc</button>
+        </form>
       </div>
-      <!-- End Card -->
-
-      <!-- Card -->
-      <div class="card">
-        <div class="card-body card-body-centered py-10">
-          <img class="avatar avatar-xl mb-3" src="..\assets\svg\illustrations\yelling.svg" alt="Image Description">
-          <p class="card-text">No data to show</p>
-          <a class="btn btn-sm btn-white" href="..\index.html">Get Started</a>
-        </div>
+      <canvas id="chartMonth"></canvas>
+      <div class="table-responsive">
+        <table>
+          <thead><tr><th>STT</th><th>Tháng</th><th>Số vé đã xác nhận</th><th>Doanh thu</th></tr></thead>
+          <tbody>
+            <% let idxMonth = 1; for (let m in bookingByMonth) { %>
+              <tr>
+                <td><%= idxMonth++ %></td>
+                <td><%= m %></td>
+                <td><%= bookingByMonth[m] %></td>
+                <td><%= bookingRevenueByMonth[m].toLocaleString('vi-VN') %> đ</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
       </div>
-      <!-- End Card -->
     </div>
-    <!-- End Content -->
+    <div class="tab-pane custom-tab-pane" id="tab-year">
+      <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;">
+        <span class="fw-bold">Biểu đồ vé & doanh thu theo năm</span>
+        <form style="display:flex;gap:6px;flex-wrap:wrap;" method="get" action="/dashboard">
+          <select name="yearFrom">
+            <% allYears.forEach(function(y) { %>
+              <option value="<%= y %>" <%= (typeof yearFrom !== 'undefined' && yearFrom == y) ? 'selected' : '' %>><%= y %></option>
+            <% }) %>
+          </select>
+          <select name="yearTo">
+            <% allYears.forEach(function(y) { %>
+              <option value="<%= y %>" <%= (typeof yearTo !== 'undefined' && yearTo == y) ? 'selected' : '' %>><%= y %></option>
+            <% }) %>
+          </select>
+          <button style="padding:4px 12px;border-radius:4px;background:#007bff;color:#fff;border:none;cursor:pointer;" type="submit">Lọc</button>
+        </form>
+      </div>
+      <canvas id="chartYear"></canvas>
+      <div class="table-responsive">
+        <table>
+          <thead><tr><th>STT</th><th>Năm</th><th>Số vé đã xác nhận</th><th>Doanh thu</th></tr></thead>
+          <tbody>
+            <% let idxYear = 1; for (let y in bookingByYear) { %>
+              <tr>
+                <td><%= idxYear++ %></td>
+                <td><%= y %></td>
+                <td><%= bookingByYear[y] %></td>
+                <td><%= bookingRevenueByYear[y].toLocaleString('vi-VN') %> đ</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-card">
+  <div class="section-title">Thống kê chuyến đi & top khách hàng</div>
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-around;align-items:stretch;">
+    <div style="flex:1 1 320px;min-width:260px;max-width:480px;background:#f9f9f9;border-radius:12px;padding:18px 10px 10px 10px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:12px;">
+      <div style="font-weight:bold;margin-bottom:10px;">Biểu đồ doanh thu theo chuyến đi</div>
+      <canvas id="chartTripPie"></canvas>
+    </div>
+    <div style="flex:1 1 320px;min-width:260px;max-width:480px;background:#f9f9f9;border-radius:12px;padding:18px 10px 10px 10px;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:12px;">
+      <div style="font-weight:bold;margin-bottom:10px;">Top 10 khách hàng doanh thu cao nhất</div>
+      <canvas id="chartTopCustomer"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+var bookingByDay = <%- JSON.stringify(bookingByDay || {}) %>;
+var bookingByMonth = <%- JSON.stringify(bookingByMonth || {}) %>;
+var bookingByYear = <%- JSON.stringify(bookingByYear || {}) %>;
+var bookingRevenueByDay = <%- JSON.stringify(bookingRevenueByDay || {}) %>;
+var bookingRevenueByMonth = <%- JSON.stringify(bookingRevenueByMonth || {}) %>;
+var bookingRevenueByYear = <%- JSON.stringify(bookingRevenueByYear || {}) %>;
+var bookingByTrip = <%- JSON.stringify(bookingByTrip || {}) %>;
+var topCustomers = <%- JSON.stringify(topCustomers || []) %>;
+
+var chartDay, chartMonth, chartYear;
+
+function renderComboChart(ctx, labels, dataBar, dataLine, labelBar, labelLine) {
+  return new Chart(ctx, {
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: labelBar,
+          data: dataBar,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1,
+          yAxisID: 'y',
+        },
+        {
+          type: 'line',
+          label: labelLine,
+          data: dataLine,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderWidth: 2,
+          fill: false,
+          yAxisID: 'y1',
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          position: 'left',
+          title: { display: true, text: labelBar }
+        },
+        y1: {
+          beginAtZero: true,
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: labelLine }
+        }
+      }
+    }
+  });
+}
+
+function drawDayChart() {
+  if (chartDay) chartDay.destroy();
+  var ctx = document.getElementById('chartDay').getContext('2d');
+  chartDay = renderComboChart(
+    ctx,
+    Object.keys(bookingByDay),
+    Object.values(bookingByDay),
+    Object.values(bookingRevenueByDay),
+    'Số vé đã xác nhận',
+    'Doanh thu (VNĐ)'
+  );
+}
+function drawMonthChart() {
+  if (chartMonth) chartMonth.destroy();
+  var ctx = document.getElementById('chartMonth').getContext('2d');
+  chartMonth = renderComboChart(
+    ctx,
+    Object.keys(bookingByMonth),
+    Object.values(bookingByMonth),
+    Object.values(bookingRevenueByMonth),
+    'Số vé đã xác nhận',
+    'Doanh thu (VNĐ)'
+  );
+}
+function drawYearChart() {
+  if (chartYear) chartYear.destroy();
+  var ctx = document.getElementById('chartYear').getContext('2d');
+  chartYear = renderComboChart(
+    ctx,
+    Object.keys(bookingByYear),
+    Object.values(bookingByYear),
+    Object.values(bookingRevenueByYear),
+    'Số vé đã xác nhận',
+    'Doanh thu (VNĐ)'
+  );
+}
+
+function renderPieChart(ctx, labels, data, label) {
+  return new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: data,
+        backgroundColor: [
+          '#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8',
+          '#6f42c1', '#fd7e14', '#20c997', '#e83e8c', '#343a40', '#6c757d', '#6610f2'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true, position: 'bottom' } }
+    }
+  });
+}
+
+function renderHorizontalBar(ctx, labels, data, label) {
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: data,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          beginAtZero: true,
+          title: { display: true, text: label }
+        }
+      }
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      showTab(this.dataset.tab);
+    });
+  });
+  // Hiển thị tab đầu tiên khi load
+  showTab('day');
+
+  // Vẽ biểu đồ pie chuyến đi
+  var tripLabels = Object.keys(bookingByTrip);
+  var tripData = Object.values(bookingByTrip);
+  renderPieChart(
+    document.getElementById('chartTripPie').getContext('2d'),
+    tripLabels,
+    tripData,
+    'Doanh thu theo chuyến đi'
+  );
+  // Vẽ biểu đồ cột ngang top khách hàng
+  var topLabels = topCustomers.map(c => c.name);
+  var topData = topCustomers.map(c => c.revenue);
+  renderHorizontalBar(
+    document.getElementById('chartTopCustomer').getContext('2d'),
+    topLabels,
+    topData,
+    'Doanh thu (VNĐ)'
+  );
+});
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  document.querySelectorAll('.custom-tab-pane').forEach(pane => {
+    pane.classList.toggle('show', pane.id === 'tab-' + tab);
+  });
+  if (tab === 'day') drawDayChart();
+  if (tab === 'month') drawMonthChart();
+  if (tab === 'year') drawYearChart();
+}
+</script>

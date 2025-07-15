@@ -154,32 +154,32 @@
         <div class="navbar-vertical-content">
           <ul class="navbar-nav navbar-nav-lg nav-tabs">
             <!-- Dashboards -->
-            <li class="navbar-vertical-aside-has-menu active">
+            <li class="navbar-vertical-aside-has-menu <%= currentPath === '/dashboard' ? 'active' : '' %>">
               <a class="js-navbar-vertical-aside-menu-link nav-link" href="/dashboard" title="Dashboards">
                 <i class="tio-home-vs-1-outlined nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Trang chủ</span>
               </a>
             </li>
-            <li class="navbar-vertical-aside-has-menu ">
+            <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/user') ? 'active' : '' %>">
               <a class="js-navbar-vertical-aside-menu-link nav-link" href="/user" title="userMn">
                 <i class="bi-person nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý người dùng</span>
               </a>
             </li>
             <!-- End Dashboards -->
-             <li class="navbar-vertical-aside-has-menu ">
+             <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/trips') || currentPath.startsWith('/vehicles') ? 'active' : '' %>">
               <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="ticketMn">
                 <i class="bi bi-bus-front nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý phương tiện</span>
               </a>
               <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                <li class="navbar-vertical-aside-has-menu ">
+                <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/trips') ? 'active' : '' %>">
                   <a class="js-navbar-vertical-aside-menu-link nav-link " href="/trips" title="Users">
                     <span class="tio-circle nav-indicator-icon"></span>
                     <span class="text-truncate">Quản lý lộ trình</span>
                   </a>
                 </li>
-                <li class="navbar-vertical-aside-has-menu ">
+                <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/vehicles') ? 'active' : '' %>">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="/vehicles" title="User Profile">
                     <span class="tio-circle nav-indicator-icon"></span>
                     <span class="text-truncate">Quản lý xe</span>
@@ -188,47 +188,33 @@
               </ul>
             </li>
             <!-- Pages -->
-            <li class="navbar-vertical-aside-has-menu ">
-              <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="ticketMn">
+            <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/bookings') ? 'active' : '' %>">
+              <a class="js-navbar-vertical-aside-menu-link nav-link" href="/bookings" title="ticketMn">
                 <i class="bi-ticket-detailed nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý vé</span>
               </a>
-              <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                <li class="navbar-vertical-aside-has-menu ">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link " href="javascript:;" title="Users">
-                    <span class="tio-circle nav-indicator-icon"></span>
-                    <span class="text-truncate">Quản lý giá vé</span>
-                  </a>
-                </li>
-                <li class="navbar-vertical-aside-has-menu ">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="/bookings" title="User Profile">
-                    <span class="tio-circle nav-indicator-icon"></span>
-                    <span class="text-truncate">Quản lý vé đã đặt</span>
-                  </a>
-                </li>
-              </ul>
             </li>
             <!-- End Pages -->
 
-            <li class="navbar-vertical-aside-has-menu">
+            <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/delivery') ? 'active' : '' %>">
               <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:;" title="">
                 <i class="bi bi-box-seam nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý chuyển phát</span>
               </a>
               <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                <li class="navbar-vertical-aside-has-menu ">
+                <li class="navbar-vertical-aside-has-menu <%= currentPath === '/delivery' ? 'active' : '' %>">
                   <a class="js-navbar-vertical-aside-menu-link nav-link " href="/delivery" title="">
                     <span class="tio-circle nav-indicator-icon"></span>
                     <span class="text-truncate">Quản lý bưu cục</span>
                   </a>
                 </li>
-                <li class="navbar-vertical-aside-has-menu ">
+                <li class="navbar-vertical-aside-has-menu <%= currentPath === '/delivery/price_delivery' ? 'active' : '' %>">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="/delivery/price_delivery" title="">
                     <span class="tio-circle nav-indicator-icon"></span>
                     <span class="text-truncate">Giá cước chuyển phát</span>
                   </a>
                 </li>
-                <li class="navbar-vertical-aside-has-menu ">
+                <li class="navbar-vertical-aside-has-menu <%= currentPath === '/delivery/order_manage' ? 'active' : '' %>">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="/delivery/order_manage" title="">
                     <span class="tio-circle nav-indicator-icon"></span>
                     <span class="text-truncate">Quản lý đơn hàng</span>
@@ -237,14 +223,14 @@
               </ul>
             </li>
 
-            <li class="navbar-vertical-aside-has-menu ">
+            <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/news') ? 'active' : '' %>">
               <a class="js-navbar-vertical-aside-menu-link nav-link" href="/news" title="">
                 <i class="bi-file-text nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Quản lý bài viết</span>
               </a>
             </li>
-            <li class="navbar-vertical-aside-has-menu ">
-              <a class="js-navbar-vertical-aside-menu-link nav-link" href="" title="">
+            <li class="navbar-vertical-aside-has-menu <%= currentPath.startsWith('/feedback') ? 'active' : '' %>">
+              <a class="js-navbar-vertical-aside-menu-link nav-link" href="/feedback" title="">
                 <i class="bi-chat-left nav-icon"></i>
                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Phản hồi</span>
               </a>

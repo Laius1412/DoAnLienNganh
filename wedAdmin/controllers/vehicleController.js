@@ -56,7 +56,10 @@ exports.listVehicles = async (req, res) => {
     const vehicleTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const trips = tripsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    res.render('vehicles/vehicles', { vehicles, vehicleTypes, trips, selectedVehicleTypeId: vehicleTypeId || '', selectedTripId: tripId || '' });
+    // Lấy giá trị search từ query (nếu có)
+    const { search = '' } = req.query;
+
+    res.render('vehicles/vehicles', { vehicles, vehicleTypes, trips, selectedVehicleTypeId: vehicleTypeId || '', selectedTripId: tripId || '', search });
 
   } catch (error) {
     console.error('Lỗi khi lấy danh sách phương tiện:', error);

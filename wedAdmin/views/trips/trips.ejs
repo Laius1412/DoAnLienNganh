@@ -1,7 +1,7 @@
 <style>
   .trips-container {
-    max-width: 1400px;
-    margin: 32px auto;
+    max-width: 100%;
+    margin: 16px auto;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 12px #0002;
@@ -304,7 +304,7 @@
           <label class="form-label">Điểm dừng (stops)</label>
           <div id="addStopsContainer" class="row g-2"></div>
           <button type="button" class="btn btn-outline-success mt-2" onclick="addStopRow('add')"><i class="bi bi-plus-circle"></i> Thêm thành phố dừng</button>
-          <input type="hidden" name="stops" id="addStopsInput" value='<%= addTripData && addTripData.stops ? addTripData.stops : "" %>'>
+          <input type="hidden" name="stops" id="addStopsInput" value='<%= addTripData && addTripData.stops ? JSON.stringify(addTripData.stops) : "[]" %>'>
         </div>
       </div>
       <div class="modal-footer">
@@ -351,7 +351,7 @@
           <label class="form-label">Điểm dừng (stops)</label>
           <div id="editStopsContainer" class="row g-2"></div>
           <button type="button" class="btn btn-outline-success mt-2" onclick="addStopRow('edit')"><i class="bi bi-plus-circle"></i> Thêm thành phố dừng</button>
-          <input type="hidden" name="stops" id="editStopsInput" value='<%= editTripData && editTripData.stops ? editTripData.stops : "" %>'>
+          <input type="hidden" name="stops" id="editStopsInput" value='<%= editTripData && editTripData.stops ? JSON.stringify(editTripData.stops) : "[]" %>'>
         </div>
       </div>
       <div class="modal-footer">
@@ -401,8 +401,11 @@
       checkboxes.forEach(cb => cb.checked = selectAll.checked);
       updateDeleteBtn();
     });
+    // Gọi lại updateDeleteBtn khi trang vừa load để đảm bảo nút xóa đúng trạng thái
+    updateDeleteBtn();
+  });
 
-    // ========== XỬ LÝ STOPS (THÊM/SỬA) =============
+  // ========== XỬ LÝ STOPS (THÊM/SỬA) =============
 function renderStops(containerId, inputId, stopsData) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
@@ -525,6 +528,11 @@ function openEditModal(tripStr) {
   document.getElementById("editTripForm").action = "/trips/edit/" + trip.id;
   document.getElementById("editStopsInput").value = JSON.stringify(trip.stops || []);
   initStopsForm('edit', trip.stops || []);
+}
+
+// Thêm hàm submitDeleteSelected để xử lý xóa nhiều chuyến đi
+function submitDeleteSelected() {
+  document.getElementById('deleteSelectedForm').submit();
 }
 </script>
 <% if (addTripError) { %>

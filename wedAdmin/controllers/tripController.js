@@ -47,14 +47,14 @@ exports.addTrip = async (req, res) => {
       stopsArr = stops ? JSON.parse(stops) : [];
     } catch (e) {
       req.session.addTripError = "Dữ liệu điểm dừng không hợp lệ";
-      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination, stops };
+      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination, stops: [] };
       return res.redirect("/trips");
     }
 
     const snapshot = await db.collection("trip").where("tripCode", "==", tripCode).get();
     if (!snapshot.empty) {
       req.session.addTripError = "Mã chuyến đã tồn tại, vui lòng nhập mã khác";
-      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination, stops };
+      req.session.addTripData = { tripCode, nameTrip, vRouter, startLocation, destination, stops: stopsArr };
       return res.redirect("/trips");
     }
 
@@ -82,7 +82,7 @@ exports.updateTrip = async (req, res) => {
       stopsArr = stops ? JSON.parse(stops) : [];
     } catch (e) {
       req.session.editTripError = "Dữ liệu điểm dừng không hợp lệ";
-      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination, stops };
+      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination, stops: [] };
       return res.redirect("/trips");
     }
 
@@ -93,7 +93,7 @@ exports.updateTrip = async (req, res) => {
     const existsDuplicate = snapshot.docs.some(doc => doc.id !== id);
     if (existsDuplicate) {
       req.session.editTripError = "Mã chuyến đã tồn tại, vui lòng nhập mã khác";
-      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination, stops };
+      req.session.editTripData = { id, tripCode, nameTrip, vRouter, startLocation, destination, stops: stopsArr };
       return res.redirect("/trips");
     }
 
