@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middlewares/authMiddleware');
+const dashboardController = require('../controllers/dashboardController');
 
-router.get('/', isAuthenticated, (req, res) => {
-  res.render('dashboard', { user: req.session.user });
-});
+router.get('/', dashboardController.getDashboardStats);
 
 module.exports = router;

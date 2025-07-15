@@ -24,6 +24,12 @@ app.set('layout', 'layout');
 // Static
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Thêm middleware để truyền currentPath vào tất cả các view
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
+
 // Session
 app.use(session({
   secret: 'my_secret_key',
