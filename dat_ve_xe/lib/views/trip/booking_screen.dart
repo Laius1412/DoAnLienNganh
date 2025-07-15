@@ -203,6 +203,17 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // Bước 2: Chọn điểm đón/trả (nested city/location)
   void _showLocationSelectionSheet(bool isStartLocation) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final sheetBg = isDark ? Colors.grey[900] : const Color(0xFFFFF3E8);
+    final headerBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
+    final citySelected = isDark ? Colors.orange[200] : const Color.fromARGB(255, 253, 109, 37);
+    final cityUnselected = isDark ? Colors.white : Colors.black87;
+    final cityBgSelected = isDark ? Colors.orange[900]!.withOpacity(0.13) : const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1);
+    final cityBgUnselected = Colors.transparent;
+    final locationSelected = isDark ? Colors.orange[200] : const Color.fromARGB(255, 253, 109, 37);
+    final locationUnselected = isDark ? Colors.white : Colors.black87;
+    final locationBgSelected = isDark ? Colors.orange[900]!.withOpacity(0.13) : const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1);
+    final locationBgUnselected = Colors.transparent;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -211,9 +222,9 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFFFFF3E8),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: sheetBg,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -221,9 +232,9 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 253, 109, 37),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              decoration: BoxDecoration(
+                color: headerBg,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -251,7 +262,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       // Danh sách tỉnh/thành
                       Container(
                         width: 140,
-                        color: Colors.white,
+                        color: isDark ? Colors.grey[850] : Colors.white,
                         child: ListView.builder(
                           itemCount: _stops.length,
                           itemBuilder: (context, index) {
@@ -260,12 +271,12 @@ class _BookingScreenState extends State<BookingScreen> {
                                 ? stop.city == _selectedStartCity
                                 : stop.city == _selectedEndCity);
                             return Material(
-                              color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
+                              color: isSelected ? cityBgSelected : cityBgUnselected,
                               child: ListTile(
                                 title: Text(
                                   stop.city,
                                   style: TextStyle(
-                                    color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
+                                    color: isSelected ? citySelected : cityUnselected,
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                   ),
                                 ),
@@ -300,16 +311,16 @@ class _BookingScreenState extends State<BookingScreen> {
                                 final location = locations[index];
                                 final isSelected = location == selectedLocation;
                                 return Material(
-                                  color: isSelected ? const Color.fromARGB(255, 253, 109, 37).withOpacity(0.1) : Colors.transparent,
+                                  color: isSelected ? locationBgSelected : locationBgUnselected,
                                   child: ListTile(
                                     leading: Icon(
                                       Icons.location_on,
-                                      color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.grey,
+                                      color: isSelected ? locationSelected : (isDark ? Colors.grey[400] : Colors.grey),
                                     ),
                                     title: Text(
                                       location,
                                       style: TextStyle(
-                                        color: isSelected ? const Color.fromARGB(255, 253, 109, 37) : Colors.black87,
+                                        color: isSelected ? locationSelected : locationUnselected,
                                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                       ),
                                     ),
@@ -442,12 +453,26 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final cardColor = isDark ? Colors.grey[900] : const Color.fromARGB(255, 255, 243, 232);
+    final borderColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final textColor = isDark ? Colors.white : Colors.black;
+    final labelColor = isDark ? Colors.white : const Color.fromARGB(255, 253, 109, 37);
+    final subTextColor = isDark ? Colors.white70 : Colors.black87;
+    final seatBookedColor = isDark ? Colors.grey[700]! : Colors.grey[700]!;
+    final seatSelectedColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final seatEmptyColor = isDark ? Colors.grey[900]! : Colors.white;
+    final seatBorderColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final buttonBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
+    final buttonText = Colors.white;
     if (_isInitializing) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Đặt vé'),
-          backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-          foregroundColor: Colors.white,
+          title: Text('Đặt vé', style: TextStyle(color: textColor)),
+          backgroundColor: buttonBg,
+          foregroundColor: textColor,
+          iconTheme: IconThemeData(color: textColor),
         ),
         body: const Center(
           child: CircularProgressIndicator(),
@@ -465,10 +490,12 @@ class _BookingScreenState extends State<BookingScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('Đặt vé'),
-        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-        foregroundColor: Colors.white,
+        title: Text('Đặt vé', style: TextStyle(color: textColor)),
+        backgroundColor: buttonBg,
+        foregroundColor: textColor,
+        iconTheme: IconThemeData(color: textColor),
       ),
       body: StreamBuilder<List<SeatPosition>>(
         stream: seatStream(),
@@ -515,9 +542,9 @@ class _BookingScreenState extends State<BookingScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 243, 232), // màu nền bên trong
+                  color: cardColor, // màu nền bên trong
                   border: Border.all(
-                    color: const Color.fromARGB(255, 253, 109, 37), // viền cam
+                    color: borderColor, // viền cam
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -535,53 +562,53 @@ class _BookingScreenState extends State<BookingScreen> {
                   children: [
                     Text(
                       '${widget.vehicle.trip?.nameTrip}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 253, 109, 37),
+                        color: labelColor,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.calendar_today, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
                           'Ngày đi: ${dateFormat.format(widget.selectedDate)}',
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.access_time, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.access_time, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
                           'Giờ: ${widget.vehicle.startTime} - ${widget.vehicle.endTime}',
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.directions_bus, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.directions_bus, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
                           'Loại xe: ${widget.vehicle.vehicleType?.nameType} (${widget.vehicle.vehicleType?.seatCount} chỗ)',
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.attach_money, color: Color.fromARGB(255, 253, 109, 37)),
+                        Icon(Icons.attach_money, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
                           'Giá vé: ${NumberFormat("#,###", "vi_VN").format(widget.vehicle.price)}đ/ghế',
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
                     ),
@@ -593,20 +620,20 @@ class _BookingScreenState extends State<BookingScreen> {
               if (_step == 1)
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 11),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                       margin: const EdgeInsets.symmetric(horizontal: 0),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFF3E8),
+                        color: cardColor,
                         border: Border.all(
-                          color: Color.fromARGB(255, 253, 109, 37),
+                          color: borderColor,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.orange.withOpacity(0.08),
+                            color: isDark ? Colors.orange[900]!.withOpacity(0.08) : Colors.orange.withOpacity(0.08),
                             blurRadius: 8,
                             offset: Offset(0, 2),
                           ),
@@ -620,11 +647,11 @@ class _BookingScreenState extends State<BookingScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _buildSeatLegend(Colors.grey[700]!, 'Đã bán'),
+                                _buildSeatLegend(seatBookedColor, 'Đã bán'),
                                 const SizedBox(width: 16),
-                                _buildSeatLegend(const Color.fromARGB(255, 253, 109, 37), 'Đang chọn'),
+                                _buildSeatLegend(seatSelectedColor, 'Đang chọn'),
                                 const SizedBox(width: 16),
-                                _buildSeatLegend(Colors.white, 'Giường trống', border: Colors.black),
+                                _buildSeatLegend(seatEmptyColor, 'Giường trống', border: seatBorderColor),
                               ],
                             ),
                           ),
@@ -713,14 +740,15 @@ class _BookingScreenState extends State<BookingScreen> {
               if (_step == 2)
                 Expanded(
                   child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color.fromARGB(255, 253, 109, 37), width: 2),
+                      border: Border.all(color: borderColor, width: 2),
                       borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
+                      color: cardColor,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: isDark ? Colors.orange[900]!.withOpacity(0.08) : Colors.black.withOpacity(0.08),
                           blurRadius: 12,
                           offset: Offset(0, 4),
                         ),
@@ -729,12 +757,12 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Chọn điểm đón và trả khách',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 253, 109, 37),
+                            color: labelColor,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -744,14 +772,15 @@ class _BookingScreenState extends State<BookingScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: const Color.fromARGB(255, 253, 109, 37),
+                                color: borderColor,
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.circular(8),
+                              color: isDark ? Colors.grey[850] : Colors.white,
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                                Icon(Icons.location_on, color: labelColor),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
@@ -759,7 +788,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                         ? '${_selectedStartLocation!} (${_selectedStartCity!})'
                                         : 'Chọn điểm đón',
                                     style: TextStyle(
-                                      color: _selectedStartLocation != null ? Colors.black : Colors.grey,
+                                      color: _selectedStartLocation != null ? textColor : (isDark ? Colors.white54 : Colors.grey),
                                       fontSize: 16,
                                     ),
                                   ),
@@ -776,14 +805,15 @@ class _BookingScreenState extends State<BookingScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: const Color.fromARGB(255, 253, 109, 37),
+                                color: borderColor,
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.circular(8),
+                              color: isDark ? Colors.grey[850] : Colors.white,
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.location_on, color: Color.fromARGB(255, 253, 109, 37)),
+                                Icon(Icons.location_on, color: labelColor),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
@@ -791,7 +821,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                         ? '${_selectedEndLocation!} (${_selectedEndCity!})'
                                         : 'Chọn điểm trả',
                                     style: TextStyle(
-                                      color: _selectedEndLocation != null ? Colors.black : Colors.grey,
+                                      color: _selectedEndLocation != null ? textColor : (isDark ? Colors.white54 : Colors.grey),
                                       fontSize: 16,
                                     ),
                                   ),
@@ -811,10 +841,10 @@ class _BookingScreenState extends State<BookingScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? Colors.grey[900] : Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: isDark ? Colors.orange[900]!.withOpacity(0.13) : Colors.grey.withOpacity(0.3),
                         spreadRadius: 1,
                         blurRadius: 8,
                         offset: const Offset(0, -3),
@@ -832,16 +862,16 @@ class _BookingScreenState extends State<BookingScreen> {
                               'Tổng tiền:',
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.grey[700],
+                                color: isDark ? Colors.white70 : Colors.grey[700],
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             Text(
                               '${NumberFormat("#,###", "vi_VN").format(_totalPrice)}đ',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 253, 109, 37),
+                                color: labelColor,
                               ),
                             ),
                           ],
@@ -857,8 +887,8 @@ class _BookingScreenState extends State<BookingScreen> {
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-                            foregroundColor: Colors.white,
+                            backgroundColor: buttonBg,
+                            foregroundColor: buttonText,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 36,
                               vertical: 18,
@@ -879,8 +909,8 @@ class _BookingScreenState extends State<BookingScreen> {
                               ? (_isLoading ? null : _handleBooking)
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-                            foregroundColor: Colors.white,
+                            backgroundColor: buttonBg,
+                            foregroundColor: buttonText,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 36,
                               vertical: 18,
@@ -916,15 +946,20 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // Widget ghế mới
   Widget _buildCustomSeatButton(String code, bool isSelected, bool isBooked, [bool isHeldByMe = false]) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final seatBookedColor = isDark ? Colors.grey[700]! : Colors.grey[700]!;
+    final seatSelectedColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final seatEmptyColor = isDark ? Colors.grey[900]! : Colors.white;
+    final seatBorderColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
     Color seatColor;
     if (isBooked) {
-      seatColor = Colors.grey[700]!;
+      seatColor = seatBookedColor;
     } else if (isSelected) {
-      seatColor = const Color.fromARGB(255, 253, 109, 37);
+      seatColor = seatSelectedColor;
     } else if (isHeldByMe) {
-      seatColor = Colors.blue[200]!;
+      seatColor = isDark ? Colors.blue[700]! : Colors.blue[200]!;
     } else {
-      seatColor = Colors.white;
+      seatColor = seatEmptyColor;
     }
     return InkWell(
       onTap: isBooked
@@ -943,10 +978,10 @@ class _BookingScreenState extends State<BookingScreen> {
           color: seatColor,
           border: Border.all(
             color: isBooked
-                ? Colors.grey[700]!
+                ? seatBookedColor
                 : isSelected
-                    ? const Color.fromARGB(255, 253, 109, 37)
-                    : seatColor,
+                    ? seatSelectedColor
+                    : seatBorderColor,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(6),
@@ -969,6 +1004,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // Sửa lại chú thích để hỗ trợ viền
   Widget _buildSeatLegend(Color color, String label, {Color? border}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Container(
@@ -981,7 +1017,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(label),
+        Text(label, style: TextStyle(color: isDark ? Colors.white : Colors.black)),
       ],
     );
   }

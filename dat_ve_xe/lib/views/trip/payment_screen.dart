@@ -149,11 +149,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final cardColor = isDark ? Colors.grey[900] : Colors.grey[100];
+    final textColor = isDark ? Colors.white : Colors.black;
+    final labelColor = isDark ? Colors.orange[200] : const Color.fromARGB(255, 253, 109, 37);
+    final borderColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final buttonBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
+    final buttonText = Colors.white;
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('Thanh toán'),
-        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-        foregroundColor: Colors.white,
+        title: Text('Thanh toán', style: TextStyle(color: textColor)),
+        backgroundColor: buttonBg,
+        foregroundColor: textColor,
+        iconTheme: IconThemeData(color: textColor),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -166,9 +176,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.red[50],
+                      color: isDark ? Colors.red[900] : Colors.red[50],
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red),
+                      border: Border.all(color: isDark ? Colors.red[700]! : Colors.red),
                     ),
                     child: Row(
                       children: [
@@ -176,8 +186,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'Thời gian còn lại: $_remainingTime',
-                          style: const TextStyle(
-                            color: Colors.red,
+                          style: TextStyle(
+                            color: isDark ? Colors.orange[200] : Colors.red,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -190,22 +200,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 243, 232),
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: const Color.fromARGB(255, 253, 109, 37),
+                        color: borderColor,
                         width: 1,
                       ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Thông tin chuyến đi',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 253, 109, 37),
+                            color: labelColor,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -300,26 +310,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Số tiền thanh toán',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey,
+                            color: textColor,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           '${NumberFormat("#,###", "vi_VN").format(widget.totalAmount)}đ',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 253, 109, 37),
+                            color: labelColor,
                           ),
                         ),
                       ],
@@ -328,11 +338,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   const SizedBox(height: 24),
 
                   // Payment methods
-                  const Text(
+                  Text(
                     'Phương thức thanh toán',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -379,20 +390,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
     VoidCallback? onTap,
     bool enabled = true,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? Colors.grey[900] : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: isDark ? Colors.orange[900]! : Colors.grey[300]!),
         borderRadius: BorderRadius.circular(8),
+        color: cardColor,
       ),
       child: ListTile(
-        leading: Icon(icon, color: const Color.fromARGB(255, 253, 109, 37)),
+        leading: Icon(icon, color: isDark ? Colors.orange[200] : const Color.fromARGB(255, 253, 109, 37)),
         title: Text(title,
-           style: !enabled ? const TextStyle(color: Colors.grey) : null,
-        ),
+           style: TextStyle(color: !enabled ? Colors.grey : textColor)),
         subtitle: Text(subtitle,
-           style: !enabled ? const TextStyle(color: Colors.grey) : null,
-        ),
+           style: TextStyle(color: !enabled ? Colors.grey : textColor)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: enabled ? (onTap ?? _handlePayment) : null,
       ),

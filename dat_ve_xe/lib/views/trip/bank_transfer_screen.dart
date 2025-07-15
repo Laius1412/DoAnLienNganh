@@ -29,11 +29,26 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final cardColor = isDark ? Colors.grey[900]! : const Color.fromARGB(255, 255, 243, 232);
+    final borderColor = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final textColor = isDark ? Colors.white : Colors.black;
+    final labelColor = (isDark ? Colors.orange[200] : const Color.fromARGB(255, 253, 109, 37))!;
+    final subTextColor = (isDark ? Colors.white70 : Colors.grey)!;
+    final qrBg = isDark ? Colors.grey[900]! : Colors.grey[100]!;
+    final qrInnerBg = isDark ? Colors.black : Colors.white;
+    final qrBorder = isDark ? Colors.orange[900]! : Colors.grey[300]!;
+    final buttonBg = isDark ? Colors.orange[900]! : const Color.fromARGB(255, 253, 109, 37);
+    final buttonDeleteBg = isDark ? Colors.red[900]! : Colors.red;
+    final buttonText = Colors.white;
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('Chuyển khoản ngân hàng'),
-        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-        foregroundColor: Colors.white,
+        title: Text('Chuyển khoản ngân hàng', style: TextStyle(color: textColor)),
+        backgroundColor: buttonBg,
+        foregroundColor: textColor,
+        iconTheme: IconThemeData(color: textColor),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -44,50 +59,30 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 255, 243, 232),
+                color: cardColor,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: const Color.fromARGB(255, 253, 109, 37),
+                  color: borderColor,
                   width: 1,
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Thông tin tài khoản ngân hàng',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 253, 109, 37),
+                      color: labelColor,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildBankInfo(
-                    'Ngân hàng:',
-                    'BIDV',
-                    Icons.account_balance,
-                  ),
-                  _buildBankInfo(
-                    'Số tài khoản:',
-                    '5121034942',
-                    Icons.account_balance_wallet,
-                  ),
-                  _buildBankInfo(
-                    'Chủ tài khoản:',
-                    'Ngueyn Tran Viet Anh',
-                    Icons.person,
-                  ),
-                  _buildBankInfo(
-                    'Nội dung chuyển khoản:',
-                    'Thanh toan ${widget.bookingId}',
-                    Icons.description,
-                  ),
-                  _buildBankInfo(
-                    'Số tiền:',
-                    '${NumberFormat("#,###", "vi_VN").format(widget.totalAmount)}đ',
-                    Icons.attach_money,
-                  ),
+                  _buildBankInfo('Ngân hàng:', 'BIDV', Icons.account_balance, labelColor, subTextColor, textColor),
+                  _buildBankInfo('Số tài khoản:', '5121034942', Icons.account_balance_wallet, labelColor, subTextColor, textColor),
+                  _buildBankInfo('Chủ tài khoản:', 'Ngueyn Tran Viet Anh', Icons.person, labelColor, subTextColor, textColor),
+                  _buildBankInfo('Nội dung chuyển khoản:', 'Thanh toan ${widget.bookingId}', Icons.description, labelColor, subTextColor, textColor),
+                  _buildBankInfo('Số tiền:', '${NumberFormat("#,###", "vi_VN").format(widget.totalAmount)}đ', Icons.attach_money, labelColor, subTextColor, textColor),
                 ],
               ),
             ),
@@ -98,16 +93,17 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: qrBg,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'Mã QR chuyển khoản',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -115,11 +111,11 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                     width: 200,
                     height: 200,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: qrInnerBg,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[300]!),
+                      border: Border.all(color: qrBorder),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -133,7 +129,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                             'QR Code',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey,
+                              color: subTextColor,
                             ),
                           ),
                         ],
@@ -149,17 +145,18 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: qrBg,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Ảnh xác nhận chuyển khoản',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -169,7 +166,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                       height: 200,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
+                        border: Border.all(color: qrBorder),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
@@ -189,8 +186,8 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                           icon: const Icon(Icons.camera_alt),
                           label: const Text('Chọn ảnh'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-                            foregroundColor: Colors.white,
+                            backgroundColor: buttonBg,
+                            foregroundColor: buttonText,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
@@ -203,8 +200,8 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                             icon: const Icon(Icons.delete),
                             label: const Text('Xóa'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
+                              backgroundColor: buttonDeleteBg,
+                              foregroundColor: buttonText,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
@@ -223,8 +220,8 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
               child: ElevatedButton(
                 onPressed: _selectedImage != null && !_isLoading ? _handlePayment : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-                  foregroundColor: Colors.white,
+                  backgroundColor: buttonBg,
+                  foregroundColor: buttonText,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -251,12 +248,12 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
     );
   }
 
-  Widget _buildBankInfo(String label, String value, IconData icon) {
+  Widget _buildBankInfo(String label, String value, IconData icon, Color labelColor, Color subTextColor, Color textColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, color: const Color.fromARGB(255, 253, 109, 37), size: 20),
+          Icon(icon, color: labelColor, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -264,16 +261,17 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey,
+                    color: subTextColor,
                   ),
                 ),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
+                    color: textColor,
                   ),
                 ),
               ],

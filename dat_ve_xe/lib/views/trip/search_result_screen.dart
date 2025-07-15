@@ -110,11 +110,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final cardColor = isDark ? Colors.grey[900] : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final ticketBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text('Danh sách chuyến (${dateFormat.format(widget.selectedDate)})'),
-        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
+        backgroundColor: ticketBg,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -287,11 +293,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final priceFormatted = NumberFormat("#,###", "vi_VN").format(vehicle.price);
     final duration = calculateDuration(vehicle.startTime, vehicle.endTime);
     final availableSeats = _availableSeats[vehicle.id] ?? 0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ticketBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
 
     return Ticket(
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 253, 109, 37),
+          color: ticketBg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
