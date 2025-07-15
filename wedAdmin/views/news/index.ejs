@@ -1,10 +1,10 @@
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-success mb-0">
-      <i class="bi bi-newspaper me-2"></i>Danh sách bài viết
+      Danh sách bài viết
     </h2>
     <a href="/news/create" class="btn btn-success px-4 py-2 rounded-3 shadow-sm">
-      <i class="bi bi-plus-circle me-1"></i>Thêm mới
+     Thêm mới
     </a>
   </div>
 
@@ -76,19 +76,19 @@
                     style="min-width: 180px;">
                   <li>
                     <a class="dropdown-item" href="/news/view/<%= item.id %>">
-                      <i class="bi bi-eye text-primary me-2"></i>Xem chi tiết
+                      Xem chi tiết
                     </a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="/news/edit/<%= item.id %>">
-                      <i class="bi bi-pencil text-warning me-2"></i>Sửa
+                      Sửa
                     </a>
                   </li>
                   <li>
                     <form action="/news/delete/<%= item.id %>" method="POST"
                           onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?');">
                       <button class="dropdown-item text-danger" type="submit">
-                        <i class="bi bi-trash text-danger me-2"></i>Xóa
+                        Xóa
                       </button>
                     </form>
                   </li>

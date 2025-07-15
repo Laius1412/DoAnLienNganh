@@ -17,7 +17,7 @@ const index = async (req, res) => {
   try {
     const query = (req.query.q || '').toLowerCase();
     const sort = req.query.sort || '';
-    const snapshot = await db.collection('users').get();
+    const snapshot = await db.collection('users').get(); // chứa tất cả user
     const users = [];
 
     for (const doc of snapshot.docs) {
@@ -28,7 +28,15 @@ const index = async (req, res) => {
       if (!query || name.includes(query) || phone.includes(query)) {
         // Đếm số lần đặt vé của user này
         const bookingSnap = await db.collection('bookings').where('userId', '==', doc.id).get();
-        const bookingCount = bookingSnap.size;
+        const bookings = [];
+        bookingSnap.forEach(b => {
+          bookings.push({
+            id: b.id,
+            code: b.data().code || '', // hoặc trường bạn muốn hiển thị
+            createdAt: b.data().createdAt || null
+          });
+        });
+        const bookingCount = bookings.length;
 
         // CHUẨN HÓA SỐ ĐIỆN THOẠI
         const normalizedPhone0 = normalizePhone(phone);
@@ -39,7 +47,7 @@ const index = async (req, res) => {
         const deliveryOrderSnap84 = await db.collection('deliveryOrders').where('phoneFrom', '==', normalizedPhone84).get();
         const deliveryOrderCount = deliveryOrderSnap0.size + deliveryOrderSnap84.size;
 
-        users.push({ id: doc.id, ...data, bookingCount, deliveryOrderCount, avatar: data.avt });
+        users.push({ id: doc.id, ...data, bookingCount, bookings, deliveryOrderCount, avatar: data.avt });
       }
     }
 
@@ -52,7 +60,7 @@ const index = async (req, res) => {
           const parts = fullName.trim().split(' ');
           return parts[parts.length - 1].toLowerCase();
         };
-        return getLastName(a.name).localeCompare(getLastName(b.name), 'vi', { sensitivity: 'base' });
+        return getLastName(a.name).localeCompare(getLastName(b.name), 'vi', { sensitivity: 'base' }); // so sánh và sắp xếp tên
       });
     } else if (sort === 'booking-desc') {
       users.sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0));
@@ -85,15 +93,15 @@ const store = async (req, res) => {
   }
 
   try {
-    const userRecord = await auth.createUser({
+    const userRecord = await auth.createUser({ // tạo user trong firebase authentication
       email,
       password,
       displayName: name,
       phoneNumber: formattedPhone,
     });
 
-    await db.collection('users').doc(userRecord.uid).set({
-      name,
+    await db.collection('users').doc(userRecord.uid).set({ // tạo user trong firestore
+      name, 
       email,
       gender: gender || null,
       birth: birth || null,
@@ -273,8 +281,8 @@ const exportExcel = async (req, res) => {
       users.sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0));
     }
 
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Users');
+    const workbook = new ExcelJS.Workbook(); // tạo excel
+    const worksheet = workbook.addWorksheet('Users'); // tạo sheet
 
     worksheet.columns = [
       { header: 'Họ tên', key: 'name', width: 30 },
