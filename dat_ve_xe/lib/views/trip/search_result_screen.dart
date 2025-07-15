@@ -297,6 +297,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -336,70 +337,82 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        vehicle.startTime,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Khởi hành',
-                        style: TextStyle(
-                          color: Colors.grey[200],
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.yellow[200],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          duration,
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          vehicle.startTime,
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 180,
-                        height: 1,
-                        color: Colors.grey[200],
-                      ),
-                    ],
+                        Text(
+                          'Khởi hành',
+                          style: TextStyle(
+                            color: Colors.grey[200],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      Text(
-                        vehicle.endTime,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.yellow[200],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            duration,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Đến nơi',
-                        style: TextStyle(
+                        const SizedBox(height: 4),
+                        Container(
+                          width: double.infinity,
+                          height: 1,
                           color: Colors.grey[200],
-                          fontSize: 14,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          vehicle.endTime,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Đến nơi',
+                          style: TextStyle(
+                            color: Colors.grey[200],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -500,11 +513,9 @@ class Ticket extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final ticketWidth = screenSize.width - margin * 2;
-    final ticketHeight = ticketWidth * 0.6;
-
     return Container(
       width: ticketWidth,
-      height: ticketHeight,
+      // Bỏ height cố định để nội dung tự co giãn
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(

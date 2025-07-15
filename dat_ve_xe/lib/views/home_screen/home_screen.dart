@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/views/trip/search_result_screen.dart';
-// import '../../models/news_model.dart';
-// import 'news_detail_screen.dart';
-// import '../../service/news_service.dart';
 import '../../widgets/news_carousel.dart';
 import '../../widgets/price_carousel.dart';
 
