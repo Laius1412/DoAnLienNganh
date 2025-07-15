@@ -340,6 +340,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     icon: Icons.credit_card,
                     title: 'Thẻ tín dụng/ghi nợ (Đang bảo trì)',
                     subtitle: 'Thanh toán qua thẻ Visa, Mastercard',
+                    enabled: false,
                   ),
                   _buildPaymentMethod(
                     icon: Icons.account_balance,
@@ -356,42 +357,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                       );
                     },
+                    enabled: true,
                   ),
                   _buildPaymentMethod(
                     icon: Icons.qr_code,
                     title: 'Ví điện tử (Đang bảo trì)',
                     subtitle: 'Thanh toán qua Momo, ZaloPay',
+                    enabled: false,
                   ),
                   const SizedBox(height: 32),
-
-                  // Payment button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handlePayment,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Text(
-                              'Thanh toán ngay',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -403,6 +377,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     required String title,
     required String subtitle,
     VoidCallback? onTap,
+    bool enabled = true,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -412,10 +387,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
       child: ListTile(
         leading: Icon(icon, color: const Color.fromARGB(255, 253, 109, 37)),
-        title: Text(title),
-        subtitle: Text(subtitle),
+        title: Text(title,
+           style: !enabled ? const TextStyle(color: Colors.grey) : null,
+        ),
+        subtitle: Text(subtitle,
+           style: !enabled ? const TextStyle(color: Colors.grey) : null,
+        ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap ?? _handlePayment,
+        onTap: enabled ? (onTap ?? _handlePayment) : null,
       ),
     );
   }

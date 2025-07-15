@@ -368,6 +368,12 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Future<void> _handleSelectSeat(String code) async {
+    if (_selectedSeats.length >= 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bạn chỉ có thể đặt tối đa 4 vé mỗi lần!')),
+      );
+      return;
+    }
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
