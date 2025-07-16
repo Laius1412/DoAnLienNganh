@@ -18,6 +18,22 @@ async function fetchInitialData() {
   regions = regionsRes?.data || [];
   users = usersRes?.data || [];
   orders = ordersRes?.data || [];
+
+  // Sắp xếp đơn hàng theo ngày tạo từ mới nhất tới cũ nhất
+  orders.sort((a, b) => {
+    const getTime = (createdAt) => {
+      if (!createdAt) return 0;
+      if (typeof createdAt === 'object' && createdAt.seconds) {
+        return createdAt.seconds * 1000;
+      }
+      if (!isNaN(createdAt)) {
+        return Number(createdAt);
+      }
+      return new Date(createdAt).getTime();
+    };
+    return getTime(b.createdAt) - getTime(a.createdAt);
+  });
+
   renderOrdersTable(orders);
 }
 
@@ -42,7 +58,17 @@ function renderOrdersTable(data) {
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
-  const d = new Date(dateStr);
+  let d;
+  // Nếu là Firestore timestamp object
+  if (typeof dateStr === 'object' && dateStr.seconds) {
+    d = new Date(dateStr.seconds * 1000);
+  } else if (!isNaN(dateStr)) {
+    d = new Date(Number(dateStr));
+  } else {
+    d = new Date(dateStr);
+  }
+  if (isNaN(d.getTime())) return '';
+  // Hiển thị ngày/tháng/năm và giờ/phút/giây
   return d.toLocaleString('vi-VN');
 }
 
@@ -161,4 +187,4 @@ btnSaveEdit.addEventListener('click', async () => {
 });
 
 // Khởi động
-window.addEventListener('DOMContentLoaded', fetchInitialData); 
+window.addEventListener('DOMContentLoaded', fetchInitialData);

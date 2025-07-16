@@ -120,13 +120,17 @@ module.exports = {
 
   // Lấy danh sách đơn hàng giao hàng
   getDeliveryOrders: async (req, res) => {
-    try {
-      const snapshot = await db.collection('deliveryOrders').get();
-      const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      res.status(200).json({ data: orders });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+    const snapshot = await db.collection('deliveryOrders').get();
+    const data = snapshot.docs.map(doc => {
+      const order = doc.data();
+      // Nếu order.createdAt là Firestore Timestamp
+      if (order.createdAt && order.createdAt.toDate) {
+        order.createdAt = order.createdAt.toDate().toISOString();
+      }
+      // Nếu là số thì giữ nguyên
+      return order;
+    });
+    res.json({ data });
   },
 
   // Lấy danh sách users

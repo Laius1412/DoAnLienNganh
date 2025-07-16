@@ -23,6 +23,7 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
   bool _isLoading = true;
   User? _currentUser;
   Map<String, String> _regionNames = {};
+  DateTime? _selectedDate; // Thêm biến lưu ngày được chọn
 
   @override
   void initState() {
@@ -63,8 +64,6 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
 
     try {
       print('Current user uid: ${_currentUser!.uid}');
-
-      // Thử truy vấn không có orderBy trước
       final querySnapshot =
           await _firestore
               .collection('deliveryOrders')
@@ -74,14 +73,6 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
       print(
         'Found ${querySnapshot.docs.length} orders for user ${_currentUser!.uid}',
       );
-
-      // In ra thông tin từng document để debug
-      for (var doc in querySnapshot.docs) {
-        print('Order id: ${doc.id}');
-        print('  userId: ${doc.data()['userId']}');
-        print('  createdAt: ${doc.data()['createdAt']}');
-        print('  status: ${doc.data()['status']}');
-      }
 
       final deliveries = <DeliveryOrder>[];
       for (var doc in querySnapshot.docs) {
@@ -93,6 +84,8 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
           print('Error parsing delivery ${doc.id}: $e');
         }
       }
+      // Sắp xếp theo ngày tạo mới nhất đến cũ nhất
+      deliveries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       setState(() {
         _deliveries = deliveries;
@@ -190,16 +183,76 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
         foregroundColor: Colors.white,
       ),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _deliveries.isEmpty
-              ? _buildEmptyState()
-              : RefreshIndicator(
-                onRefresh: _loadDeliveries,
-                child: _buildDeliveriesList(),
-              ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.calendar_today),
+                    label: Text(
+                      _selectedDate == null
+                          ? t.selectDate
+                          : '${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.year}',
+                    ),
+                    onPressed: () async {
+                      final now = DateTime.now();
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDate ?? now,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(now.year + 1),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _selectedDate = picked;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                if (_selectedDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    tooltip: 'Xóa lọc',
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = null;
+                      });
+                    },
+                  ),
+              ],
+            ),
+          ),
+          Expanded(
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _filteredDeliveries.isEmpty
+                    ? _buildEmptyState()
+                    : RefreshIndicator(
+                      onRefresh: _loadDeliveries,
+                      child: _buildDeliveriesList(),
+                    ),
+          ),
+        ],
+      ),
     );
+  }
+
+  // Lọc danh sách theo ngày được chọn
+  List<DeliveryOrder> get _filteredDeliveries {
+    if (_selectedDate == null) return _deliveries;
+    return _deliveries.where((d) {
+      return d.createdAt.year == _selectedDate!.year &&
+          d.createdAt.month == _selectedDate!.month &&
+          d.createdAt.day == _selectedDate!.day;
+    }).toList();
   }
 
   Widget _buildEmptyState() {
@@ -242,11 +295,12 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
     final t = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final deliveries = _filteredDeliveries;
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
-      itemCount: _deliveries.length,
+      itemCount: deliveries.length,
       itemBuilder: (context, index) {
-        final delivery = _deliveries[index];
+        final delivery = deliveries[index];
 
         return Container(
           margin: const EdgeInsets.only(bottom: 16.0),

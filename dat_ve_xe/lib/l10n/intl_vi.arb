@@ -209,5 +209,6 @@
     "dateSend": "Ngày gửi",
     "noDeliveries": "Không tìm thấy đơn hàng",
     "noDeliveriesMessage": "Bạn chưa tạo đơn hàng chuyển phát nào.",
-    "noNotifications": "Không có thông báo nào."
+    "noNotifications": "Không có thông báo nào.",
+    "selectDate": "Chọn ngày"
 }
