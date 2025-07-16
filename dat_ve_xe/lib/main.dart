@@ -14,6 +14,7 @@ import 'service/notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'views/notification/notification_screen.dart';
 import 'service/notification_listener_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // Import background handler
 import 'service/notification_service.dart'
@@ -31,6 +32,23 @@ void main() async {
 
   // Khởi tạo notification listener service
   NotificationListenerService.initialize();
+
+  // Tạo notification channel cho Android
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'delivery_notifications', // Phải trùng với channelId bên web admin/server
+    'Thông báo đơn hàng', // Tên hiển thị (tùy ý)
+    description: 'Thông báo trạng thái đơn giao hàng', // Mô tả (tùy ý)
+    importance: Importance.high,
+  );
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >()
+      ?.createNotificationChannel(channel);
 
   runApp(
     ChangeNotifierProvider(
