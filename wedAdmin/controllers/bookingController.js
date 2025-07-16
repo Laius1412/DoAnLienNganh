@@ -52,6 +52,9 @@ exports.getAllBookings = async (req, res) => {
       filteredBookings = allBookings.filter(booking => booking.statusBooking === 'confirmed');
     }
     
+    // Đếm số lượng booking đang chờ phê duyệt
+    const pendingCount = allBookings.filter(booking => booking.statusBooking === 'pending').length;
+
     // Lọc theo tìm kiếm
     if (phone) {
       filteredBookings = filteredBookings.filter(booking => 
@@ -84,7 +87,8 @@ exports.getAllBookings = async (req, res) => {
       tab,
       phone,
       date,
-      time
+      time,
+      pendingCount // truyền thêm biến này
     });
   } catch (error) {
     console.error('Error getting bookings:', error);
@@ -95,7 +99,8 @@ exports.getAllBookings = async (req, res) => {
       tab: 'pending',
       phone: '',
       date: '',
-      time: ''
+      time: '',
+      pendingCount: 0 // fallback khi lỗi
     });
   }
 };

@@ -27,6 +27,13 @@ class PriceCarousel extends StatelessWidget {
       },
     ];
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? Colors.grey[900] : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.white70 : Colors.black87;
+    final iconColor = isDark ? Colors.orange[200] : Colors.orange;
+    final imageErrorColor = isDark ? Colors.grey[800] : Colors.grey[300];
+    final iconErrorColor = isDark ? Colors.grey[400] : Colors.grey;
 
     return SizedBox(
       height: 180,
@@ -39,10 +46,10 @@ class PriceCarousel extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
+              color: cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: isDark ? Colors.black54 : Colors.black12,
                   blurRadius: 6,
                   offset: Offset(0, 2),
                 ),
@@ -61,8 +68,8 @@ class PriceCarousel extends StatelessWidget {
                       return Container(
                         width: 110,
                         height: 180,
-                        color: Colors.grey[300],
-                        child: Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                        color: imageErrorColor,
+                        child: Icon(Icons.broken_image, color: iconErrorColor, size: 40),
                       );
                     },
                   ),
@@ -76,33 +83,33 @@ class PriceCarousel extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.swap_vert),
+                            Icon(Icons.swap_vert, color: iconColor),
                             SizedBox(width: 6),
                             Text(
                               item['route']!,
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                             ),
                           ],
                         ),
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.directions_transit),
+                            Icon(Icons.directions_transit, color: iconColor),
                             SizedBox(width: 6),
                             Text(
                               item['type'] ?? '',
-                              style: TextStyle(fontSize: 15, color: Colors.black87),
+                              style: TextStyle(fontSize: 15, color: subTextColor),
                             ),
                           ],
                         ),
                         SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(Icons.confirmation_number),
+                            Icon(Icons.confirmation_number, color: iconColor),
                             SizedBox(width: 6),
                             Text(
                             item['price']!,
-                            style: TextStyle(fontSize: 16, color: Colors.orange, fontWeight: FontWeight.w600),
+                            style: TextStyle(fontSize: 16, color: iconColor, fontWeight: FontWeight.w600),
                           ),
                           ],
                         ),

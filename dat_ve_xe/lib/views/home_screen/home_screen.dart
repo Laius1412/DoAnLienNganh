@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/views/trip/search_result_screen.dart';
-// import '../../models/news_model.dart';
-// import 'news_detail_screen.dart';
-// import '../../service/news_service.dart';
 import '../../widgets/news_carousel.dart';
 import '../../widgets/price_carousel.dart';
 
@@ -38,23 +35,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showLocationPicker(bool isStart) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.grey[900] : Colors.white;
+    final headerColor = Color.fromARGB(255, 253, 109, 37);
+    final textColor = isDark ? Colors.white : Colors.black;
+    final selectedColor = Color.fromARGB(255, 253, 109, 37);
+    final borderColor = isDark ? Colors.grey[700] : Colors.grey[300];
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.7,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 253, 109, 37),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              decoration: BoxDecoration(
+                color: headerColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,28 +85,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   final isSelected = isStart 
                       ? location == _selectedStart 
                       : location == _selectedDestination;
-                  return ListTile(
-                    title: Text(
-                      location,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? Color.fromARGB(255, 253, 109, 37) : Colors.black,
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: borderColor!),
                       ),
+                      color: isSelected ? selectedColor.withOpacity(isDark ? 0.15 : 0.08) : Colors.transparent,
                     ),
-                    trailing: isSelected 
-                        ? const Icon(Icons.check, color: Color.fromARGB(255, 253, 109, 37))
-                        : null,
-                    onTap: () {
-                      setState(() {
-                        if (isStart) {
-                          _selectedStart = location;
-                        } else {
-                          _selectedDestination = location;
-                        }
-                      });
-                      Navigator.pop(context);
-                    },
+                    child: ListTile(
+                      title: Text(
+                        location,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected ? selectedColor : textColor,
+                        ),
+                      ),
+                      trailing: isSelected 
+                          ? Icon(Icons.check, color: selectedColor)
+                          : null,
+                      onTap: () {
+                        setState(() {
+                          if (isStart) {
+                            _selectedStart = location;
+                          } else {
+                            _selectedDestination = location;
+                          }
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
                   );
                 },
               ),
@@ -117,8 +128,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('EEEE, dd/MM/yyyy', 'vi');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final headerColor = isDark ? Color.fromARGB(255, 253, 109, 37) : Color.fromARGB(255, 253, 109, 37);
+    final cardColor = isDark ? Colors.grey[900] : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.white70 : Colors.black87;
+    final accentColor = isDark ? Color.fromARGB(255, 253, 109, 37) : Color.fromARGB(255, 253, 109, 37);
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -126,18 +144,17 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 345,
               child: Stack(
                 children: [
-                  // Header (thanh màu cam)
+                  // Header (thanh màu cam/dark)
                   Container(
                     height: 80,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 253, 109, 37),
-                      borderRadius: BorderRadius.only(
+                      color: headerColor,
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(32),
                         bottomRight: Radius.circular(32),
                       ),
                     ),
-                    // Nếu có logo, chuông, thêm vào đây
                   ),
                   // Card tìm kiếm chuyến đi, nổi lên header
                   Positioned(
@@ -145,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     right: 20,
                     top: 30,
                     child: Card(
+                      color: cardColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -156,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Hộp chọn điểm đi & đến
                             Container(
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 253, 109, 37),
+                                color: accentColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               padding: const EdgeInsets.all(16),
@@ -208,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Hộp chọn ngày
                             Container(
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 253, 109, 37),
+                                color: accentColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -238,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color.fromARGB(255, 253, 109, 37),
+                                  backgroundColor: accentColor,
                                   foregroundColor: Colors.white,
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
@@ -292,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Tin tức',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: subTextColor),
                 ),
               ),
             ),
@@ -304,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Giá vé',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: subTextColor),
                 ),
               ),
             ),

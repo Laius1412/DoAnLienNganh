@@ -9,6 +9,12 @@ class NewsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double totalHeight = 280;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? Colors.grey[900] : Colors.white;
+    final titleColor = isDark ? Colors.white : Colors.black;
+    final shadowColor = isDark ? Colors.black54 : Colors.black12;
+    final imageErrorColor = isDark ? Colors.grey[800] : Colors.grey[300];
+    final iconErrorColor = isDark ? Colors.grey[400] : Colors.grey;
     return FutureBuilder<List<NewsModel>>(
       future: NewsService.fetchNews(),
       builder: (context, snapshot) {
@@ -43,7 +49,7 @@ class NewsCarousel extends StatelessWidget {
                     color: Colors.transparent,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black12,
+                        color: shadowColor,
                         blurRadius: 8,
                         offset: Offset(0, 4),
                       ),
@@ -63,8 +69,8 @@ class NewsCarousel extends StatelessWidget {
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 width: double.infinity,
-                                color: Colors.grey[300],
-                                child: Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                                color: imageErrorColor,
+                                child: Icon(Icons.broken_image, color: iconErrorColor, size: 40),
                               );
                             },
                           ),
@@ -76,7 +82,7 @@ class NewsCarousel extends StatelessWidget {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cardColor,
                             borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -85,7 +91,7 @@ class NewsCarousel extends StatelessWidget {
                             child: Text(
                               news.title,
                               style: TextStyle(
-                                color: Colors.black,
+                                color: titleColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 height: 1.3,

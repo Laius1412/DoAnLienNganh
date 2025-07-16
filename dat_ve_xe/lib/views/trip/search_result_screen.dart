@@ -31,6 +31,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   late Future<List<Vehicle>> _vehicleFuture;
   Map<String, int> _availableSeats = {};
 
+  // Thêm các biến trạng thái cho sắp xếp và lọc
+  String _sortOption = 'Giờ sớm nhất';
+  String _timeFilter = 'Tất cả';
+  String _vehicleTypeFilter = 'Tất cả';
+  List<String> _vehicleTypes = ['Tất cả'];
+
   @override
   void initState() {
     super.initState();
@@ -55,14 +61,18 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           final availableSeats = totalSeats - bookedSeats.length;
           _availableSeats[vehicle.id] = availableSeats;
         }
-        
-        // Sắp xếp xe theo giờ khởi hành
+        // Cập nhật danh sách loại xe
+        final types = vehicles.map((v) => v.vehicleType?.nameType ?? '').toSet().toList();
+        types.removeWhere((e) => e.isEmpty);
+        setState(() {
+          _vehicleTypes = ['Tất cả', ...types];
+        });
+        // Sắp xếp mặc định theo giờ khởi hành
         vehicles.sort((a, b) {
           final timeA = DateFormat('HH:mm').parse(a.startTime);
           final timeB = DateFormat('HH:mm').parse(b.startTime);
           return timeA.compareTo(timeB);
         });
-        
         return vehicles;
       });
     });
@@ -100,59 +110,181 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final cardColor = isDark ? Colors.grey[900] : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final ticketBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
 
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text('Danh sách chuyến (${dateFormat.format(widget.selectedDate)})'),
-        backgroundColor: const Color.fromARGB(255, 253, 109, 37),
+        backgroundColor: ticketBg,
         foregroundColor: Colors.white,
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadVehicles,
-        child: FutureBuilder<List<Vehicle>>(
-          future: _vehicleFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('Lỗi: ${snapshot.error}'));
-            }
-
-            final vehicles = snapshot.data ?? [];
-
-            if (vehicles.isEmpty) {
-              return const Center(child: Text('Không tìm thấy xe phù hợp.'));
-            }
-
-            return ListView.builder(
-              itemCount: vehicles.length,
-              itemBuilder: (context, index) {
-                final vehicle = vehicles[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+      body: Column(
+        children: [
+          // UI mới: 3 nút lớn, mỗi nút mở BottomSheet
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _FilterButton(
+                    icon: Icons.sort,
+                    label: 'Sắp xếp',
+                    value: _sortOption,
+                    onTap: () => _showFilterBottomSheet(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => BookingScreen(
-                          vehicle: vehicle,
-                          startLocation: widget.startLocation,
-                          destination: widget.destination,
-                          selectedDate: widget.selectedDate,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    child: _buildVehicleCard(vehicle),
+                      title: 'Sắp xếp',
+                      options: [
+                        'Giờ sớm nhất',
+                        'Nhiều ghế trống',
+                        'Giá vé thấp nhất',
+                      ],
+                      current: _sortOption,
+                      onSelected: (val) => setState(() => _sortOption = val),
+                    ),
                   ),
-                );
-              },
-            );
-          },
-        ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _FilterButton(
+                    icon: Icons.access_time,
+                    label: 'Khung giờ',
+                    value: _timeFilter,
+                    onTap: () => _showFilterBottomSheet(
+                      context,
+                      title: 'Khung giờ',
+                      options: [
+                        'Tất cả',
+                        '0h-12h',
+                        '12h-19h',
+                        '19h-24h',
+                      ],
+                      current: _timeFilter,
+                      onSelected: (val) => setState(() => _timeFilter = val),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _FilterButton(
+                    icon: Icons.directions_bus,
+                    label: 'Loại xe',
+                    value: _vehicleTypeFilter,
+                    onTap: () => _showFilterBottomSheet(
+                      context,
+                      title: 'Loại xe',
+                      options: _vehicleTypes,
+                      current: _vehicleTypeFilter,
+                      onSelected: (val) => setState(() => _vehicleTypeFilter = val),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Danh sách xe
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _loadVehicles,
+              child: FutureBuilder<List<Vehicle>>(
+                future: _vehicleFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Lỗi:  [${snapshot.error}'));
+                  }
+
+                  final vehicles = snapshot.data ?? [];
+
+                  if (vehicles.isEmpty) {
+                    return const Center(child: Text('Không tìm thấy xe phù hợp.'));
+                  }
+
+                  // Áp dụng lọc khung giờ
+                  List<Vehicle> filtered = vehicles.where((vehicle) {
+                    // Lọc theo loại xe
+                    if (_vehicleTypeFilter != 'Tất cả' && (vehicle.vehicleType?.nameType ?? '') != _vehicleTypeFilter) {
+                      return false;
+                    }
+                    // Lọc theo khung giờ
+                    if (_timeFilter != 'Tất cả') {
+                      final time = DateFormat('HH:mm').parse(vehicle.startTime);
+                      final hour = time.hour;
+                      if (_timeFilter == '0h-12h' && (hour < 0 || hour >= 12)) return false;
+                      if (_timeFilter == '12h-19h' && (hour < 12 || hour >= 19)) return false;
+                      if (_timeFilter == '19h-24h' && (hour < 19 || hour >= 24)) return false;
+                    }
+                    // Lọc chuyến đã khởi hành nếu là hôm nay
+                    final now = DateTime.now();
+                    if (widget.selectedDate.year == now.year &&
+                        widget.selectedDate.month == now.month &&
+                        widget.selectedDate.day == now.day) {
+                      final start = DateFormat('HH:mm').parse(vehicle.startTime);
+                      final vehicleDateTime = DateTime(
+                        now.year, now.month, now.day, start.hour, start.minute);
+                      if (vehicleDateTime.isBefore(now)) return false;
+                    }
+                    return true;
+                  }).toList();
+
+                  // Áp dụng sắp xếp
+                  if (_sortOption == 'Giờ sớm nhất') {
+                    filtered.sort((a, b) {
+                      final timeA = DateFormat('HH:mm').parse(a.startTime);
+                      final timeB = DateFormat('HH:mm').parse(b.startTime);
+                      return timeA.compareTo(timeB);
+                    });
+                  } else if (_sortOption == 'Nhiều ghế trống') {
+                    filtered.sort((a, b) {
+                      final seatsA = _availableSeats[a.id] ?? 0;
+                      final seatsB = _availableSeats[b.id] ?? 0;
+                      return seatsB.compareTo(seatsA);
+                    });
+                  } else if (_sortOption == 'Giá vé thấp nhất') {
+                    filtered.sort((a, b) => a.price.compareTo(b.price));
+                  }
+
+                  if (filtered.isEmpty) {
+                    return const Center(child: Text('Không có chuyến xe phù hợp với bộ lọc.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      final vehicle = filtered[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BookingScreen(
+                                vehicle: vehicle,
+                                startLocation: widget.startLocation,
+                                destination: widget.destination,
+                                selectedDate: widget.selectedDate,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          child: _buildVehicleCard(vehicle),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -161,16 +293,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final priceFormatted = NumberFormat("#,###", "vi_VN").format(vehicle.price);
     final duration = calculateDuration(vehicle.startTime, vehicle.endTime);
     final availableSeats = _availableSeats[vehicle.id] ?? 0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ticketBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
 
     return Ticket(
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 253, 109, 37),
+          color: ticketBg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -210,70 +345,82 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        vehicle.startTime,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Khởi hành',
-                        style: TextStyle(
-                          color: Colors.grey[200],
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.yellow[200],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          duration,
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          vehicle.startTime,
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 180,
-                        height: 1,
-                        color: Colors.grey[200],
-                      ),
-                    ],
+                        Text(
+                          'Khởi hành',
+                          style: TextStyle(
+                            color: Colors.grey[200],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      Text(
-                        vehicle.endTime,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.yellow[200],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            duration,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Đến nơi',
-                        style: TextStyle(
+                        const SizedBox(height: 4),
+                        Container(
+                          width: double.infinity,
+                          height: 1,
                           color: Colors.grey[200],
-                          fontSize: 14,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          vehicle.endTime,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Đến nơi',
+                          style: TextStyle(
+                            color: Colors.grey[200],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -374,11 +521,9 @@ class Ticket extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final ticketWidth = screenSize.width - margin * 2;
-    final ticketHeight = ticketWidth * 0.6;
-
     return Container(
       width: ticketWidth,
-      height: ticketHeight,
+      // Bỏ height cố định để nội dung tự co giãn
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -464,4 +609,108 @@ class TicketClipper extends CustomClipper<Path> {
       old.clipRadius != clipRadius ||
       old.smallClipRadius != smallClipRadius ||
       old.numberOfSmallClips != numberOfSmallClips;
+}
+
+// Thêm widget nút bộ lọc và hàm show bottom sheet
+
+// Nút bộ lọc
+class _FilterButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+  const _FilterButton({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFd6D25),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.07),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 24),
+            const SizedBox(height: 4),
+            Text(label, style: const TextStyle(color: Colors.white, fontSize: 13)),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Hàm show bottom sheet chọn bộ lọc
+void _showFilterBottomSheet(
+  BuildContext context, {
+  required String title,
+  required List<String> options,
+  required String current,
+  required ValueChanged<String> onSelected,
+}) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    backgroundColor: Colors.white,
+    builder: (ctx) {
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFd6D25),
+                ),
+              ),
+            ),
+            ...options.map((e) => ListTile(
+                  title: Text(e, style: TextStyle(
+                    color: e == current ? const Color(0xFFFd6D25) : Colors.black,
+                    fontWeight: e == current ? FontWeight.bold : FontWeight.normal,
+                  )),
+                  trailing: e == current
+                      ? const Icon(Icons.check, color: Color(0xFFFd6D25))
+                      : null,
+                  onTap: () {
+                    onSelected(e);
+                    Navigator.pop(context);
+                  },
+                )),
+            const SizedBox(height: 12),
+          ],
+        ),
+      );
+    },
+  );
 }
