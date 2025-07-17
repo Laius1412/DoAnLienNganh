@@ -15,6 +15,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'views/notification/notification_screen.dart';
 import 'service/notification_listener_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'service/push_notification_service.dart';
 
 // Import background handler
 import 'service/notification_service.dart'
@@ -32,6 +33,9 @@ void main() async {
 
   // Khởi tạo notification listener service
   NotificationListenerService.initialize();
+
+  // Khởi tạo push notification service (hiện local notification khi nhận FCM)
+  await PushNotificationService.initialize();
 
   // Tạo notification channel cho Android
   const AndroidNotificationChannel channel = AndroidNotificationChannel(

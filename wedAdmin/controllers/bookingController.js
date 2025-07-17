@@ -1,4 +1,5 @@
 const { db } = require("../firebase/config"); // Lấy đúng biến db đã export
+const admin = require('firebase-admin');
 
 exports.getAllBookings = async (req, res) => {
   try {
@@ -157,6 +158,31 @@ exports.getBookingDetail = async (req, res) => {
   }
 };
 
+// Hàm gửi push notification FCM
+async function sendPushNotificationToUser(userId, title, body, data = {}) {
+  // Lấy fcmToken từ Firestore
+  const userDoc = await db.collection('users').doc(userId).get();
+  if (!userDoc.exists) return;
+  const fcmToken = userDoc.data().fcmToken;
+  if (!fcmToken) return;
+
+  const message = {
+    token: fcmToken,
+    notification: {
+      title: title,
+      body: body,
+    },
+    data: data,
+  };
+
+  try {
+    const response = await admin.messaging().send(message);
+    console.log('Successfully sent FCM:', response);
+  } catch (error) {
+    console.error('Error sending FCM:', error);
+  }
+}
+
 // Xác nhận đặt vé và gửi thông báo
 exports.confirmBooking = async (req, res) => {
   try {
@@ -180,12 +206,19 @@ exports.confirmBooking = async (req, res) => {
         userId: userId,
         title: 'Vé đã được xác nhận',
         content: `Vé của bạn (ID: ${bookingId}) đã được xác nhận thành công!`,
-        timestamp: new Date(), // Nếu dùng admin SDK thì dùng FieldValue.serverTimestamp()
+        timestamp: new Date(),
         isRead: false,
         type: 'booking_confirmed',
         bookingId: bookingId,
       });
       console.log('Đã ghi xong thông báo bookingNotice');
+      // Gửi push notification FCM
+      await sendPushNotificationToUser(
+        userId,
+        'Vé đã được xác nhận',
+        `Vé của bạn (ID: ${bookingId}) đã được xác nhận thành công!`,
+        { bookingId }
+      );
     }
 
     res.redirect('/bookings/' + bookingId);
