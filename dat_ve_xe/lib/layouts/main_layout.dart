@@ -10,6 +10,7 @@ import 'package:dat_ve_xe/widgets/netwwork_status_banner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../service/notification_listener_service.dart';
+import 'dart:async'; // Import for StreamSubscription
 
 class MainLayout extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -32,6 +33,10 @@ class _MainLayoutState extends State<MainLayout> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _unreadCount = 0;
   User? _currentUser;
+  int _deliveryUnread = 0;
+  int _bookingUnread = 0;
+  StreamSubscription? _unreadDeliverySub;
+  StreamSubscription? _unreadBookingSub;
 
   @override
   void initState() {
@@ -47,16 +52,13 @@ class _MainLayoutState extends State<MainLayout> {
       PersonalScreen(onLanguageChanged: widget.onLanguageChanged),
     ];
 
-    // Khởi tạo notification listener service
-    NotificationListenerService.onUnreadCountChanged = (count) {
-      setState(() {
-        _unreadCount = count;
-      });
-    };
+    // Lắng nghe realtime số lượng thông báo chưa đọc từ cả hai collection
+    _listenUnreadNotifications();
 
     _auth.authStateChanges().listen((user) {
       if (user != null && user.uid != _currentUser?.uid) {
         _currentUser = user;
+        _listenUnreadNotifications(); // Lắng nghe lại khi user đổi
       } else if (user == null) {
         setState(() {
           _currentUser = null;
@@ -64,6 +66,68 @@ class _MainLayoutState extends State<MainLayout> {
         });
       }
     });
+  }
+
+  void _listenUnreadNotifications() {
+    _unreadDeliverySub?.cancel();
+    _unreadBookingSub?.cancel();
+    final user = _auth.currentUser;
+    if (user == null) {
+      setState(() => _unreadCount = 0);
+      return;
+    }
+    // Lắng nghe deliveryNotice
+    _unreadDeliverySub = _firestore
+        .collection('deliveryNotice')
+        .where('userId', isEqualTo: user.uid)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .listen((snapshot) {
+      _deliveryUnread = snapshot.docs.length;
+      setState(() {
+        _unreadCount = _deliveryUnread + _bookingUnread;
+      });
+    });
+    // Lắng nghe bookingNotice
+    _unreadBookingSub = _firestore
+        .collection('bookingNotice')
+        .where('userId', isEqualTo: user.uid)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .listen((bookingSnap) {
+      _bookingUnread = bookingSnap.docs.length;
+      setState(() {
+        _unreadCount = _deliveryUnread + _bookingUnread;
+      });
+    });
+  }
+
+  Stream<int> get _unreadCountStream {
+    final user = _auth.currentUser;
+    if (user == null) return Stream.value(0);
+    final deliveryStream = _firestore
+        .collection('deliveryNotice')
+        .where('userId', isEqualTo: user.uid)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map((snap) => snap.docs.length);
+    final bookingStream = _firestore
+        .collection('bookingNotice')
+        .where('userId', isEqualTo: user.uid)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map((snap) => snap.docs.length);
+    return deliveryStream.asyncCombineLatestMain<int, int>(
+      bookingStream,
+      (delivery, booking) => delivery + booking,
+    );
+  }
+
+  @override
+  void dispose() {
+    _unreadDeliverySub?.cancel();
+    _unreadBookingSub?.cancel();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -127,13 +191,10 @@ class _MainLayoutState extends State<MainLayout> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Nút đổi theme bên trái
-
                       // Logo hoặc tên app (căn giữa)
                       SizedBox(
-                        height:
-                            70, // Đảm bảo banner có kích thước giống với thanh AppBar
-                        width: 200, // Đặt chiều rộng mong muốn
+                        height: 70,
+                        width: 200,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
                           child: Image.asset(
@@ -142,59 +203,63 @@ class _MainLayoutState extends State<MainLayout> {
                           ),
                         ),
                       ),
-
                       // Icon thông báo bên phải
                       Align(
                         alignment: Alignment.centerRight,
                         child: Stack(
                           children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.notifications,
-                                color:
-                                    Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.black
-                                        : Colors.white,
-                              ),
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => NotificationScreen(
-                                          onNotificationsUpdated: () {
-                                            // Real-time listener sẽ tự động cập nhật
-                                          },
+                            StreamBuilder<int>(
+                              stream: _unreadCountStream,
+                              builder: (context, snapshot) {
+                                final unread = snapshot.data ?? 0;
+                                return Stack(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.notifications,
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => NotificationScreen(
+                                              onNotificationsUpdated: () {},
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    if (unread > 0)
+                                      Positioned(
+                                        right: 8,
+                                        top: 8,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          constraints: const BoxConstraints(
+                                            minWidth: 16,
+                                            minHeight: 16,
+                                          ),
+                                          child: Text(
+                                            '$unread',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
-                                  ),
+                                      ),
+                                  ],
                                 );
                               },
                             ),
-                            if (_unreadCount > 0)
-                              Positioned(
-                                right: 8,
-                                top: 8,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 16,
-                                    minHeight: 16,
-                                  ),
-                                  child: Text(
-                                    '$_unreadCount',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
                           ],
                         ),
                       ),
@@ -275,5 +340,31 @@ class _MainLayoutState extends State<MainLayout> {
         ],
       ),
     );
+  }
+}
+
+// Đổi tên extension để tránh xung đột
+extension AsyncCombineLatestMainLayout<T> on Stream<T> {
+  Stream<R> asyncCombineLatestMain<S, R>(Stream<S> other, R Function(T, S) combiner) {
+    late T latestT;
+    late S latestS;
+    bool hasT = false;
+    bool hasS = false;
+    final controller = StreamController<R>();
+    final subT = this.listen((t) {
+      latestT = t;
+      hasT = true;
+      if (hasS) controller.add(combiner(latestT, latestS));
+    });
+    final subS = other.listen((s) {
+      latestS = s;
+      hasS = true;
+      if (hasT) controller.add(combiner(latestT, latestS));
+    });
+    controller.onCancel = () {
+      subT.cancel();
+      subS.cancel();
+    };
+    return controller.stream;
   }
 }

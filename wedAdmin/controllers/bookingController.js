@@ -157,11 +157,37 @@ exports.getBookingDetail = async (req, res) => {
   }
 };
 
-// Xác nhận đặt vé
+// Xác nhận đặt vé và gửi thông báo
 exports.confirmBooking = async (req, res) => {
   try {
     const bookingId = req.params.id;
+
+    // 1. Update trạng thái booking
     await db.collection('bookings').doc(bookingId).update({ statusBooking: 'confirmed' });
+
+    // 2. Lấy thông tin booking để lấy userId
+    const bookingDoc = await db.collection('bookings').doc(bookingId).get();
+    if (!bookingDoc.exists) {
+      return res.status(404).send('Không tìm thấy booking');
+    }
+    const bookingData = bookingDoc.data();
+    const userId = bookingData.userId;
+
+    // 3. Ghi thông báo vào collection bookingNotice
+    if (userId) {
+      console.log('Chuẩn bị ghi thông báo cho user:', userId);
+      await db.collection('bookingNotice').add({
+        userId: userId,
+        title: 'Vé đã được xác nhận',
+        content: `Vé của bạn (ID: ${bookingId}) đã được xác nhận thành công!`,
+        timestamp: new Date(), // Nếu dùng admin SDK thì dùng FieldValue.serverTimestamp()
+        isRead: false,
+        type: 'booking_confirmed',
+        bookingId: bookingId,
+      });
+      console.log('Đã ghi xong thông báo bookingNotice');
+    }
+
     res.redirect('/bookings/' + bookingId);
   } catch (error) {
     console.error('Error confirming booking:', error);

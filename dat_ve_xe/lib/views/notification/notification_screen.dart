@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/notification_model.dart';
 import '../../widgets/notification_bell.dart';
 import '../../widgets/notification_list.dart';
+import 'dart:async';
 
 class NotificationScreen extends StatefulWidget {
   final VoidCallback? onNotificationsUpdated;
@@ -50,28 +51,51 @@ class _NotificationScreenState extends State<NotificationScreen> {
       _isLoading = true;
     });
     try {
-      print('Current user: ${_currentUser?.uid}');
-      print('Loading notifications...');
-      final snapshot =
-          await _firestore
-              .collection('deliveryNotice')
-              .where('userId', isEqualTo: _currentUser!.uid)
-              .orderBy('timestamp', descending: true)
-              .get();
-      print('Found ${snapshot.docs.length} notifications');
-      final List<AppNotification> loadedNotifications = [];
-      for (var doc in snapshot.docs) {
-        print('Notification: ${doc.data()}');
+      // Lấy deliveryNotice
+      final deliverySnapshot = await _firestore
+          .collection('deliveryNotice')
+          .where('userId', isEqualTo: _currentUser!.uid)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      final List<AppNotification> loadedNotifications = deliverySnapshot.docs.map((doc) {
         final data = doc.data();
-        loadedNotifications.add(
-          AppNotification(
-            id: doc.id,
-            title: data['title'] ?? '',
-            content: data['body'] ?? '',
-            isRead: data['isRead'] ?? false,
-          ),
+        return AppNotification(
+          id: doc.id,
+          title: data['title'] ?? '',
+          content: data['body'] ?? data['content'] ?? '',
+          isRead: data['isRead'] ?? false,
+          timestamp: data['timestamp'] != null ? DateTime.parse(data['timestamp']) : DateTime.now(),
+          source: 'deliveryNotice',
         );
-      }
+      }).toList();
+
+      // Lấy bookingNotice
+      final bookingSnapshot = await _firestore
+          .collection('bookingNotice')
+          .where('userId', isEqualTo: _currentUser!.uid)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      loadedNotifications.addAll(bookingSnapshot.docs.map((doc) {
+        final data = doc.data();
+        return AppNotification(
+          id: doc.id,
+          title: data['title'] ?? '',
+          content: data['content'] ?? '',
+          isRead: data['isRead'] ?? false,
+          timestamp: data['timestamp'] != null ? DateTime.parse(data['timestamp']) : DateTime.now(),
+          source: 'bookingNotice',
+        );
+      }));
+
+      // Sort tất cả theo timestamp mới nhất
+      loadedNotifications.sort((a, b) {
+        final at = a.timestamp ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bt = b.timestamp ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bt.compareTo(at);
+      });
+
       setState(() {
         notifications = loadedNotifications;
         _isLoading = false;
@@ -85,7 +109,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Future<void> markAsRead(AppNotification notification) async {
     try {
-      await _firestore.collection('deliveryNotice').doc(notification.id).update(
+      final collection = notification.source ?? 'deliveryNotice';
+      await _firestore.collection(collection).doc(notification.id).update(
         {'isRead': true},
       );
       setState(() {
@@ -97,31 +122,127 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void _onNotificationTap(AppNotification notification) async {
     await markAsRead(notification);
     if (mounted) {
-      Navigator.pushNamed(context, '/myDeliveries');
+      if (notification.source == 'bookingNotice') {
+        Navigator.pushNamed(context, '/myticket');
+      } else {
+        Navigator.pushNamed(context, '/myDeliveries');
+      }
     }
+  }
+
+  Stream<List<AppNotification>> get _notificationsStream {
+    if (_currentUser == null) return Stream<List<AppNotification>>.empty();
+    final deliveryStream = _firestore
+        .collection('deliveryNotice')
+        .where('userId', isEqualTo: _currentUser!.uid)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              return AppNotification(
+                id: doc.id,
+                title: data['title'] ?? '',
+                content: data['body'] ?? data['content'] ?? '',
+                isRead: data['isRead'] ?? false,
+                timestamp: data['timestamp'] != null ? (data['timestamp'] is Timestamp ? (data['timestamp'] as Timestamp).toDate() : DateTime.tryParse(data['timestamp'].toString()) ?? DateTime.now()) : DateTime.now(),
+                source: 'deliveryNotice',
+              );
+            }).toList());
+    final bookingStream = _firestore
+        .collection('bookingNotice')
+        .where('userId', isEqualTo: _currentUser!.uid)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              return AppNotification(
+                id: doc.id,
+                title: data['title'] ?? '',
+                content: data['content'] ?? '',
+                isRead: data['isRead'] ?? false,
+                timestamp: data['timestamp'] != null ? (data['timestamp'] is Timestamp ? (data['timestamp'] as Timestamp).toDate() : DateTime.tryParse(data['timestamp'].toString()) ?? DateTime.now()) : DateTime.now(),
+                source: 'bookingNotice',
+              );
+            }).toList());
+    return deliveryStream.asyncCombineLatest<List<AppNotification>, List<AppNotification>>(
+      bookingStream,
+      (delivery, booking) {
+        final all = [...delivery, ...booking];
+        all.sort((a, b) {
+          final at = a.timestamp ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bt = b.timestamp ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return bt.compareTo(at);
+        });
+        return all;
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    int unreadCount = notifications.where((n) => !n.isRead).length;
+    debugPrint('DEBUG: Current userId: ${_currentUser?.uid}');
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.notifications),
-        actions: [NotificationBell(unreadCount: unreadCount)],
+        actions: [
+          StreamBuilder<List<AppNotification>>(
+            stream: _notificationsStream,
+            builder: (context, snapshot) {
+              final unreadCount = snapshot.data?.where((n) => !n.isRead).length ?? 0;
+              return NotificationBell(unreadCount: unreadCount);
+            },
+          ),
+        ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadNotifications,
-        child:
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : notifications.isEmpty
-                ? Center(child: Text(loc.noNotifications))
-                : NotificationList(
-                  notifications: notifications,
-                  onNotificationTap: _onNotificationTap,
-                ),
+      body: StreamBuilder<List<AppNotification>>(
+        stream: _notificationsStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final notifications = snapshot.data ?? [];
+          Future.microtask(() {
+            debugPrint('DEBUG: Received notifications: ${notifications.length}');
+            for (var n in notifications) {
+              debugPrint('DEBUG: Notification - id: ${n.id}, title: ${n.title}, isRead: ${n.isRead}, timestamp: ${n.timestamp}, source: ${n.source}');
+            }
+          });
+          if (notifications.isEmpty) {
+            return Center(child: Text(loc.noNotifications));
+          }
+          return NotificationList(
+            notifications: notifications,
+            onNotificationTap: _onNotificationTap,
+          );
+        },
       ),
     );
+  }
+}
+
+// Extension đặt ngoài class
+extension AsyncCombineLatestExtension<T> on Stream<T> {
+  Stream<R> asyncCombineLatest<S, R>(Stream<S> other, R Function(T, S) combiner) {
+    late T latestT;
+    late S latestS;
+    bool hasT = false;
+    bool hasS = false;
+    final controller = StreamController<R>();
+    final subT = this.listen((t) {
+      latestT = t;
+      hasT = true;
+      if (hasS) controller.add(combiner(latestT, latestS));
+    });
+    final subS = other.listen((s) {
+      latestS = s;
+      hasS = true;
+      if (hasT) controller.add(combiner(latestT, latestS));
+    });
+    controller.onCancel = () {
+      subT.cancel();
+      subS.cancel();
+    };
+    return controller.stream;
   }
 }

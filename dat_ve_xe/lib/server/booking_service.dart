@@ -317,9 +317,15 @@ class BookingService {
       await _firestore.collection('bookings').doc(bookingId).update({
         'statusBooking': newStatus,
       });
+
+      print('booking.statusBooking: ${booking.statusBooking}, newStatus: ${newStatus}');
+      if (booking.statusBooking == 'pending' && newStatus == 'confirmed') {
+        print('Gọi sendBookingConfirmedNotification cho bookingId: ${booking.id}, userId: ${booking.userId}');
+        await sendBookingConfirmedNotification(booking.userId, booking.id);
+      }
       return true;
     } catch (e) {
-      print('Error updating booking status: $e');
+      print('Error updating booking status: ${e}');
       return false;
     }
   }
@@ -589,6 +595,23 @@ class BookingService {
     } catch (e) {
       print('Error releasing seat: $e');
       return false;
+    }
+  }
+
+  Future<void> sendBookingConfirmedNotification(String userId, String bookingId) async {
+    try {
+      await _firestore.collection('bookingNotice').add({
+        'userId': userId,
+        'title': 'Vé đã được xác nhận',
+        'content': 'Vé của bạn (ID: $bookingId) đã được xác nhận thành công!',
+        'timestamp': FieldValue.serverTimestamp(),
+        'isRead': false,
+        'type': 'booking_confirmed',
+        'bookingId': bookingId,
+      });
+      print('Đã ghi thông báo bookingNotice cho user $userId, booking $bookingId');
+    } catch (e) {
+      print('Lỗi khi ghi bookingNotice: $e');
     }
   }
 }
