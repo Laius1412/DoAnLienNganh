@@ -4,6 +4,7 @@ import 'package:dat_ve_xe/service/cloudinary_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BankTransferScreen extends StatefulWidget {
   final String bookingId;
@@ -45,7 +46,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Chuyển khoản ngân hàng', style: TextStyle(color: textColor)),
+        title: Text(AppLocalizations.of(context)!.bankTransferTitle, style: TextStyle(color: textColor)),
         backgroundColor: buttonBg,
         foregroundColor: textColor,
         iconTheme: IconThemeData(color: textColor),
@@ -70,7 +71,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Thông tin tài khoản ngân hàng',
+                    AppLocalizations.of(context)!.bankInfoTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -78,11 +79,11 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildBankInfo('Ngân hàng:', 'BIDV', Icons.account_balance, labelColor, subTextColor, textColor),
-                  _buildBankInfo('Số tài khoản:', '5121034942', Icons.account_balance_wallet, labelColor, subTextColor, textColor),
-                  _buildBankInfo('Chủ tài khoản:', 'Ngueyn Tran Viet Anh', Icons.person, labelColor, subTextColor, textColor),
-                  _buildBankInfo('Nội dung chuyển khoản:', 'Thanh toan ${widget.bookingId}', Icons.description, labelColor, subTextColor, textColor),
-                  _buildBankInfo('Số tiền:', '${NumberFormat("#,###", "vi_VN").format(widget.totalAmount)}đ', Icons.attach_money, labelColor, subTextColor, textColor),
+                  _buildBankInfo(AppLocalizations.of(context)!.bankNameLabel, AppLocalizations.of(context)!.bankNameValue, Icons.account_balance, labelColor, subTextColor, textColor),
+                  _buildBankInfo(AppLocalizations.of(context)!.accountNumberLabel, AppLocalizations.of(context)!.accountNumberValue, Icons.account_balance_wallet, labelColor, subTextColor, textColor),
+                  _buildBankInfo(AppLocalizations.of(context)!.accountHolderLabel, AppLocalizations.of(context)!.accountHolderValue, Icons.person, labelColor, subTextColor, textColor),
+                  _buildBankInfo(AppLocalizations.of(context)!.transferContentLabel, AppLocalizations.of(context)!.transferContentValue(widget.bookingId), Icons.description, labelColor, subTextColor, textColor),
+                  _buildBankInfo(AppLocalizations.of(context)!.amountLabel, '${NumberFormat("#,###", "vi_VN").format(widget.totalAmount)}đ', Icons.attach_money, labelColor, subTextColor, textColor),
                 ],
               ),
             ),
@@ -99,7 +100,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Mã QR chuyển khoản',
+                    AppLocalizations.of(context)!.qrTransferTitle,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -126,7 +127,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'QR Code',
+                            AppLocalizations.of(context)!.qrCode,
                             style: TextStyle(
                               fontSize: 14,
                               color: subTextColor,
@@ -152,7 +153,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Ảnh xác nhận chuyển khoản',
+                    AppLocalizations.of(context)!.uploadBillTitle,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -184,7 +185,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                         child: ElevatedButton.icon(
                           onPressed: _pickImage,
                           icon: const Icon(Icons.camera_alt),
-                          label: const Text('Chọn ảnh'),
+                          label: Text(AppLocalizations.of(context)!.chooseImage),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: buttonBg,
                             foregroundColor: buttonText,
@@ -198,7 +199,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                           child: ElevatedButton.icon(
                             onPressed: () => setState(() => _selectedImage = null),
                             icon: const Icon(Icons.delete),
-                            label: const Text('Xóa'),
+                            label: Text(AppLocalizations.of(context)!.delete),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: buttonDeleteBg,
                               foregroundColor: buttonText,
@@ -236,9 +237,9 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
-                        'Xác nhận thanh toán',
-                        style: TextStyle(fontSize: 16),
+                    : Text(
+                        AppLocalizations.of(context)!.confirmPayment,
+                        style: const TextStyle(fontSize: 16),
                       ),
               ),
             ),
@@ -298,7 +299,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi khi chọn ảnh: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.imagePickError(e.toString()))),
       );
     }
   }
@@ -306,7 +307,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
   Future<void> _handlePayment() async {
     if (_selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng chọn ảnh xác nhận chuyển khoản')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseChooseImage)),
       );
       return;
     }
@@ -324,7 +325,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
       
 
       if (imageUrl == null) {
-        throw Exception('Không thể upload ảnh. Vui lòng kiểm tra kết nối mạng và thử lại.');
+        throw Exception(AppLocalizations.of(context)!.uploadImageError);
       }
 
       // Cập nhật booking với ảnh và xác nhận thanh toán
@@ -337,7 +338,7 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
         setState(() => _isPaymentSuccessful = true);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Thanh toán thành công!')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.paymentSuccess)),
           );
           // Navigate back to home screen
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -345,14 +346,14 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Thanh toán thất bại. Vui lòng thử lại!')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.paymentFailed)),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorWithMessage(e.toString()))),
         );
       }
     } finally {

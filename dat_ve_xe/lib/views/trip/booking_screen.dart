@@ -8,6 +8,7 @@ import 'package:dat_ve_xe/models/stop_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:dat_ve_xe/models/seat_position_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BookingScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -129,14 +130,14 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> _handleBooking() async {
     if (_selectedSeats.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng chọn ít nhất 1 ghế')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectAtLeastOneSeat)),
       );
       return;
     }
 
     if (_selectedStartLocation == null || _selectedEndLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng chọn điểm đón và điểm trả')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectPickupDropoff)),
       );
       return;
     }
@@ -147,7 +148,7 @@ class _BookingScreenState extends State<BookingScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vui lòng đăng nhập để đặt vé')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.pleaseLoginToBook)),
         );
         return;
       }
@@ -184,14 +185,14 @@ class _BookingScreenState extends State<BookingScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Đặt vé thất bại. Vui lòng thử lại!')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.bookingFailed)),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorWithMessage(e.toString()))),
         );
       }
     } finally {
@@ -240,7 +241,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isStartLocation ? 'Chọn tỉnh/thành điểm đón' : 'Chọn tỉnh/thành điểm trả',
+                    isStartLocation ? AppLocalizations.of(context)!.selectPickupProvince : AppLocalizations.of(context)!.selectDropoffProvince,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -381,21 +382,21 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> _handleSelectSeat(String code) async {
     if (_selectedSeats.length >= 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bạn chỉ có thể đặt tối đa 4 vé mỗi lần!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.max4Tickets)),
       );
       return;
     }
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng đăng nhập để chọn ghế!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseLoginToSelectSeat)),
       );
       return;
     }
     final seatId = await _getOrCreateSeatIdByCode(code);
     if (seatId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không tìm thấy hoặc tạo được ghế $code!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.seatNotFoundOrCreate(code))),
       );
       return;
     }
@@ -414,7 +415,7 @@ class _BookingScreenState extends State<BookingScreen> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ghế $code đang được giữ bởi người khác!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.seatHeldByOther(code))),
       );
     }
   }
@@ -469,7 +470,7 @@ class _BookingScreenState extends State<BookingScreen> {
     if (_isInitializing) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Đặt vé', style: TextStyle(color: textColor)),
+          title: Text(AppLocalizations.of(context)!.bookingTitle, style: TextStyle(color: textColor)),
           backgroundColor: buttonBg,
           foregroundColor: textColor,
           iconTheme: IconThemeData(color: textColor),
@@ -492,7 +493,7 @@ class _BookingScreenState extends State<BookingScreen> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Đặt vé', style: TextStyle(color: textColor)),
+        title: Text(AppLocalizations.of(context)!.bookingTitle, style: TextStyle(color: textColor)),
         backgroundColor: buttonBg,
         foregroundColor: textColor,
         iconTheme: IconThemeData(color: textColor),
@@ -574,7 +575,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Icon(Icons.calendar_today, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
-                          'Ngày đi: ${dateFormat.format(widget.selectedDate)}',
+                          '${AppLocalizations.of(context)!.bookingDate}: ${dateFormat.format(widget.selectedDate)}',
                           style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
@@ -585,7 +586,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Icon(Icons.access_time, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
-                          'Giờ: ${widget.vehicle.startTime} - ${widget.vehicle.endTime}',
+                          '${AppLocalizations.of(context)!.bookingTime}: ${widget.vehicle.startTime} - ${widget.vehicle.endTime}',
                           style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
@@ -596,7 +597,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Icon(Icons.directions_bus, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
-                          'Loại xe: ${widget.vehicle.vehicleType?.nameType} (${widget.vehicle.vehicleType?.seatCount} chỗ)',
+                          '${AppLocalizations.of(context)!.bookingVehicleType}: ${widget.vehicle.vehicleType?.nameType} (${widget.vehicle.vehicleType?.seatCount} chỗ)',
                           style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
@@ -607,7 +608,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Icon(Icons.attach_money, color: labelColor),
                         const SizedBox(width: 8),
                         Text(
-                          'Giá vé: ${NumberFormat("#,###", "vi_VN").format(widget.vehicle.price)}đ/ghế',
+                          '${AppLocalizations.of(context)!.bookingPrice}: ${NumberFormat("#,###", "vi_VN").format(widget.vehicle.price)}đ/ghế',
                           style: TextStyle(fontSize: 16, color: subTextColor),
                         ),
                       ],
@@ -647,19 +648,19 @@ class _BookingScreenState extends State<BookingScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _buildSeatLegend(seatBookedColor, 'Đã bán'),
+                                _buildSeatLegend(seatBookedColor, AppLocalizations.of(context)!.seatSold),
                                 const SizedBox(width: 16),
-                                _buildSeatLegend(seatSelectedColor, 'Đang chọn'),
+                                _buildSeatLegend(seatSelectedColor, AppLocalizations.of(context)!.seatSelected),
                                 const SizedBox(width: 16),
-                                _buildSeatLegend(seatEmptyColor, 'Giường trống', border: seatBorderColor),
+                                _buildSeatLegend(seatEmptyColor, AppLocalizations.of(context)!.seatEmpty, border: seatBorderColor),
                               ],
                             ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: const [
-                              Text('Tầng 1', style: TextStyle(fontWeight: FontWeight.bold)),
-                              Text('Tầng 2', style: TextStyle(fontWeight: FontWeight.bold)),
+                            children: [
+                              Text(AppLocalizations.of(context)!.floor1, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text(AppLocalizations.of(context)!.floor2, style: const TextStyle(fontWeight: FontWeight.bold)),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -758,7 +759,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Chọn điểm đón và trả khách',
+                          AppLocalizations.of(context)!.selectPickupDropoff,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -786,7 +787,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                   child: Text(
                                     _selectedStartLocation != null && _selectedStartCity != null
                                         ? '${_selectedStartLocation!} (${_selectedStartCity!})'
-                                        : 'Chọn điểm đón',
+                                        : AppLocalizations.of(context)!.selectPickupPoint,
                                     style: TextStyle(
                                       color: _selectedStartLocation != null ? textColor : (isDark ? Colors.white54 : Colors.grey),
                                       fontSize: 16,
@@ -819,7 +820,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                   child: Text(
                                     _selectedEndLocation != null && _selectedEndCity != null
                                         ? '${_selectedEndLocation!} (${_selectedEndCity!})'
-                                        : 'Chọn điểm trả',
+                                        : AppLocalizations.of(context)!.selectDropoffPoint,
                                     style: TextStyle(
                                       color: _selectedEndLocation != null ? textColor : (isDark ? Colors.white54 : Colors.grey),
                                       fontSize: 16,
@@ -859,7 +860,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Tổng tiền:',
+                              AppLocalizations.of(context)!.totalAmount,
                               style: TextStyle(
                                 fontSize: 20,
                                 color: isDark ? Colors.white70 : Colors.grey[700],
@@ -898,9 +899,9 @@ class _BookingScreenState extends State<BookingScreen> {
                             ),
                             minimumSize: const Size(120, 54),
                           ),
-                          child: const Text(
-                            'Tiếp tục',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          child: Text(
+                            AppLocalizations.of(context)!.continueLabel,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       if (_step == 2)
@@ -929,9 +930,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                   ),
                                 )
-                              : const Text(
-                                  'Đặt vé',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              : Text(
+                                  AppLocalizations.of(context)!.bookTicket,
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                         ),
                     ],

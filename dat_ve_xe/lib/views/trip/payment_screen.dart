@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/models/booking_model.dart';
 import 'dart:async';
 import 'bank_transfer_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String bookingId;
@@ -75,11 +76,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Hết thời gian thanh toán. Đơn hàng đã bị hủy.')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.paymentTimeout)),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Không thể hủy đơn hàng. Vui lòng thử lại.')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.paymentCancelFailed)),
           );
         }
         // Navigate back to home screen
@@ -89,7 +90,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       print('Error handling timeout: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đã xảy ra lỗi khi hủy đơn hàng.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.paymentCancelError)),
         );
         Navigator.of(context).popUntil((route) => route.isFirst);
       }
@@ -122,7 +123,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         setState(() => _isPaymentSuccessful = true);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Thanh toán thành công!')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.paymentSuccess)),
           );
           // Navigate back to home screen
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -130,14 +131,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Thanh toán thất bại. Vui lòng thử lại!')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.paymentFailed)),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorWithMessage(e.toString()))),
         );
       }
     } finally {
@@ -160,7 +161,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Thanh toán', style: TextStyle(color: textColor)),
+        title: Text(AppLocalizations.of(context)!.paymentTitle, style: TextStyle(color: textColor)),
         backgroundColor: buttonBg,
         foregroundColor: textColor,
         iconTheme: IconThemeData(color: textColor),
@@ -185,7 +186,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const Icon(Icons.timer, color: Colors.red),
                         const SizedBox(width: 8),
                         Text(
-                          'Thời gian còn lại: $_remainingTime',
+                          AppLocalizations.of(context)!.paymentTimeLeft(_remainingTime),
                           style: TextStyle(
                             color: isDark ? Colors.orange[200] : Colors.red,
                             fontWeight: FontWeight.bold,
@@ -211,7 +212,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Thông tin chuyến đi',
+                          AppLocalizations.of(context)!.tripInfo,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -228,7 +229,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 child: Text(
                                   _booking!.seats.isNotEmpty && _booking!.seats[0].vehicle?.trip != null
                                       ? _booking!.seats[0].vehicle!.trip!.nameTrip
-                                      : 'N/A',
+                                      : AppLocalizations.of(context)!.notAvailable,
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -256,7 +257,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               Text(
                                 _booking!.seats.isNotEmpty && _booking!.seats[0].vehicle != null
                                     ? '${_booking!.seats[0].vehicle!.startTime} - ${_booking!.seats[0].vehicle!.endTime}'
-                                    : 'N/A',
+                                    : AppLocalizations.of(context)!.notAvailable,
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ],
@@ -268,7 +269,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Điểm đón: ${_booking!.startLocationBooking}',
+                                  AppLocalizations.of(context)!.pickupPoint(_booking!.startLocationBooking),
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
@@ -281,7 +282,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Điểm trả: ${_booking!.endLocationBooking}',
+                                  AppLocalizations.of(context)!.dropoffPoint(_booking!.endLocationBooking),
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
@@ -294,7 +295,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Ghế: ${_booking!.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(", ")}',
+                                  AppLocalizations.of(context)!.seatsLabel(_booking!.seats.map((s) => s.seatPosition?.numberSeat ?? '').join(", ") ),
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
@@ -317,7 +318,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Số tiền thanh toán',
+                          AppLocalizations.of(context)!.paymentAmount,
                           style: TextStyle(
                             fontSize: 16,
                             color: textColor,
@@ -339,7 +340,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                   // Payment methods
                   Text(
-                    'Phương thức thanh toán',
+                    AppLocalizations.of(context)!.paymentMethod,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -349,14 +350,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   const SizedBox(height: 16),
                   _buildPaymentMethod(
                     icon: Icons.credit_card,
-                    title: 'Thẻ tín dụng/ghi nợ (Đang bảo trì)',
-                    subtitle: 'Thanh toán qua thẻ Visa, Mastercard',
+                    title: AppLocalizations.of(context)!.creditCard,
+                    subtitle: AppLocalizations.of(context)!.creditCardSubtitle,
                     enabled: false,
                   ),
                   _buildPaymentMethod(
                     icon: Icons.account_balance,
-                    title: 'Chuyển khoản ngân hàng',
-                    subtitle: 'Chuyển khoản qua ngân hàng',
+                    title: AppLocalizations.of(context)!.bankTransfer,
+                    subtitle: AppLocalizations.of(context)!.bankTransferSubtitle,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -372,8 +373,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   _buildPaymentMethod(
                     icon: Icons.qr_code,
-                    title: 'Ví điện tử (Đang bảo trì)',
-                    subtitle: 'Thanh toán qua Momo, ZaloPay',
+                    title: AppLocalizations.of(context)!.eWallet,
+                    subtitle: AppLocalizations.of(context)!.eWalletSubtitle,
                     enabled: false,
                   ),
                   const SizedBox(height: 32),

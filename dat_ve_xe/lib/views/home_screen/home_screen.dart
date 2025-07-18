@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:dat_ve_xe/views/trip/search_result_screen.dart';
 import '../../widgets/news_carousel.dart';
 import '../../widgets/price_carousel.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -127,14 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('EEEE, dd/MM/yyyy', 'vi');
+    final l10n = AppLocalizations.of(context)!;
+    final dateFormat = DateFormat('EEEE, dd/MM/yyyy', Localizations.localeOf(context).languageCode);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark ? Colors.black : Colors.white;
-    final headerColor = isDark ? Color.fromARGB(255, 253, 109, 37) : Color.fromARGB(255, 253, 109, 37);
+    final headerColor = Color.fromARGB(255, 253, 109, 37);
     final cardColor = isDark ? Colors.grey[900] : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.white70 : Colors.black87;
-    final accentColor = isDark ? Color.fromARGB(255, 253, 109, 37) : Color.fromARGB(255, 253, 109, 37);
+    final accentColor = Color.fromARGB(255, 253, 109, 37);
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
@@ -188,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(width: 10),
                                         Expanded(
                                           child: Text(
-                                            _selectedStart ?? 'Chọn điểm đi',
+                                            _selectedStart ?? l10n.tapToSelect,
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20,
@@ -208,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(width: 10),
                                         Expanded(
                                           child: Text(
-                                            _selectedDestination ?? 'Chọn điểm đến',
+                                            _selectedDestination ?? l10n.tapToSelect,
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20,
@@ -237,15 +238,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Expanded(
                                     child: Text(
                                       _selectedDate != null
-                                          ? 'Ngày đi: ${dateFormat.format(_selectedDate!)}'
-                                          : 'Chưa chọn ngày đi',
+                                          ? '${l10n.selectDate}: ${dateFormat.format(_selectedDate!)}'
+                                          : l10n.tapToSelect,
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
                                   TextButton(
                                     onPressed: _pickDate,
                                     style: TextButton.styleFrom(foregroundColor: Colors.white),
-                                    child: Text('Chọn ngày', style: TextStyle(color: Colors.white)),
+                                    child: Text(l10n.selectDate, style: TextStyle(color: Colors.white)),
                                   ),
                                 ],
                               ),
@@ -266,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onPressed: () {
                                   if (_selectedStart == _selectedDestination) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Điểm đi và đến không được trùng nhau')),
+                                      SnackBar(content: Text(l10n.startEndMustNotBeSame)),
                                     );
                                     return;
                                   }
@@ -274,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       _selectedDestination == null ||
                                       _selectedDate == null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Vui lòng chọn đủ thông tin')),
+                                      SnackBar(content: Text(l10n.enterAllFields)),
                                     );
                                     return;
                                   }
@@ -291,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   );
                                 },
-                                child: Text('Tìm chuyến đi', style: TextStyle(fontSize: 18)),
+                                child: Text(l10n.search, style: TextStyle(fontSize: 18)),
                               ),
                             ),
                           ],
@@ -309,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Tin tức',
+                  l10n.news,
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: subTextColor),
                 ),
               ),
@@ -321,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Giá vé',
+                  l10n.price,
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: subTextColor),
                 ),
               ),

@@ -4,6 +4,8 @@ import 'package:dat_ve_xe/server/vehicle_service.dart';
 import 'package:dat_ve_xe/server/booking_service.dart';
 import 'package:intl/intl.dart';
 import 'booking_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class SearchResultScreen extends StatefulWidget {
   final String startLocation;
@@ -31,19 +33,37 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   late Future<List<Vehicle>> _vehicleFuture;
   Map<String, int> _availableSeats = {};
 
-  // Thêm các biến trạng thái cho sắp xếp và lọc
-  String _sortOption = 'Giờ sớm nhất';
-  String _timeFilter = 'Tất cả';
-  String _vehicleTypeFilter = 'Tất cả';
-  List<String> _vehicleTypes = ['Tất cả'];
+  // Các biến filter sẽ khởi tạo động theo l10n
+  String? _sortOption;
+  String? _timeFilter;
+  String? _vehicleTypeFilter;
+  List<String>? _vehicleTypes;
+
+  bool _didLoadVehicles = false;
 
   @override
   void initState() {
     super.initState();
-    _loadVehicles();
+    // Không gọi _loadVehicles ở đây!
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    _sortOption ??= l10n.earliestTime;
+    _timeFilter ??= l10n.all;
+    _vehicleTypeFilter ??= l10n.all;
+    _vehicleTypes ??= [l10n.all];
+
+    if (!_didLoadVehicles) {
+      _didLoadVehicles = true;
+      _loadVehicles();
+    }
   }
 
   Future<void> _loadVehicles() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _vehicleFuture = _vehicleService.searchVehiclesByLocation(
         startLocation: widget.startLocation,
@@ -65,7 +85,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         final types = vehicles.map((v) => v.vehicleType?.nameType ?? '').toSet().toList();
         types.removeWhere((e) => e.isEmpty);
         setState(() {
-          _vehicleTypes = ['Tất cả', ...types];
+          _vehicleTypes = [l10n.all, ...types];
         });
         // Sắp xếp mặc định theo giờ khởi hành
         vehicles.sort((a, b) {
@@ -109,6 +129,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final dateFormat = DateFormat('dd/MM/yyyy');
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark ? Colors.black : Colors.white;
@@ -116,10 +137,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final textColor = isDark ? Colors.white : Colors.black;
     final ticketBg = isDark ? Colors.orange[900] : const Color.fromARGB(255, 253, 109, 37);
 
+    // Đảm bảo filter luôn đồng bộ với l10n khi build
+    _sortOption ??= l10n.earliestTime;
+    _timeFilter ??= l10n.all;
+    _vehicleTypeFilter ??= l10n.all;
+    _vehicleTypes ??= [l10n.all];
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Danh sách chuyến (${dateFormat.format(widget.selectedDate)})'),
+        title: Text('${l10n.tripListTitle} (${dateFormat.format(widget.selectedDate)})'),
         backgroundColor: ticketBg,
         foregroundColor: Colors.white,
       ),
@@ -133,17 +160,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 Expanded(
                   child: _FilterButton(
                     icon: Icons.sort,
-                    label: 'Sắp xếp',
-                    value: _sortOption,
+                    label: l10n.sort,
+                    value: _sortOption!,
                     onTap: () => _showFilterBottomSheet(
                       context,
-                      title: 'Sắp xếp',
-                      options: [
-                        'Giờ sớm nhất',
-                        'Nhiều ghế trống',
-                        'Giá vé thấp nhất',
-                      ],
-                      current: _sortOption,
+                      title: l10n.sort,
+                      options: [l10n.earliestTime, l10n.mostAvailableSeats, l10n.lowestPrice],
+                      current: _sortOption!,
                       onSelected: (val) => setState(() => _sortOption = val),
                     ),
                   ),
@@ -152,18 +175,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 Expanded(
                   child: _FilterButton(
                     icon: Icons.access_time,
-                    label: 'Khung giờ',
-                    value: _timeFilter,
+                    label: l10n.timeRange,
+                    value: _timeFilter!,
                     onTap: () => _showFilterBottomSheet(
                       context,
-                      title: 'Khung giờ',
-                      options: [
-                        'Tất cả',
-                        '0h-12h',
-                        '12h-19h',
-                        '19h-24h',
-                      ],
-                      current: _timeFilter,
+                      title: l10n.timeRange,
+                      options: [l10n.all, l10n.time0_12, l10n.time12_19, l10n.time19_24],
+                      current: _timeFilter!,
                       onSelected: (val) => setState(() => _timeFilter = val),
                     ),
                   ),
@@ -172,13 +190,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 Expanded(
                   child: _FilterButton(
                     icon: Icons.directions_bus,
-                    label: 'Loại xe',
-                    value: _vehicleTypeFilter,
+                    label: l10n.vehicleType,
+                    value: _vehicleTypeFilter!,
                     onTap: () => _showFilterBottomSheet(
                       context,
-                      title: 'Loại xe',
-                      options: _vehicleTypes,
-                      current: _vehicleTypeFilter,
+                      title: l10n.vehicleType,
+                      options: _vehicleTypes!,
+                      current: _vehicleTypeFilter!,
                       onSelected: (val) => setState(() => _vehicleTypeFilter = val),
                     ),
                   ),
@@ -198,28 +216,28 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    return Center(child: Text('Lỗi:  [${snapshot.error}'));
+                    return Center(child: Text('${l10n.error}:  [${snapshot.error}'));
                   }
 
                   final vehicles = snapshot.data ?? [];
 
                   if (vehicles.isEmpty) {
-                    return const Center(child: Text('Không tìm thấy xe phù hợp.'));
+                    return Center(child: Text(l10n.noVehicleFound));
                   }
 
                   // Áp dụng lọc khung giờ
                   List<Vehicle> filtered = vehicles.where((vehicle) {
                     // Lọc theo loại xe
-                    if (_vehicleTypeFilter != 'Tất cả' && (vehicle.vehicleType?.nameType ?? '') != _vehicleTypeFilter) {
+                    if (_vehicleTypeFilter != l10n.all && (vehicle.vehicleType?.nameType ?? '') != _vehicleTypeFilter) {
                       return false;
                     }
                     // Lọc theo khung giờ
-                    if (_timeFilter != 'Tất cả') {
+                    if (_timeFilter != l10n.all) {
                       final time = DateFormat('HH:mm').parse(vehicle.startTime);
                       final hour = time.hour;
-                      if (_timeFilter == '0h-12h' && (hour < 0 || hour >= 12)) return false;
-                      if (_timeFilter == '12h-19h' && (hour < 12 || hour >= 19)) return false;
-                      if (_timeFilter == '19h-24h' && (hour < 19 || hour >= 24)) return false;
+                      if (_timeFilter == l10n.time0_12 && (hour < 0 || hour >= 12)) return false;
+                      if (_timeFilter == l10n.time12_19 && (hour < 12 || hour >= 19)) return false;
+                      if (_timeFilter == l10n.time19_24 && (hour < 19 || hour >= 24)) return false;
                     }
                     // Lọc chuyến đã khởi hành nếu là hôm nay
                     final now = DateTime.now();
@@ -235,24 +253,24 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   }).toList();
 
                   // Áp dụng sắp xếp
-                  if (_sortOption == 'Giờ sớm nhất') {
+                  if (_sortOption == l10n.earliestTime) {
                     filtered.sort((a, b) {
                       final timeA = DateFormat('HH:mm').parse(a.startTime);
                       final timeB = DateFormat('HH:mm').parse(b.startTime);
                       return timeA.compareTo(timeB);
                     });
-                  } else if (_sortOption == 'Nhiều ghế trống') {
+                  } else if (_sortOption == l10n.mostAvailableSeats) {
                     filtered.sort((a, b) {
                       final seatsA = _availableSeats[a.id] ?? 0;
                       final seatsB = _availableSeats[b.id] ?? 0;
                       return seatsB.compareTo(seatsA);
                     });
-                  } else if (_sortOption == 'Giá vé thấp nhất') {
+                  } else if (_sortOption == l10n.lowestPrice) {
                     filtered.sort((a, b) => a.price.compareTo(b.price));
                   }
 
                   if (filtered.isEmpty) {
-                    return const Center(child: Text('Không có chuyến xe phù hợp với bộ lọc.'));
+                    return Center(child: Text(l10n.noVehicleWithFilter));
                   }
 
                   return ListView.builder(

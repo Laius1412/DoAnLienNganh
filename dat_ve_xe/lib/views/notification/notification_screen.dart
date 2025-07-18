@@ -6,6 +6,8 @@ import '../../models/notification_model.dart';
 import '../../widgets/notification_bell.dart';
 import '../../widgets/notification_list.dart';
 import 'dart:async';
+import '../../server/booking_service.dart';
+import '../myticket_screen/detail_my_tickets.dart';
 
 class NotificationScreen extends StatefulWidget {
   final VoidCallback? onNotificationsUpdated;
@@ -22,6 +24,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List<AppNotification> notifications = [];
   bool _isLoading = true;
   User? _currentUser;
+  int _displayLimit = 10;
 
   @override
   void initState() {
@@ -123,6 +126,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
     await markAsRead(notification);
     if (mounted) {
       if (notification.source == 'bookingNotice') {
+        // Lấy bookingId từ Firestore
+        final doc = await _firestore.collection('bookingNotice').doc(notification.id).get();
+        final data = doc.data();
+        final bookingId = data != null ? data['bookingId'] as String? : null;
+        if (bookingId != null && bookingId.isNotEmpty) {
+          // Lấy chi tiết booking
+          final bookingService = BookingService();
+          final booking = await bookingService.getBookingById(bookingId);
+          if (booking != null) {
+            if (!mounted) return;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailMyTicket(booking: booking),
+              ),
+            );
+            return;
+          }
+        }
+        // Nếu không có bookingId hoặc lỗi thì fallback về trang vé của tôi
         Navigator.pushNamed(context, '/myticket');
       } else {
         Navigator.pushNamed(context, '/myDeliveries');
@@ -176,6 +199,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         return all;
       },
     );
+  }
+
+  void _loadMoreNotifications() {
+    setState(() {
+      _displayLimit += 10;
+    });
   }
 
   @override
