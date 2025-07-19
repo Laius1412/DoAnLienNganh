@@ -641,7 +641,7 @@ class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
                 child: Center(
                   child: LoadingAnimationWidget.inkDrop(
                     color: Colors.orange,
-                    size: 60,
+                    size: 30,
                   ),
                 ),
               ),

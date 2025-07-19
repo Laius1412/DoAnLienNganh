@@ -266,7 +266,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Center(
                   child: LoadingAnimationWidget.inkDrop(
                     color: Colors.orange,
-                    size: 60,
+                    size: 30,
                   ),
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dat_ve_xe/models/delivery_models.dart';
 import 'package:dat_ve_xe/views/personal_screen/login_request_card.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class MyDeliveriesScreen extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -62,6 +63,7 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
       _isLoading = true;
     });
 
+    final start = DateTime.now();
     try {
       print('Current user uid: ${_currentUser!.uid}');
       final querySnapshot =
@@ -84,8 +86,14 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
           print('Error parsing delivery ${doc.id}: $e');
         }
       }
-      // Sắp xếp theo ngày tạo mới nhất đến cũ nhất
       deliveries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      // Đảm bảo hiệu ứng loading tối thiểu 2s
+      final elapsed = DateTime.now().difference(start).inMilliseconds;
+      final minLoading = 2000;
+      if (elapsed < minLoading) {
+        await Future.delayed(Duration(milliseconds: minLoading - elapsed));
+      }
 
       setState(() {
         _deliveries = deliveries;
@@ -183,63 +191,80 @@ class _MyDeliveriesScreenState extends State<MyDeliveriesScreen> {
         backgroundColor: const Color.fromARGB(255, 253, 109, 37),
         foregroundColor: Colors.white,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.calendar_today),
-                    label: Text(
-                      _selectedDate == null
-                          ? t.selectDate
-                          : '${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.year}',
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.calendar_today),
+                        label: Text(
+                          _selectedDate == null
+                              ? t.selectDate
+                              : '${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.year}',
+                        ),
+                        onPressed: () async {
+                          final now = DateTime.now();
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _selectedDate ?? now,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(now.year + 1),
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              _selectedDate = picked;
+                            });
+                          }
+                        },
+                      ),
                     ),
-                    onPressed: () async {
-                      final now = DateTime.now();
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDate ?? now,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(now.year + 1),
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          _selectedDate = picked;
-                        });
-                      }
-                    },
+                    if (_selectedDate != null)
+                      IconButton(
+                        icon: const Icon(Icons.clear),
+                        tooltip: 'Xóa lọc',
+                        onPressed: () {
+                          setState(() {
+                            _selectedDate = null;
+                          });
+                        },
+                      ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child:
+                    _isLoading
+                        // Bỏ CircularProgressIndicator, chỉ dùng LoadingAnimationWidget
+                        ? const SizedBox.shrink()
+                        : _filteredDeliveries.isEmpty
+                        ? _buildEmptyState()
+                        : RefreshIndicator(
+                          onRefresh: _loadDeliveries,
+                          child: _buildDeliveriesList(),
+                        ),
+              ),
+            ],
+          ),
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: LoadingAnimationWidget.inkDrop(
+                    color: Colors.orange,
+                    size: 30,
                   ),
                 ),
-                if (_selectedDate != null)
-                  IconButton(
-                    icon: const Icon(Icons.clear),
-                    tooltip: 'Xóa lọc',
-                    onPressed: () {
-                      setState(() {
-                        _selectedDate = null;
-                      });
-                    },
-                  ),
-              ],
+              ),
             ),
-          ),
-          Expanded(
-            child:
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _filteredDeliveries.isEmpty
-                    ? _buildEmptyState()
-                    : RefreshIndicator(
-                      onRefresh: _loadDeliveries,
-                      child: _buildDeliveriesList(),
-                    ),
-          ),
         ],
       ),
     );

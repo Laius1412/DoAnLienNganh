@@ -200,7 +200,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 child: Center(
                   child: LoadingAnimationWidget.inkDrop(
                     color: Colors.orange,
-                    size: 60,
+                    size: 30,
                   ),
                 ),
               ),
