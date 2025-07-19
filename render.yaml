@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: wedadmin
+    env: node
+    buildCommand: cd wedAdmin && npm install
+    startCommand: cd wedAdmin && npm start
+    rootDir: wedAdmin
+    plan: free
+    envVars:
+      - key: FIREBASE_SERVICE_ACCOUNT
+        value: <TẠM THỜI BỎ TRỐNG – SẼ THÊM TRÊN GIAO DIỆN SAU>

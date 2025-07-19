@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 // Session
 app.use(session({
-  secret: 'my_secret_key',
+  secret: process.env.SESSION_SECRET || 'my_secret_key',
   resave: false,
   saveUninitialized: false,
 }));
@@ -54,11 +54,11 @@ app.use('/delivery', DeliverRoutes);
 app.use("/trips", tripRoutes);
 app.use('/vehicles', vehicleRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));
-
 app.use('/news', newsRouter);
 app.use('/bookings', bookingRoute);
 
 const uploadRoute = require('./routes/upload');
 app.use('/', uploadRoute);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));
