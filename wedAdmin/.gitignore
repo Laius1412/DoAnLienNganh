@@ -15,6 +15,9 @@ lerna-debug.log*
 # This line specifically ignores the Firebase key file based on your directory structure
 firebase/firebase-adminsdk.json
 
+# Firebase config files
+firebase-adminsdk.json
+
 # Build and temporary directories
 dist/
 build/
