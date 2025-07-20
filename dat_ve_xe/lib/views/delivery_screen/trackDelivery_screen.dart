@@ -232,7 +232,7 @@ class _TrackDeliveryScreenState extends State<TrackDeliveryScreen> {
                 child: Center(
                   child: LoadingAnimationWidget.inkDrop(
                     color: Colors.orange,
-                    size: 60,
+                    size: 30,
                   ),
                 ),
               ),

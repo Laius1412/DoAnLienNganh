@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
               .update({'fcmToken': fcmToken, 'isNotificationEnabled': true});
         }
 
-        _showMessage(t.loginSuccess);
+        // _showMessage(t.loginSuccess);
         widget.onLoginStateChanged(true);
 
         await Future.delayed(const Duration(seconds: 2));
@@ -207,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Center(
                   child: LoadingAnimationWidget.inkDrop(
                     color: Colors.orange,
-                    size: 60,
+                    size: 30,
                   ),
                 ),
               ),
